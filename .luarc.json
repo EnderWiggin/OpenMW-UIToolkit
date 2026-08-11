@@ -1,0 +1,7 @@
+{
+    "runtime.version": "LuaJIT",
+    "workspace.library": [
+        "../Cod3x/"
+    ],
+    "runtime.plugin": "../Cod3x/omw_context_plugin.lua"
+}
