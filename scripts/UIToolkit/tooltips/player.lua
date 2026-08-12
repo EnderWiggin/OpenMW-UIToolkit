@@ -7,10 +7,24 @@ local I = require('openmw.interfaces')
 local types = require('openmw.types')
 local core = require('openmw.core')
 local self = require('openmw.self')
+local helpers = require('scripts.UIToolkit.tooltips.utils')
 local Tooltips = require('scripts.UIToolkit.tooltips.tooltips')
 local T = {
     Base = require('scripts.UIToolkit.templates.base'),
 }
+
+local tooltipElement = ui.create {
+    type = ui.TYPE.Container,
+    props = {},
+    layer = 'Popup'
+}
+---@type UTKTooltips.Tooltip?
+local currentTooltip
+---@type openmw.ui.Element?
+local currentTipElement
+---@type UTKTooltips.CurrentTipIsAlive?
+local currentTipIsAlive
+
 
 ---@type UTKTooltips.PreCreateHandler[]
 local preCreateTooltipHandlers = {}
@@ -19,11 +33,14 @@ local postCreateTooltipHandlers = {}
 
 local boxTemplateNormal = I.MWUI.templates.boxSolid
 local boxTemplateOwned = auxUi.deepLayoutCopy(I.MWUI.templates.boxSolid)
+---@cast boxTemplateOwned openmw.ui.Template
 boxTemplateOwned.content[1].props.color = util.color.rgb(0.15, 0, 0)
 boxTemplateOwned.content[1].props.alpha = 1.0
 
 
 local showOwnedObjects = true --TODO: read from settings
+local fixedTooltips = false   --TODO: read from settings
+local fixedPositionSet = false
 
 local function isOwned(obj)
     if not obj then
@@ -174,7 +191,120 @@ local function createTooltipLayout(tooltip)
     return layout
 end
 
+local function getMousePosition()
+    ---@diagnostic disable-next-line: undefined-field
+    if ui.mousePosition then return ui.mousePosition() end
 
+    local ctx = I.UIToolkit.getCtx()
+    return ctx.mousePos
+end
+
+local function updatePosition()
+    if not currentTooltip then return end
+    local mousePos = getMousePosition()
+    local screenSize = ui.screenSize()
+    local props = tooltipElement.layout.props
+    if mousePos then
+        -- UI move is active
+
+        if fixedTooltips and fixedPositionSet then
+            -- User wants tooltips to stay in place
+            return
+        end
+        -- The tooltip should follow the mouse
+
+        -- Offset the tooltip widget to make sure we don't overrun edges.
+        local anchorX = mousePos.x / screenSize.x
+
+        -- With fixed tooltips, we increase the offset to ensure the tooltip doesn't overlap
+        -- the inventory icon it's active for.
+        local offsetY = fixedTooltips and 50 or 30
+        local anchorY = 0
+
+        -- Normally tooltips are below the cursor, and we have to flip that and place it above
+        -- the cursor if we are too far down the screen.
+        -- This flip should depend on the tooltip size, but we don't have access to that information
+        -- so we flip it about 3/4 of the way down the screen instead.
+        if (mousePos.y / screenSize.y) > 0.75 then
+            offsetY = -offsetY
+            anchorY = 1
+        end
+
+        props.position = util.vector2(mousePos.x, util.clamp(mousePos.y + offsetY, 0, screenSize.y))
+        props.anchor = util.vector2(anchorX, anchorY)
+    else
+        if currentTooltip.object and not fixedTooltips then
+            local viewport = helpers.objectTooltipViewportCoords(currentTooltip.object)
+            if viewport then
+                -- Subtract a bit from y to raise the tooltip slightly, to help avoid the tooltip overlapping the crosshair
+                -- in most cases. Note that this subtracts more than the original engine implementation, this is because in
+                -- most cases the anchor lowers the tooltip relative to the original engine implementation.
+                local y = math.max(0, math.min(screenSize.y, viewport.y - 50))
+                props.position = util.vector2(screenSize.x / 2, y)
+                -- Since we do not have access to the final size of the tooltip element, we have to use the anchor
+                -- to ensure the tooltip does not disappear off the screen near the top/bottom of the screen.
+                props.anchor = util.vector2(0.5, math.min(y / screenSize.y, 1))
+            else
+                -- Couldn't get in-world position - place below crosshair
+                props.position = (ui.screenSize() / 2) - util.vector2(0, 50)
+                props.anchor = util.vector2(0.5, 1)
+            end
+        else
+            -- User wants tooltips to stay in place
+            props.position = (ui.screenSize() / 2) - util.vector2(0, 50)
+            props.anchor = util.vector2(0.5, 1)
+        end
+    end
+    fixedPositionSet = true
+end
+
+local function clear()
+    currentTooltip = nil
+    currentTipIsAlive = nil
+    tooltipElement.layout.content = nil
+    fixedPositionSet = false
+    if currentTipElement then
+        auxUi.deepDestroy(currentTipElement)
+        currentTipElement = nil
+    end
+end
+
+local function update()
+    if currentTipIsAlive and not currentTipIsAlive() then
+        clear()
+    end
+    if currentTooltip ~= nil then
+        tooltipElement.layout.props.visible = true
+        if not currentTipElement then
+            local layout = currentTooltip.layout
+            if not layout then
+                layout = I.UTKTooltips.createTooltipLayout(currentTooltip)
+            end
+            if layout then
+                currentTipElement = ui.create(layout)
+            end
+        end
+        if not tooltipElement.layout.content and currentTipElement then
+            tooltipElement.layout.content = ui.content { currentTipElement }
+        end
+        updatePosition()
+    else
+        tooltipElement.layout.props.visible = false
+    end
+    tooltipElement:update()
+end
+
+local function setTooltip(newTooltip, isAlive)
+    clear()
+    if newTooltip then
+        if not newTooltip.type and not autoType(newTooltip) then
+            error('Cannot use new tooltip: Unable to determine type')
+        end
+        currentTooltip = newTooltip
+        currentTipIsAlive = isAlive
+    end
+    update()
+end
 
 
 ---
@@ -433,9 +563,16 @@ end
 
 
 return {
+    engineHandlers = {
+        onUpdate = update,
+    },
     interfaceName = 'UTKTooltips',
     interface = {
         version = 1,
+
+        currentTooltip = function() return currentTooltip end,
+        setTooltip = setTooltip,
+
         --- Instantiates the tooltip by filling in the layout member. This invokes create tooltip handlers.
         -- @function [parent=#Tooltips] createTooltipLayout
         -- @param #Tooltip tooltip The tooltip.
@@ -480,10 +617,4 @@ return {
         -- @field [parent=#Tooltips] #list<#function> builders
         builders = Tooltips.builders,
     },
-
-    eventHandlers = {
-        OMWMusicCombatTargetsChanged = function(data)
-            actorCombatTargets[data.actor.id] = data.targets
-        end
-    }
 }

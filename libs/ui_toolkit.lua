@@ -22,6 +22,11 @@
 ---@field hovering boolean? element is currently being hovered over
 ---@field disabled boolean? element is disabled
 
+---@class UIToolkit.InteractiveOpts
+---@field tooltipFn? fun():UTKTooltips.Tooltip? optional tooltip
+---@field onClick? fun() optional function to be called when element is clicked. Note: element won't change colors if there's no click callback set
+---@field canClick? fun():boolean
+---@field onMouseMove? fun(e, tgt, element)
 
 ---@class UIToolkit.InteractiveColors
 ---@field pressColor openmw.util.Color?
@@ -60,6 +65,8 @@
 
 ---@class openmw.interfaces.UTKTooltips
 ---@field version number
+---@field currentTooltip fun():UTKTooltips.Tooltip?
+---@field setTooltip fun(tooltip:UTKTooltips.Tooltip?, isAlive:UTKTooltips.CurrentTipIsAlive?)
 ---@field createTooltipLayout fun(tooltip:UTKTooltips.Tooltip):openmw.ui.Layout?
 ---@field addPreCreateTooltipHandler fun(handler:UTKTooltips.PreCreateHandler)
 ---@field addPostCreateTooltipHandler fun(handler:UTKTooltips.PostCreateHandler)
@@ -77,6 +84,7 @@
 ---@field caption string? (Optional) caption, used by @{#TooltipType.MapMarker} and @{#TooltipType.Caption}
 ---@field notes string[]? (Optional) notes, used by @{#TooltipType.MapMarker}.
 ---@field recipe UTKTooltips.Recipe? (Optional) recipe. If set, this recipe is used directly.
+---@field layout openmw.ui.Layout? (Optional) layout. If set, this layout is used directly, skipping all builders.
 
 --- Recipe item type. Decides which builder is used to create the layout.
 ---@alias UTKTooltips.RecipeItemBuilder fun(item:UTKTooltips.RecipeItem):openmw.ui.Layout
@@ -219,3 +227,4 @@
 
 ---@alias UTKTooltips.PreCreateHandler fun(recipe:UTKTooltips.Recipe, tooltip:UTKTooltips.Tooltip)
 ---@alias UTKTooltips.PostCreateHandler fun(layout:openmw.ui.Layout, tooltip:UTKTooltips.Tooltip)
+---@alias UTKTooltips.CurrentTipIsAlive fun():boolean

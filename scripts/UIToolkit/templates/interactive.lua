@@ -15,6 +15,76 @@ local T = {
     Base = require('scripts.UIToolkit.templates.base'),
 }
 
+---@param opts UIToolkit.InteractiveOpts
+---@param element openmw.ui.Element|openmw.ui.Layout
+---@return any
+function M.interactive(opts, element)
+    local toolkit = I.UIToolkit
+    local ctx = toolkit.getCtx()
+
+    element = element.layout and element or ui.create(element)
+    ---@cast element openmw.ui.Element
+
+    element.layout.userData = element.layout.userData or {}
+    element.layout.userData.interactive = true
+
+    element.layout.events = element.layout.events or {}
+    element.layout.events.mousePress = async:callback(function(e)
+        if e.button ~= 1 then
+            return false
+        end
+        if opts.onClick then
+            if opts.canClick and not opts.canClick() then
+                return false
+            end
+            ambient.playSound('menu click', { scale = false })
+            toolkit.updateInteractiveState(element.layout, { pressed = true })
+            toolkit.queueUpdate(element)
+            return true
+        end
+        return false
+    end)
+    element.layout.events.mouseRelease = async:callback(function(e)
+        if e.button ~= 1 then
+            return false
+        end
+        if opts.onClick then
+            if not element.layout.userData.pressed then
+                return false
+            end
+            toolkit.updateInteractiveState(element.layout, { pressed = false })
+            toolkit.queueUpdate(element)
+            return opts.onClick()
+        end
+        return false
+    end)
+    local isAlive = function() return element.layout ~= nil end
+    element.layout.events.focusLoss = async:callback(function()
+        I.UTKTooltips.setTooltip(nil)
+        toolkit.updateInteractiveState(element, { hovering = false })
+        toolkit.queueUpdate(element)
+        ctx.mousePos = nil
+        return true
+    end)
+    element.layout.events.focusGain = async:callback(function()
+        --ctx.focusedInteractiveDelayed = element
+        toolkit.updateInteractiveState(element, { hovering = true })
+        toolkit.queueUpdate(element)
+
+        if opts.tooltipFn then
+            I.UTKTooltips.setTooltip(opts.tooltipFn(), isAlive)
+        end
+        return true
+    end)
+    element.layout.events.mouseMove = async:callback(function(e, tgt)
+        ctx.mousePos = e.position --TODO: this is temporary, until 0.52, where `ui.mousePosition` would hopefully exist
+        if opts.onMouseMove then
+            opts.onMouseMove(e, tgt, element)
+        end
+    end)
+    return element
+end
+
 ---@param text string
 ---@param onClick function
 ---@param name string? name for the element, defaults to 'button'
