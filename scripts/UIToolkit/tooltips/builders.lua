@@ -6,6 +6,8 @@ local ui = require('openmw.ui')
 local I = require('openmw.interfaces')
 local helpers = require('scripts.UIToolkit.tooltips.utils')
 
+local hasGapAPI = core.API_REVISION >= 132
+
 -- Short-hands
 local V2 = util.vector2
 local T = {
@@ -239,8 +241,36 @@ local function effectDescription(content, effect, noTarget, noMagnitude, noDurat
     content:add(flex)
 end
 
+---@param layout openmw.ui.Layout
+---@return openmw.ui.Layout
+local function fallbackGap(layout)
+    if hasGapAPI then return layout end
+    local content = layout.content
+    if content and #content > 0 then
+        local gap = layout.props and layout.props.gap
+        if gap and (layout.type == ui.TYPE.Flex or layout.template and layout.template.type == ui.TYPE.Flex) then
+            layout.props.gap = nil
+            local interval = layout.props.horizontal and T.Base.intervalH(gap) or T.Base.intervalV(gap)
+            local newContent = ui.content {}
+            for i = 1, #content do
+                if i > 1 then
+                    newContent:add(interval)
+                end
+                newContent:add(fallbackGap(content[i]))
+            end
+            layout.content = newContent
+        else
+            for i = 1, #content do
+                content[i] = fallbackGap(content[i])
+            end
+        end
+    end
+
+    return layout
+end
+
 local function centerFlex(content, gap)
-    return {
+    return fallbackGap {
         type = ui.TYPE.Flex,
         props = {
             arrange = ui.ALIGNMENT.Center,
@@ -447,7 +477,7 @@ function Builders.header(item)
         textContent:add(textParagraph(subtitle, 'Subtitle'))
     end
     local theme = I.UIToolkit.getTheme()
-    return {
+    return fallbackGap {
         type = ui.TYPE.Flex,
         props = {
             horizontal = true,
@@ -481,7 +511,7 @@ end
 
 function Builders.note(item)
     local theme = I.UIToolkit.getTheme()
-    return {
+    return fallbackGap {
         type = ui.TYPE.Flex,
         props = {
             horizontal = true,
@@ -587,7 +617,7 @@ function Builders.root(recipe, tooltip)
         end
     end
 
-    return layout
+    return fallbackGap(layout)
 end
 
 function Builders.spellList(item)
