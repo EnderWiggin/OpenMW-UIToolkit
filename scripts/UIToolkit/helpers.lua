@@ -71,24 +71,6 @@ end
 if not context.isRuntime() then return H end
 ---@omw-context-begin runtime
 
-local core = require('openmw.core')
-
-
-function H.colorFromGMST(gmst)
-    local colorString = core.getGMST(gmst)
-    local numberTable = {}
-    for numberString in colorString:gmatch("([^,]+)") do
-        if #numberTable == 3 then break end
-        local number = tonumber(numberString:match("^%s*(.-)%s*$"))
-        if number then
-            table.insert(numberTable, number / 255)
-        end
-    end
-
-    if #numberTable < 3 then error('Invalid color GMST name: ' .. gmst) end
-
-    return util.color.rgb(table.unpack(numberTable))
-end
 
 ---@omw-context-end runtime
 

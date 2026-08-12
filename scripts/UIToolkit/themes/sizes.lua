@@ -7,6 +7,12 @@ local omwConstants = require('scripts.omw.mwui.constants')
 local Sizes = {
     textNormal = omwConstants.textNormalSize,
     textHeader = omwConstants.textHeaderSize,
+    border = 2,
+    thickBorder = 4,
+    tooltipPadding = 8,
+    smallGap = 4,
+    standardGap = 8,
+    padding = 2,
 }
 
 function Sizes:new()

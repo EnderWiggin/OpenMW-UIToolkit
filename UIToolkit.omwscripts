@@ -1,1 +1,2 @@
 PLAYER: scripts/UIToolkit/toolkit.lua
+PLAYER: scripts/UIToolkit/tooltips/player.lua
