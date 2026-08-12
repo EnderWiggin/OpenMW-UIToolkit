@@ -150,7 +150,7 @@ local gmsts =
     'fCombatDistance',
     'fWortChanceValue',
 }
-local l10n = core.l10n('OMWEngine')
+local l10n = core.l10n('UTKTooltips')
 
 local enchantmentTypeStrings = {
     [core.magic.ENCHANTMENT_TYPE.CastOnStrike] = l10n('ItemCastWhenStrikes'),
@@ -247,8 +247,61 @@ local function getCondition(object)
     end
 end
 
-local function armorWeightClass(record)
-    local armorSkill = I.Combat.getArmorSkill(record)
+local Armor = types.Armor
+local armorTypeGmst = {
+    [Armor.TYPE.Boots] = core.getGMST('iBootsWeight'),
+    [Armor.TYPE.Cuirass] = core.getGMST('iCuirassWeight'),
+    [Armor.TYPE.Greaves] = core.getGMST('iGreavesWeight'),
+    [Armor.TYPE.Helmet] = core.getGMST('iHelmWeight'),
+    [Armor.TYPE.LBracer] = core.getGMST('iGauntletWeight'),
+    [Armor.TYPE.LGauntlet] = core.getGMST('iGauntletWeight'),
+    [Armor.TYPE.LPauldron] = core.getGMST('iPauldronWeight'),
+    [Armor.TYPE.RBracer] = core.getGMST('iGauntletWeight'),
+    [Armor.TYPE.RGauntlet] = core.getGMST('iGauntletWeight'),
+    [Armor.TYPE.RPauldron] = core.getGMST('iPauldronWeight'),
+    [Armor.TYPE.Shield] = core.getGMST('iShieldWeight'),
+}
+
+local function asRecord(itemOrId)
+    if not itemOrId then return end
+    if type(itemOrId) == 'string' then
+        return Armor.records[itemOrId]
+    elseif itemOrId.__type.name == 'ESM::Armor' then
+        return itemOrId
+    end
+    return Armor.records[itemOrId.recordId]
+end
+
+local function getArmorSkill(itemOrId)
+    local item = asRecord(itemOrId)
+    if not item then
+        return 'unarmored'
+    end
+    local weightGmst = armorTypeGmst[item.type]
+    local epsilon = 0.0005
+    if item.weight <= weightGmst * core.getGMST('fLightMaxMod') + epsilon then
+        return 'lightarmor'
+    elseif item.weight <= weightGmst * core.getGMST('fMedMaxMod') + epsilon then
+        return 'mediumarmor'
+    else
+        return 'heavyarmor'
+    end
+end
+
+---@param record openmw.types.ArmorRecord
+---@param object openmw.Object?
+---@return string
+local function armorWeightClass(record, object)
+    local armorSkill
+    if I.Combat.version >= 4 then
+        ---@diagnostic disable-next-line: param-type-mismatch
+        armorSkill = I.Combat.getArmorSkill(record)
+    elseif object then
+        armorSkill = I.Combat.getArmorSkill(object)
+    else
+        getArmorSkill(record)
+    end
+
     if armorSkill == 'lightarmor' then
         return l10n('Light')
     elseif armorSkill == 'mediumarmor' then
@@ -369,7 +422,7 @@ end
 Tooltips.armorRecipe = function(tooltip)
     local record = types.Armor.records[tooltip.key or tooltip.object.recordId]
     if not record then return end
-    local weightClass = armorWeightClass(record)
+    local weightClass = armorWeightClass(record, tooltip.object)
     local rating = record.baseArmor
     if tooltip.object and tooltip.observer then
         rating = I.Combat.getEffectiveArmorRating(tooltip.object, tooltip.observer)
