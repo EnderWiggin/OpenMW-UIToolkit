@@ -9,6 +9,7 @@ local Item = types.Item
 local Lockable = types.Lockable
 local NPC = types.NPC
 
+local l10n = core.l10n('UTKTooltips')
 local Utils = {}
 
 function Utils.determineType(object, recordId)
@@ -29,6 +30,92 @@ function Utils.formatActiveEffectName(name, mgef, aef)
         text = text .. ' (' .. skill.name .. ')'
     end
     return text
+end
+
+local magnitudeDisplayTypes =
+{
+    None = 'None',
+    TimesInt = 'TimesInt',
+    Feet = 'Feet',
+    Level = 'Level',
+    Percentage = 'Percentage',
+    Points = 'Points',
+}
+
+-- To keep from going mad filling out this table
+-- only fill out effects that DON'T return 'Points'
+-- Leaving None to be determined by .hasMagnitude
+local mgefMagnitudeDisplayType =
+{
+    -- Feet
+    [core.magic.EFFECT_TYPE.DetectAnimal] = magnitudeDisplayTypes.Feet,
+    [core.magic.EFFECT_TYPE.DetectEnchantment] = magnitudeDisplayTypes.Feet,
+    [core.magic.EFFECT_TYPE.DetectKey] = magnitudeDisplayTypes.Feet,
+    [core.magic.EFFECT_TYPE.Telekinesis] = magnitudeDisplayTypes.Feet,
+    -- Level
+    [core.magic.EFFECT_TYPE.CommandCreature] = magnitudeDisplayTypes.Level,
+    [core.magic.EFFECT_TYPE.CommandHumanoid] = magnitudeDisplayTypes.Level,
+    -- Times Int
+    [core.magic.EFFECT_TYPE.FortifyMaximumMagicka] = magnitudeDisplayTypes.TimesInt,
+    -- Percentage
+    [core.magic.EFFECT_TYPE.Blind] = magnitudeDisplayTypes.Percentage,
+    [core.magic.EFFECT_TYPE.Chameleon] = magnitudeDisplayTypes.Percentage,
+    [core.magic.EFFECT_TYPE.Dispel] = magnitudeDisplayTypes.Percentage,
+    [core.magic.EFFECT_TYPE.Reflect] = magnitudeDisplayTypes.Percentage,
+    [core.magic.EFFECT_TYPE.ResistBlightDisease] = magnitudeDisplayTypes.Percentage,
+    [core.magic.EFFECT_TYPE.ResistCommonDisease] = magnitudeDisplayTypes.Percentage,
+    [core.magic.EFFECT_TYPE.ResistCorprusDisease] = magnitudeDisplayTypes.Percentage,
+    [core.magic.EFFECT_TYPE.ResistFire] = magnitudeDisplayTypes.Percentage,
+    [core.magic.EFFECT_TYPE.ResistFrost] = magnitudeDisplayTypes.Percentage,
+    [core.magic.EFFECT_TYPE.ResistMagicka] = magnitudeDisplayTypes.Percentage,
+    [core.magic.EFFECT_TYPE.ResistNormalWeapons] = magnitudeDisplayTypes.Percentage,
+    [core.magic.EFFECT_TYPE.ResistParalysis] = magnitudeDisplayTypes.Percentage,
+    [core.magic.EFFECT_TYPE.ResistPoison] = magnitudeDisplayTypes.Percentage,
+    [core.magic.EFFECT_TYPE.ResistShock] = magnitudeDisplayTypes.Percentage,
+    [core.magic.EFFECT_TYPE.WeaknessToBlightDisease] = magnitudeDisplayTypes.Percentage,
+    [core.magic.EFFECT_TYPE.WeaknessToCommonDisease] = magnitudeDisplayTypes.Percentage,
+    [core.magic.EFFECT_TYPE.WeaknessToCorprusDisease] = magnitudeDisplayTypes.Percentage,
+    [core.magic.EFFECT_TYPE.WeaknessToFire] = magnitudeDisplayTypes.Percentage,
+    [core.magic.EFFECT_TYPE.WeaknessToFrost] = magnitudeDisplayTypes.Percentage,
+    [core.magic.EFFECT_TYPE.WeaknessToMagicka] = magnitudeDisplayTypes.Percentage,
+    [core.magic.EFFECT_TYPE.WeaknessToNormalWeapons] = magnitudeDisplayTypes.Percentage,
+    [core.magic.EFFECT_TYPE.WeaknessToPoison] = magnitudeDisplayTypes.Percentage,
+    [core.magic.EFFECT_TYPE.WeaknessToShock] = magnitudeDisplayTypes.Percentage,
+    -- None
+    [core.magic.EFFECT_TYPE.Paralyze] = magnitudeDisplayTypes.None,
+    [core.magic.EFFECT_TYPE.AlmsiviIntervention] = magnitudeDisplayTypes.None,
+    [core.magic.EFFECT_TYPE.CureBlightDisease] = magnitudeDisplayTypes.None,
+    [core.magic.EFFECT_TYPE.CureCommonDisease] = magnitudeDisplayTypes.None,
+    [core.magic.EFFECT_TYPE.CureCorprusDisease] = magnitudeDisplayTypes.None,
+    [core.magic.EFFECT_TYPE.CureParalyzation] = magnitudeDisplayTypes.None,
+    [core.magic.EFFECT_TYPE.CurePoison] = magnitudeDisplayTypes.None,
+    [core.magic.EFFECT_TYPE.Corprus] = magnitudeDisplayTypes.None,
+    [core.magic.EFFECT_TYPE.DivineIntervention] = magnitudeDisplayTypes.None,
+    [core.magic.EFFECT_TYPE.Paralyze] = magnitudeDisplayTypes.None,
+    [core.magic.EFFECT_TYPE.Invisibility] = magnitudeDisplayTypes.None,
+    [core.magic.EFFECT_TYPE.Mark] = magnitudeDisplayTypes.None,
+    [core.magic.EFFECT_TYPE.Recall] = magnitudeDisplayTypes.None,
+    [core.magic.EFFECT_TYPE.RemoveCurse] = magnitudeDisplayTypes.None,
+    [core.magic.EFFECT_TYPE.Vampirism] = magnitudeDisplayTypes.None,
+}
+
+---@param mgef openmw.core.MagicEffect
+---@param plural boolean
+function Utils.getMagicEffectUnits(mgef, plural)
+    local displayType = mgefMagnitudeDisplayType[mgef.id]
+    local unit = ''
+    if displayType == magnitudeDisplayTypes.TimesInt then
+        unit = l10n('XTimesINT')
+    elseif displayType == magnitudeDisplayTypes.Percentage then
+        unit = l10n('Percent')
+    elseif displayType == magnitudeDisplayTypes.Feet then
+        unit = l10n('Feet')
+    elseif displayType == magnitudeDisplayTypes.Level then
+        unit = plural and l10n('Levels') or l10n('Level')
+    elseif displayType == nil or displayType == magnitudeDisplayTypes.Points then
+        unit = plural and l10n('Points') or l10n('Point')
+    end
+    return unit == '' and unit or ' ' .. unit
 end
 
 function Utils.getAnyRecord(id)

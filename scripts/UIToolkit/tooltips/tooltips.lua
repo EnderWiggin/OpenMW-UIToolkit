@@ -743,9 +743,10 @@ Tooltips.activeEffectRecipe = function(tooltip)
     for _, activeSpell in pairs(Actor.activeSpells(tooltip.observer)) do
         for _, activeEffect in pairs(activeSpell.effects) do
             if activeEffect.id == mgef.id then
+                local magnitude = math.floor(activeEffect.magnitudeThisFrame)
                 items[#items + 1] = {
                     text = helpers.formatActiveEffectName(activeSpell.name, mgef, activeEffect),
-                    value = Tooltips.formatMagnitude(mgef, activeEffect)
+                    value = magnitude .. helpers.getMagicEffectUnits(mgef, magnitude > 1)
                 }
             end
         end
