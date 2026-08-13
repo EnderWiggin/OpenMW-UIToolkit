@@ -149,6 +149,7 @@ local function autoType(tooltip)
 end
 
 ---@param tooltip UTKTooltips.Tooltip
+---@return openmw.ui.Layout?
 local function createTooltipLayout(tooltip)
     local layout = nil
     local recipe = tooltip.recipe
@@ -278,7 +279,7 @@ local function update()
         if not currentTipElement then
             local layout = currentTooltip.layout
             if not layout then
-                layout = I.UTKTooltips.createTooltipLayout(currentTooltip)
+                layout = createTooltipLayout(currentTooltip)
             end
             if layout then
                 currentTipElement = ui.create(layout)
@@ -294,10 +295,12 @@ local function update()
     tooltipElement:update()
 end
 
+---@param newTooltip UTKTooltips.Tooltip
+---@param isAlive? fun():boolean
 local function setTooltip(newTooltip, isAlive)
     clear()
     if newTooltip then
-        if not newTooltip.type and not autoType(newTooltip) then
+        if not newTooltip.layout and not newTooltip.recipe and not newTooltip.type and not autoType(newTooltip) then
             error('Cannot use new tooltip: Unable to determine type')
         end
         currentTooltip = newTooltip

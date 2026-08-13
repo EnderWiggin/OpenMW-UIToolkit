@@ -11,6 +11,7 @@
 ---@field getInteractiveColor fun(state:UIToolkit.InteractiveState, custom:UIToolkit.InteractiveColors?):openmw.util.Color?
 ---@field applyInteractiveState fun(layout:openmw.ui.Layout, state:UIToolkit.InteractiveState)
 ---@field updateInteractiveState fun(layoutOrElement:openmw.ui.Layout|openmw.ui.Element, state:UIToolkit.InteractiveState?)
+---@field Components UIToolkit.Components
 
 ---@class UIToolkit.Theme
 ---@field Colors UIToolkit.Theme.Colors
@@ -23,10 +24,31 @@
 ---@field disabled boolean? element is disabled
 
 ---@class UIToolkit.InteractiveOpts
----@field tooltipFn? fun():UTKTooltips.Tooltip? optional tooltip
+---@field tooltip? UTKTooltips.Tooltip|UIToolkit.TooltipProvider|nil optional tooltip or tooltip provider function
 ---@field onClick? fun() optional function to be called when element is clicked. Note: element won't change colors if there's no click callback set
 ---@field canClick? fun():boolean
 ---@field onMouseMove? fun(e, tgt, element)
+
+---@class UIToolkit.Components
+local Components = {}
+
+---@param opts UIToolkit.TextButtonOpts
+---@return UIToolkit.TextButton
+function Components.textButton(opts) end
+
+---@class UIToolkit.Component
+---@field element openmw.ui.Element
+
+---@class UIToolkit.ButtonOpts : UIToolkit.InteractiveOpts
+---@field name string? name to give to button layout
+---@field bgrAlpha number? Alpha for background. No background if nil
+
+---@class UIToolkit.TextButtonOpts : UIToolkit.ButtonOpts
+---@field text string text on the button
+---@field width number? if set, button will be fixed-width, not scale with text length
+
+---@class UIToolkit.TextButton : UIToolkit.Component
+---@field setText fun(text:string)
 
 ---@class UIToolkit.InteractiveColors
 ---@field pressColor openmw.util.Color?
@@ -77,7 +99,7 @@
 
 --- Table of information defining a tooltip
 ---@class UTKTooltips.Tooltip
----@field type UTKTooltips.TooltipType? (Optional) Tooltip type. If not set, will be automatically determined based on object or key. Type can only be determined automatically for objects and records in openmw.types
+---@field type UTKTooltips.TooltipType? (Optional) Tooltip type. If not set, will be automatically determined based on object or key. Type can only be determined automatically for objects and records in openmw.types. Not needed if tooltip has pre-set recipe or layout.
 ---@field key string? (Optional) key defining specifics of the tooltip. See @{#TooltipType}
 ---@field object GameObject? (Optional) object to construct a tooltip from.
 ---@field observer openmw.types.Actor? (Optional) Actor used to read dynamic values, such as current/max health, skill progression, etc.
@@ -131,7 +153,7 @@
 
 --- Table of information defining a tooltip recipe
 ---@class UTKTooltips.Recipe
----@field type UTKTooltips.TooltipType The type of tooltip this is a recipe for.
+---@field type UTKTooltips.TooltipType? The type of tooltip this is a recipe for.
 ---@field arrange openmw.ui.ALIGNMENT? (Optional) Equivalent to the arrange option of a Flex (See UI documentation).
 ---@field align openmw.ui.ALIGNMENT? (Optional) Equivalent to the align option of a Flex (See UI documentation).
 ---@field gap number? (Optional) Equivalent to the gap property of a Flex (See UI documentation). The default gap between each item.
@@ -228,3 +250,4 @@
 ---@alias UTKTooltips.PreCreateHandler fun(recipe:UTKTooltips.Recipe, tooltip:UTKTooltips.Tooltip)
 ---@alias UTKTooltips.PostCreateHandler fun(layout:openmw.ui.Layout, tooltip:UTKTooltips.Tooltip)
 ---@alias UTKTooltips.CurrentTipIsAlive fun():boolean
+---@alias UIToolkit.TooltipProvider fun():UTKTooltips.Tooltip?

@@ -253,12 +253,14 @@ end
 ---@param bgrAlpha number
 ---@return openmw.ui.Template
 function M.buttonBoxBgr(bgrAlpha)
+    local theme = I.UIToolkit.getTheme()
     local template = M.buttonBox()
     template.content:insert(1, {
+        name = 'button-background',
         type = ui.TYPE.Image,
         props = {
-            resource = ui.texture { path = 'white' },
-            color = colors.BACKGROUND,
+            resource = theme.Colors.whiteTexture,
+            color = theme.Colors.BACKGROUND,
             alpha = bgrAlpha,
             relativeSize = v2(1, 1),
             size = v2(buttonBorderSize * 2, buttonBorderSize * 2),

@@ -71,8 +71,12 @@ function M.interactive(opts, element)
         toolkit.updateInteractiveState(element, { hovering = true })
         toolkit.queueUpdate(element)
 
-        if opts.tooltipFn then
-            I.UTKTooltips.setTooltip(opts.tooltipFn(), isAlive)
+        local tooltip = opts.tooltip
+        if type(tooltip) == "function" then
+            tooltip = tooltip()
+        end
+        if tooltip then
+            I.UTKTooltips.setTooltip(tooltip, isAlive)
         end
         return true
     end)

@@ -21,7 +21,13 @@ local ctx = {
     updateQueue = {},
 }
 
-local Interface = {}
+local Buttons = require('scripts.UIToolkit.components.buttons')
+
+local Interface = {
+    Components = {
+        textButton = Buttons.textButton,
+    }
+}
 
 function Interface.getCtx() return ctx end
 
@@ -36,7 +42,7 @@ end
 ---@param state UIToolkit.InteractiveState
 ---@param custom UIToolkit.InteractiveColors?
 ---@return openmw.util.Color?
-function Interface.getInteractiveColor(state, custom)
+function Interface.getInteractiveColor(state, custom, _name)
     ---@type openmw.util.Color?
     local color
     if state.active then
@@ -73,7 +79,7 @@ end
 ---@param state UIToolkit.InteractiveState
 function Interface.applyInteractiveState(layout, state)
     if layout.userData and layout.userData.colorable then
-        local color = Interface.getInteractiveColor(state, layout.userData)
+        local color = Interface.getInteractiveColor(state, layout.userData, layout.name)
         layout.props = layout.props or {}
         if layout.type == ui.TYPE.Text or layout.type == ui.TYPE.TextEdit or (layout.template and (layout.template.type == ui.TYPE.Text or layout.template.type == ui.TYPE.TextEdit)) then
             layout.props.textColor = color
