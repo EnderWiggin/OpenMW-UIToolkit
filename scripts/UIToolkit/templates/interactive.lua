@@ -16,14 +16,22 @@ local T = {
 }
 
 ---@param opts UIToolkit.InteractiveOpts
----@param element openmw.ui.Element|openmw.ui.Layout
----@return any
-function M.interactive(opts, element)
+---@param layoutOrElement openmw.ui.Element|openmw.ui.Layout
+---@return openmw.ui.Element
+function M.interactive(opts, layoutOrElement)
     local toolkit = I.UIToolkit
     local ctx = toolkit.getCtx()
+    ---@type openmw.ui.Element
+    local element
+    local isElement = type(layoutOrElement) == 'userdata'
 
-    element = element.layout and element or ui.create(element)
-    ---@cast element openmw.ui.Element
+    if isElement then
+        ---@cast layoutOrElement openmw.ui.Element
+        element = layoutOrElement
+    else
+        ---@cast layoutOrElement openmw.ui.Layout
+        element = ui.create(layoutOrElement)
+    end
 
     element.layout.userData = element.layout.userData or {}
     element.layout.userData.interactive = true

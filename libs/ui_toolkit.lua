@@ -37,7 +37,12 @@ local Components = {}
 function Components.textButton(opts) end
 
 ---@class UIToolkit.Component
+---@field new fun():UIToolkit.Component
+---@field init fun(self:UIToolkit.Component, element:openmw.ui.Element)
+---@field isDestroyed fun(self:UIToolkit.Component):boolean
 ---@field element openmw.ui.Element
+---@field active fun(self:UIToolkit.Component, value: boolean?):boolean|nil  If value is set - will update active state of the control. Returns active flag. If element is destroyed - returns nil.
+---@field disabled fun(self:UIToolkit.Component, value: boolean?):boolean|nil  If value is set - will update disabled state of the control. Returns disabled flag. If element is destroyed - returns nil.
 
 ---@class UIToolkit.ButtonOpts : UIToolkit.InteractiveOpts
 ---@field name string? name to give to button layout
@@ -48,7 +53,9 @@ function Components.textButton(opts) end
 ---@field width number? if set, button will be fixed-width, not scale with text length
 
 ---@class UIToolkit.TextButton : UIToolkit.Component
----@field setText fun(text:string)
+---@field new fun():UIToolkit.TextButton
+---@field init fun(self:UIToolkit.TextButton, opts:UIToolkit.TextButtonOpts)
+---@field setText fun(self:UIToolkit.TextButton, text:string)
 
 ---@class UIToolkit.InteractiveColors
 ---@field pressColor openmw.util.Color?

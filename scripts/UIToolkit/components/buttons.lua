@@ -9,6 +9,8 @@ local I = require('openmw.interfaces')
 
 local v2 = util.vector2
 
+local Class = require('scripts.UIToolkit.class')
+local Component = require('scripts.UIToolkit.components.component')
 local M = {}
 
 local T = {
@@ -16,9 +18,11 @@ local T = {
     Interactive = require('scripts.UIToolkit.templates.interactive'),
 }
 
+---@class UIToolkit.TextButton : UIToolkit.Component
+local TextButton = Class(Component)
+
 ---@param opts UIToolkit.TextButtonOpts
----@return UIToolkit.TextButton
-function M.textButton(opts)
+function TextButton:init(opts)
     local txt = {
         template = T.Base.text(),
         props = { text = opts.text, },
@@ -42,27 +46,30 @@ function M.textButton(opts)
         }
     end
 
-    local element = ui.create {
+    local element = T.Interactive.interactive(opts, {
         name = opts.name or 'button',
         template = T.Base.buttonBoxBgr(opts.bgrAlpha),
         props = {},
         content = ui.content { content },
         events = {},
         userData = {},
-    }
+    })
 
-    T.Interactive.interactive(opts, element)
+    self._txt = txt
+    Component.init(self, element)
+end
 
-    ---@type UIToolkit.TextButton
-    local component = {
-        element = element,
-        setText = function(text)
-            txt.props.text = text
-            I.UIToolkit.queueUpdate(element)
-        end
-    }
+function TextButton:setText(text)
+    self._txt.props.text = text
+    I.UIToolkit.queueUpdate(self.element)
+end
 
-    return component
+---@param opts UIToolkit.TextButtonOpts
+---@return UIToolkit.TextButton
+function M.textButton(opts)
+    local btn = TextButton.new()
+    btn:init(opts)
+    return btn
 end
 
 return M
