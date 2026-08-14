@@ -62,21 +62,25 @@ function Components.textEdit(opts) end
 ---@field init fun(self:UIToolkit.TextButton, opts:UIToolkit.TextButtonOpts)
 ---@field setText fun(self:UIToolkit.TextButton, text:string)
 
----@class UIToolkit.TextEditOpts
----@field text string?
+---@generic T
+---@class UIToolkit.TextEditOpts<T>
+---@field default T?
 ---@field textSize number?
+---@field textAlignH openmw.ui.ALIGNMENT?
 ---@field textColorNormal openmw.util.Color? defaults to DEFAULT_LIGHT
 ---@field textColorPlaceholder openmw.util.Color? defaults to DISABLED
 ---@field placeholder string? will be shown when edit is not in focus and text is empty
----@field onTextChanged? fun(string) will be called when entered text is changed
+---@field validate? fun(text:string|T|nil):boolean,T
+---@field onValueChanged? fun() will be called when entered value is changed
 ---@field width number? defaults to 200
 ---@field showClearButton boolean?
 
----@class UIToolkit.TextEdit : UIToolkit.Component
+---@generic T
+---@class UIToolkit.TextEdit<T> : UIToolkit.Component
 ---@field new fun():UIToolkit.TextEdit
 ---@field init fun(self:UIToolkit.TextEdit, opts:UIToolkit.TextEditOpts)
----@field getText fun(self:UIToolkit.TextEdit):string
----@field setText fun(self:UIToolkit.TextEdit, value:string)
+---@field getValue fun(self:UIToolkit.TextEdit):T
+---@field setValue fun(self:UIToolkit.TextEdit, value:T)
 ---@field setPlaceholder fun(self:UIToolkit.TextEdit, value:string?)
 ---@field setSize fun(self:UIToolkit.TextEdit, width:number)
 

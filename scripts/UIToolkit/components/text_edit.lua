@@ -15,20 +15,35 @@ local T = {
     Interactive = require('scripts.UIToolkit.templates.interactive'),
 }
 
----@class UIToolkit.TextEdit : UIToolkit.Component
+---@generic T
+---@class UIToolkit.TextEdit<T> : UIToolkit.Component
 local TextEdit = Class(Component)
+
+local function isEmpty(value)
+    return value == nil or value == ''
+end
+
+local function toText(value)
+    if value == nil then return '' end
+    return tostring(value)
+end
+
+local function validateText(value) return true, toText(value) end
 
 ---@param opts UIToolkit.TextEditOpts
 function TextEdit:init(opts)
     local t = I.UIToolkit.getTheme()
     local editTemplate = T.Base.textEditLine
-    self._text = opts.text or ''
+    ---@type  fun(text:string|T|nil):boolean,T
+    self._validate = opts.validate or validateText
+    self._default = opts.default or ''
+    self._value = self._default
     self._placeholder = opts.placeholder
     self._textSize = opts.textSize or editTemplate.props.textSize
     self._textColorNormal = opts.textColorNormal or t.Colors.DEFAULT_LIGHT
     self._textColorPlaceholder = opts.textColorPlaceholder or t.Colors.DISABLED
-    self._onTextChanged = opts.onTextChanged
-    local isEmpty = self._text == ''
+    self._onValueChanged = opts.onValueChanged
+    local empty = isEmpty(self._value)
 
     ---@type openmw.ui.Element
     local element
@@ -36,10 +51,13 @@ function TextEdit:init(opts)
 
     self._editProps = {
         size = v2(w, h),
-        text = isEmpty and self._placeholder or self._text,
-        textColor = self:_textColor(isEmpty),
+        text = empty and self._placeholder or toText(self._value),
+        textColor = self:_textColor(empty),
         textSize = self._textSize,
     }
+    if opts.textAlignH then
+        self._editProps.textAlignH = opts.textAlignH
+    end
 
     local content = ui.content { {
         name = 'text-edit',
@@ -47,10 +65,16 @@ function TextEdit:init(opts)
         props = self._editProps,
         events = {
             textChanged = async:callback(function(text, layout)
-                self._text = text
-                layout.props.text = text
-                if self._onTextChanged then
-                    self._onTextChanged(text)
+                local ok, value = self._validate(text)
+                if ok then
+                    self._value = value
+                end
+                layout.props.text = toText(self._value)
+                if layout.props.text ~= text then
+                    I.UIToolkit.queueUpdate(element)
+                end
+                if ok and self._onValueChanged then
+                    self._onValueChanged()
                 end
             end),
             focusGain = async:callback(function(_, layout)
@@ -75,6 +99,7 @@ function TextEdit:init(opts)
             size = v2(h, h),
             position = v2(w, 0),
             resource = REVERT_TEX,
+            alpha = 0.5,
         }
         local btn = {
             name = 'btn-clear',
@@ -85,9 +110,9 @@ function TextEdit:init(opts)
         I.UIToolkit.updateInteractiveState(btn, { disabled = true })
         content:add(T.Interactive.interactive({
             onClick = function()
-                self:setText('')
-                if self._onTextChanged then
-                    self._onTextChanged('')
+                self:setValue(self._default)
+                if self._onValueChanged then
+                    self._onValueChanged()
                 end
             end
         }, btn))
@@ -110,21 +135,24 @@ function TextEdit:init(opts)
 end
 
 function TextEdit:isEmpty()
-    return self._text == nil or self._text == ''
+    return toText(self._value) == ''
 end
 
----@return string
-function TextEdit:getText()
-    return self._text or ''
+---@return T
+function TextEdit:getValue()
+    return self._value
 end
 
----@param value string
-function TextEdit:setText(value)
+---@param value T
+function TextEdit:setValue(value)
     if self:isDestroyed() then return end
-    self._text = value or ''
-    local isEmpty = self._text == ''
-    self._editProps.text = isEmpty and self._placeholder or value
-    self._editProps.textColor = self:_textColor(isEmpty)
+    local ok, v = self._validate(value)
+    if not ok then return end
+    self._value = v
+    local text = toText(self._value)
+    local empty = text == ''
+    self._editProps.text = empty and self._placeholder or text
+    self._editProps.textColor = self:_textColor(empty)
     I.UIToolkit.queueUpdate(self.element)
 end
 
