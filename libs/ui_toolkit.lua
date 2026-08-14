@@ -41,6 +41,10 @@ function Components.textButton(opts) end
 ---@return UIToolkit.TextEdit
 function Components.textEdit(opts) end
 
+---@param opts UIToolkit.ScrollBarOpts
+---@return UIToolkit.ScrollBarV
+function Components.scrollBarV(opts) end
+
 ---@class UIToolkit.Component
 ---@field new fun():UIToolkit.Component
 ---@field init fun(self:UIToolkit.Component, element:openmw.ui.Element)
@@ -83,6 +87,16 @@ function Components.textEdit(opts) end
 ---@field setValue fun(self:UIToolkit.TextEdit, value:T)
 ---@field setPlaceholder fun(self:UIToolkit.TextEdit, value:string?)
 ---@field setSize fun(self:UIToolkit.TextEdit, width:number)
+
+---@class UIToolkit.ScrollBarOpts
+---@field scrollStep number
+---@field maxScroll number
+---@field size number
+---@field onScroll fun()
+
+---@class UIToolkit.ScrollBarV : UIToolkit.Component
+---@field new fun():UIToolkit.ScrollBarV
+---@field init fun(self:UIToolkit.ScrollBarV, opts:UIToolkit.ScrollBarOpts)
 
 ---@class UIToolkit.InteractiveColors
 ---@field pressColor openmw.util.Color?
