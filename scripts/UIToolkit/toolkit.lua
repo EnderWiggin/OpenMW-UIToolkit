@@ -4,6 +4,7 @@ local core = require('openmw.core')
 local ui = require('openmw.ui')
 local storage = require('openmw.storage')
 local util = require('openmw.util')
+local auxUi = require('openmw_aux.ui')
 local input = require('openmw.input')
 
 local I = require('openmw.interfaces')
@@ -19,6 +20,8 @@ local colors = theme.Colors
 local ctx = {
     ---@type table<openmw.ui.Element, boolean>
     updateQueue = {},
+    ---@type table<openmw.ui.Element, boolean>
+    destroyQueue = {},
 }
 
 local Buttons = require('scripts.UIToolkit.components.buttons')
@@ -34,8 +37,17 @@ function Interface.getCtx() return ctx end
 function Interface.getTheme() return theme end
 
 ---@param element openmw.ui.Element
-function Interface.queueUpdate(element)
-    ctx.updateQueue[element] = true
+---@param deep boolean?
+function Interface.queueUpdate(element, deep)
+    if ctx.destroyQueue[element] ~= nil then return end
+    ctx.updateQueue[element] = deep == true
+end
+
+---@param element openmw.ui.Element
+---@param deep boolean
+function Interface.queueDestroy(element, deep)
+    ctx.updateQueue[element] = nil
+    ctx.destroyQueue[element] = deep
 end
 
 ---Applies interactive state to the layout
@@ -151,10 +163,23 @@ local function onFrame()
         ctx.focusedInteractiveDelayed = nil
     end
 
-    for element in pairs(ctx.updateQueue) do
-        element:update()
+    for element, deep in pairs(ctx.updateQueue) do
+        if deep then
+            auxUi.deepUpdate(element)
+        else
+            element:update()
+        end
     end
     ctx.updateQueue = {}
+
+    for element, deep in pairs(ctx.destroyQueue) do
+        if deep then
+            auxUi.deepDestroy(element)
+        else
+            element:destroy()
+        end
+    end
+    ctx.destroyQueue = {}
 end
 
 return {

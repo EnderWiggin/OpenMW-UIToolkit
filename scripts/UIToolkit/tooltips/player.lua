@@ -265,7 +265,7 @@ local function clear()
     tooltipElement.layout.content = nil
     fixedPositionSet = false
     if currentTipElement then
-        auxUi.deepDestroy(currentTipElement)
+        I.UIToolkit.queueDestroy(currentTipElement, true)
         currentTipElement = nil
     end
 end
@@ -289,13 +289,14 @@ local function update()
             tooltipElement.layout.content = ui.content { currentTipElement }
         end
         updatePosition()
-    else
+        tooltipElement:update()
+    elseif tooltipElement.layout.props.visible then
         tooltipElement.layout.props.visible = false
+        tooltipElement:update()
     end
-    tooltipElement:update()
 end
 
----@param newTooltip UTKTooltips.Tooltip
+---@param newTooltip? UTKTooltips.Tooltip
 ---@param isAlive? fun():boolean
 local function setTooltip(newTooltip, isAlive)
     clear()
@@ -306,7 +307,6 @@ local function setTooltip(newTooltip, isAlive)
         currentTooltip = newTooltip
         currentTipIsAlive = isAlive
     end
-    update()
 end
 
 
@@ -567,7 +567,7 @@ end
 
 return {
     engineHandlers = {
-        onUpdate = update,
+        onFrame = update,
     },
     interfaceName = 'UTKTooltips',
     interface = {

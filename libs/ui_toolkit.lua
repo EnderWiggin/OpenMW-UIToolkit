@@ -7,7 +7,8 @@
 ---@class openmw.interfaces.UIToolkit
 ---@field getCtx fun():table
 ---@field getTheme fun():UIToolkit.Theme
----@field queueUpdate fun(element:openmw.ui.Element) queues element to be updated on next frame
+---@field queueUpdate fun(element:openmw.ui.Element, deep:boolean?) queues element to be updated on next frame
+---@field queueDestroy fun(element:openmw.ui.Element, deep:boolean) queues element to be destroyed on next frame
 ---@field getInteractiveColor fun(state:UIToolkit.InteractiveState, custom:UIToolkit.InteractiveColors?):openmw.util.Color?
 ---@field applyInteractiveState fun(layout:openmw.ui.Layout, state:UIToolkit.InteractiveState)
 ---@field updateInteractiveState fun(layoutOrElement:openmw.ui.Layout|openmw.ui.Element, state:UIToolkit.InteractiveState?)
