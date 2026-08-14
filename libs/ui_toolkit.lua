@@ -37,6 +37,10 @@ local Components = {}
 ---@return UIToolkit.TextButton
 function Components.textButton(opts) end
 
+---@param opts UIToolkit.TextEditOpts
+---@return UIToolkit.TextEdit
+function Components.textEdit(opts) end
+
 ---@class UIToolkit.Component
 ---@field new fun():UIToolkit.Component
 ---@field init fun(self:UIToolkit.Component, element:openmw.ui.Element)
@@ -57,6 +61,24 @@ function Components.textButton(opts) end
 ---@field new fun():UIToolkit.TextButton
 ---@field init fun(self:UIToolkit.TextButton, opts:UIToolkit.TextButtonOpts)
 ---@field setText fun(self:UIToolkit.TextButton, text:string)
+
+---@class UIToolkit.TextEditOpts
+---@field text string?
+---@field textSize number?
+---@field textColorNormal openmw.util.Color? defaults to DEFAULT_LIGHT
+---@field textColorPlaceholder openmw.util.Color? defaults to DISABLED
+---@field placeholder string? will be shown when edit is not in focus and text is empty
+---@field onTextChanged? fun(string) will be called when entered text is changed
+---@field width number? defaults to 200
+---@field showClearButton boolean?
+
+---@class UIToolkit.TextEdit : UIToolkit.Component
+---@field new fun():UIToolkit.TextEdit
+---@field init fun(self:UIToolkit.TextEdit, opts:UIToolkit.TextEditOpts)
+---@field getText fun(self:UIToolkit.TextEdit):string
+---@field setText fun(self:UIToolkit.TextEdit, value:string)
+---@field setPlaceholder fun(self:UIToolkit.TextEdit, value:string?)
+---@field setSize fun(self:UIToolkit.TextEdit, width:number)
 
 ---@class UIToolkit.InteractiveColors
 ---@field pressColor openmw.util.Color?

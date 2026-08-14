@@ -25,10 +25,20 @@ local ctx = {
 }
 
 local Buttons = require('scripts.UIToolkit.components.buttons')
+local TextEdit = require('scripts.UIToolkit.components.text_edit')
 
 local Interface = {
+    ---@type UIToolkit.Components
     Components = {
         textButton = Buttons.textButton,
+
+        ---@param opts UIToolkit.TextEditOpts
+        ---@return UIToolkit.TextEdit
+        textEdit = function(opts)
+            local edit = TextEdit.new()
+            edit:init(opts)
+            return edit
+        end,
     }
 }
 
