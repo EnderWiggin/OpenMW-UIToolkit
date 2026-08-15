@@ -92,6 +92,7 @@ function Components.scrollBarV(opts) end
 ---@field scrollStep number
 ---@field maxScroll number
 ---@field size number
+---@field handleSize number? if set, handle will be this size, if not - it will auto-calculate
 ---@field onScroll fun(position:number, progress:number)
 
 ---@class UIToolkit.ScrollBarV : UIToolkit.Component
@@ -102,6 +103,8 @@ function Components.scrollBarV(opts) end
 ---@field getProgress fun(self:UIToolkit.ScrollBarV):number [0-1] progress of the scroll
 ---@field setProgress fun(self:UIToolkit.ScrollBarV, progress:number) set [0-1] progress of the scroll
 ---@field scroll fun(self:UIToolkit.ScrollBarV, steps:number) scroll the bar by steps
+---@field setSize fun(self:UIToolkit.ScrollBarV, size:number) set scroll size
+---@field setMaxScroll fun(self:UIToolkit.ScrollBarV, maxScroll:number, preserveProgress:boolean?) 
 
 ---@class UIToolkit.InteractiveColors
 ---@field pressColor openmw.util.Color?
