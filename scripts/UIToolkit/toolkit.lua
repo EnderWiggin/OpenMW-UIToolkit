@@ -29,6 +29,7 @@ local TextEdit = require('scripts.UIToolkit.components.text_edit')
 local ScrollBar = require('scripts.UIToolkit.components.scroll_bar')
 
 local Interface = {
+    version = 1,
     ---@type UIToolkit.Components
     Components = {
         textButton = Buttons.textButton,

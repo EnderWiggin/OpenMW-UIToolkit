@@ -1,10 +1,14 @@
 ---@meta
 
+-- UIToolkit version: 1
+-- UTKTooltips version: 1
+
 ---@class openmw.interfaces
 ---@field UIToolkit openmw.interfaces.UIToolkit
 ---@field UTKTooltips openmw.interfaces.UTKTooltips
 
 ---@class openmw.interfaces.UIToolkit
+---@field version number
 ---@field getCtx fun():UIToolkit.Context
 ---@field getTheme fun():UIToolkit.Theme
 ---@field queueUpdate fun(element:openmw.ui.Element, deep:boolean?) queues element to be updated on next frame
