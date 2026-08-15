@@ -109,7 +109,25 @@ function Components.scrollBar(opts) end
 ---@field setProgress fun(self:UIToolkit.ScrollBar, progress:number) set [0-1] progress of the scroll
 ---@field scroll fun(self:UIToolkit.ScrollBar, steps:number) scroll the bar by steps
 ---@field setSize fun(self:UIToolkit.ScrollBar, size:number) set scroll size
----@field setMaxScroll fun(self:UIToolkit.ScrollBar, maxScroll:number, preserveProgress:boolean?) 
+---@field setMaxScroll fun(self:UIToolkit.ScrollBar, maxScroll:number, preserveProgress:boolean?)
+
+---@class UIToolkit.WindowOpts
+---@field title string
+---@field content openmw.ui.Content?
+---@field pinnable boolean?
+---@field pinned boolean?
+---@field draggable boolean?
+---@field resizing boolean?
+---@field minSize openmw.util.Vector2?
+---@field onResized fun()?
+
+---@class UIToolkit.Window:UIToolkit.Component
+---@field new fun():UIToolkit.Window
+---@field init fun(self:UIToolkit.Window, opts:UIToolkit.WindowOpts)
+---@field setTitle fun(self:UIToolkit.Window, newTitle:string)
+---@field getInnerSize fun(self:UIToolkit.Window):openmw.util.Vector2
+---@field setPinnable fun(self:UIToolkit.Window, pinnable:boolean)
+---@field setMinSize fun(self:UIToolkit.Window, minSize: openmw.util.Vector2)
 
 ---@class UIToolkit.InteractiveColors
 ---@field pressColor openmw.util.Color?
