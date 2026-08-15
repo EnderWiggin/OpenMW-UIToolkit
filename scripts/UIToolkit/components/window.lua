@@ -339,18 +339,28 @@ local function makeDraggable(borderTemplate, onDragTypeChanged, noResize)
 end
 
 ---@param opts UIToolkit.WindowOpts
-function Window:init(opts)
+---@param saved? UIToolkit.WindowSaveData
+function Window:init(opts, saved)
     local theme = I.UIToolkit.getTheme()
 
     local noResize = not opts.resizing
     local draggable = opts.draggable or not noResize
     local onResized = opts.onResized
+    local pinned = false
+    if saved then
+        pinned = saved.pinned
+    elseif opts.pinned ~= nil then
+        pinned = opts.pinned
+    end
+    local minSize = opts.minSize or MIN_SZ
+    local position = saved and saved.position or opts.position or v2(0, 0)
+    local size = saved and saved.size or opts.size or minSize
 
     ---@type openmw.ui.Template
     local baseTemplate = I.MWUI.templates.bordersThick
     local data = {
-        minSize = opts.minSize or MIN_SZ,
-        pinned = opts.pinned == true,
+        minSize = minSize,
+        pinned = pinned,
         pinnable = opts.pinnable == true or opts.pinned == true,
 
         ---@type DragType?
@@ -422,8 +432,8 @@ function Window:init(opts)
         layer = 'Windows',
         template = baseTemplate,
         props = {
-            position = v2(0, 0),
-            size = data.minSize,
+            position = position,
+            size = size,
         },
         content = ui.content {
             {
@@ -553,18 +563,27 @@ function Window:init(opts)
         }
     end
 
+    self.getPosition = function()
+        return window.layout.props.position
+    end
+
+    self.getSize = function()
+        return window.layout.props.size
+    end
+
     self.getInnerSize = function()
-        local size = window.layout.props.size
-        local borderMult = 4
-        return util.vector2(
-            size.x - BORDER_THICKNESS_THICK * borderMult,
-            size.y - BORDER_THICKNESS_THICK * borderMult - HEADER_HEIGHT
-        )
+        local sz = window.layout.props.size
+        local borders = 4 * BORDER_THICKNESS_THICK
+        return util.vector2(sz.x - borders, sz.y - borders - HEADER_HEIGHT)
     end
 
     self.setTitle = function(newTitle)
         title.props.text = newTitle
         header:update()
+    end
+
+    self.isPinned = function()
+        return data.pinned == true
     end
 
     self.setPinnable = function(pinnable)
@@ -578,9 +597,9 @@ function Window:init(opts)
         end
     end
 
-    self.setMinSize = function(minSize)
-        if data.minSize == minSize then return end
-        data.minSize = minSize or MIN_SZ
+    self.setMinSize = function(minSz)
+        if data.minSize == minSz then return end
+        data.minSize = minSz or MIN_SZ
         --TODO: update size if smaller?
     end
 

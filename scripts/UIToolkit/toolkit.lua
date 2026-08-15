@@ -27,7 +27,6 @@ local ctx = {
 local Buttons = require('scripts.UIToolkit.components.buttons')
 local TextEdit = require('scripts.UIToolkit.components.text_edit')
 local ScrollBar = require('scripts.UIToolkit.components.scroll_bar')
-local Window = require('scripts.UIToolkit.components.window')
 
 local Interface = {
     ---@type UIToolkit.Components
@@ -49,7 +48,8 @@ local Interface = {
             scroll:init(opts)
             return scroll
         end,
-    }
+    },
+    WindowManager = require('scripts.UIToolkit.window_manager'),
 }
 
 function Interface.getCtx() return ctx end

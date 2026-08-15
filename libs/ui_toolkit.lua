@@ -14,6 +14,7 @@
 ---@field updateInteractiveState fun(layoutOrElement:openmw.ui.Layout|openmw.ui.Element, state:UIToolkit.InteractiveState?)
 ---@field texture fun(path:string, size:openmw.util.Vector2?, offset:openmw.util.Vector2?):openmw.ui.TextureResource
 ---@field Components UIToolkit.Components
+---@field WindowManager UIToolkit.WindowManager
 
 ---@class UIToolkit.Context
 ---@field lastMousePos openmw.util.Vector2? last mouse position detected by interactive elements. Needed until `ui.mousePosition()` is merged (0.52?)
@@ -111,23 +112,41 @@ function Components.scrollBar(opts) end
 ---@field setSize fun(self:UIToolkit.ScrollBar, size:number) set scroll size
 ---@field setMaxScroll fun(self:UIToolkit.ScrollBar, maxScroll:number, preserveProgress:boolean?)
 
+---@class UIToolkit.WindowManager
+---@field register fun(id: string, opts: UIToolkit.WindowOpts)
+---@field open fun(id: string):UIToolkit.Window
+---@field close fun(id: string)
+---@field isOpen fun(id: string):boolean
+
 ---@class UIToolkit.WindowOpts
 ---@field title string
 ---@field content openmw.ui.Content?
 ---@field pinnable boolean?
 ---@field pinned boolean?
+---@field position openmw.util.Vector2?
+---@field size openmw.util.Vector2?
 ---@field draggable boolean?
 ---@field resizing boolean?
 ---@field minSize openmw.util.Vector2?
+---@field onOpen fun(wnd:UIToolkit.Window)?
+---@field onClosed fun()?
 ---@field onResized fun()?
+
+---@class UIToolkit.WindowSaveData
+---@field pinned boolean
+---@field position openmw.util.Vector2
+---@field size openmw.util.Vector2
 
 ---@class UIToolkit.Window:UIToolkit.Component
 ---@field new fun():UIToolkit.Window
----@field init fun(self:UIToolkit.Window, opts:UIToolkit.WindowOpts)
+---@field init fun(self:UIToolkit.Window, opts:UIToolkit.WindowOpts, saved:UIToolkit.WindowSaveData?)
 ---@field setTitle fun(self:UIToolkit.Window, newTitle:string)
+---@field getPosition fun(self:UIToolkit.Window):openmw.util.Vector2
+---@field getSize fun(self:UIToolkit.Window):openmw.util.Vector2
 ---@field getInnerSize fun(self:UIToolkit.Window):openmw.util.Vector2
+---@field isPinned fun(self:UIToolkit.Window):boolean
 ---@field setPinnable fun(self:UIToolkit.Window, pinnable:boolean)
----@field setMinSize fun(self:UIToolkit.Window, minSize: openmw.util.Vector2)
+---@field setMinSize fun(self:UIToolkit.Window, minSz: openmw.util.Vector2)
 
 ---@class UIToolkit.InteractiveColors
 ---@field pressColor openmw.util.Color?
