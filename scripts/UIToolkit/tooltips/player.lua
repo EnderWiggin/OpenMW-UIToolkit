@@ -197,7 +197,7 @@ local function getMousePosition()
     if ui.mousePosition then return ui.mousePosition() end
 
     local ctx = I.UIToolkit.getCtx()
-    return ctx.mousePos
+    return ctx.lastMousePos
 end
 
 local function updatePosition()
