@@ -39,9 +39,9 @@ function ScrollBarV:init(opts)
     ---@type number?
     self.dragOffset = nil
 
+    --TODO: add ability to set fixed handle size
     --TODO: add ability to resize the bar
     --TODO: add ability to change max scroll
-    --TODO: add ability to set scroll from outside
 
     local function calcScrollBarSize()
         return v2(INNER_WIDTH, self.size - ((INNER_WIDTH + omwConstants.padding) * 2))
@@ -61,7 +61,6 @@ function ScrollBarV:init(opts)
         return progress * self.maxScroll
     end
 
-
     local handleProps = {
         resource = SCROLL_TEX,
         size = v2(INNER_WIDTH - 4, calcHandleSize()),
@@ -71,16 +70,17 @@ function ScrollBarV:init(opts)
 
     ---@type openmw.ui.Element
     local barWrapper
-    local function onScroller()
-        local scrollProgress = self.maxScroll == 0 and 0 or self.position / self.maxScroll
-        local handleProgress = (self.size - ((INNER_WIDTH + omwConstants.padding) * 2) - handleProps.size.y - 4) *
-            scrollProgress
+
+    ---@param this UIToolkit.ScrollBarV
+    function self._onScrolled(this)
+        local progress = this:getProgress()
+        local handleProgress = (this.size - ((INNER_WIDTH + omwConstants.padding) * 2) - handleProps.size.y - 4) *
+            progress
         handleProps.position = util.vector2(0, handleProgress)
 
         I.UIToolkit.queueUpdate(barWrapper)
-        self.onScroll()
+        this.onScroll(this.position, progress)
     end
-
 
     local upButton = {
         template = I.MWUI.templates.borders,
@@ -100,8 +100,7 @@ function ScrollBarV:init(opts)
             mousePress = async:callback(function(e)
                 if e.button ~= 1 then return end
                 ambient.playSound('menu click', { scale = false })
-                self.position = util.clamp(self.position - self.scrollStep, 0, self.maxScroll)
-                onScroller()
+                self:scroll(-1)
             end),
         }
     }
@@ -124,8 +123,7 @@ function ScrollBarV:init(opts)
             mousePress = async:callback(function(e)
                 if e.button ~= 1 then return end
                 ambient.playSound('menu click', { scale = false })
-                self.position = util.clamp(self.position + self.scrollStep, 0, self.maxScroll)
-                onScroller()
+                self:scroll(1)
             end),
         }
     }
@@ -166,7 +164,7 @@ function ScrollBarV:init(opts)
                     local halfHand = (calcHandleSize() / 2)
                     local adjustedY = e.offset.y - (self.dragOffset or halfHand) + halfHand
                     self.position = util.clamp(handlePosToScrollPos(adjustedY), 0, self.maxScroll)
-                    onScroller()
+                    self:_onScrolled()
                 end
                 return true
             end),
@@ -175,7 +173,7 @@ function ScrollBarV:init(opts)
                     ambient.playSound('menu click')
                     self.isDragging = true
                     self.position = util.clamp(handlePosToScrollPos(e.offset.y), 0, self.maxScroll)
-                    onScroller()
+                    self:_onScrolled()
                 end
             end),
             mouseRelease = async:callback(function(e)
@@ -204,6 +202,33 @@ function ScrollBarV:init(opts)
     }
 
     Component.init(self, barWrapper)
+end
+
+---@return number
+function ScrollBarV:getPosition()
+    return self.position
+end
+
+---@param position number
+function ScrollBarV:setPosition(position)
+    self.position = util.clamp(position, 0, self.maxScroll)
+    self:_onScrolled()
+end
+
+---@return number
+function ScrollBarV:getProgress()
+    return self.maxScroll <= 0 and 0 or self.position / self.maxScroll
+end
+
+---@param progress number
+function ScrollBarV:setProgress(progress)
+    self:setPosition(progress * self.maxScroll)
+end
+
+---@param steps number
+function ScrollBarV:scroll(steps)
+    self.position = util.clamp(self.position + steps * self.scrollStep, 0, self.maxScroll)
+    self:_onScrolled()
 end
 
 return ScrollBarV
