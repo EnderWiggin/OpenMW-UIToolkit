@@ -42,8 +42,8 @@ function Components.textButton(opts) end
 function Components.textEdit(opts) end
 
 ---@param opts UIToolkit.ScrollBarOpts
----@return UIToolkit.ScrollBarV
-function Components.scrollBarV(opts) end
+---@return UIToolkit.ScrollBar
+function Components.scrollBar(opts) end
 
 ---@class UIToolkit.Component
 ---@field new fun():UIToolkit.Component
@@ -89,22 +89,23 @@ function Components.scrollBarV(opts) end
 ---@field setSize fun(self:UIToolkit.TextEdit, width:number)
 
 ---@class UIToolkit.ScrollBarOpts
+---@field horizontal boolean?
 ---@field scrollStep number
 ---@field maxScroll number
 ---@field size number
 ---@field handleSize number? if set, handle will be this size, if not - it will auto-calculate
 ---@field onScroll fun(position:number, progress:number)
 
----@class UIToolkit.ScrollBarV : UIToolkit.Component
----@field new fun():UIToolkit.ScrollBarV
----@field init fun(self:UIToolkit.ScrollBarV, opts:UIToolkit.ScrollBarOpts)
----@field getPosition fun(self:UIToolkit.ScrollBarV):number actual position of the scroll
----@field setPosition fun(self:UIToolkit.ScrollBarV, position:number) set scroll position
----@field getProgress fun(self:UIToolkit.ScrollBarV):number [0-1] progress of the scroll
----@field setProgress fun(self:UIToolkit.ScrollBarV, progress:number) set [0-1] progress of the scroll
----@field scroll fun(self:UIToolkit.ScrollBarV, steps:number) scroll the bar by steps
----@field setSize fun(self:UIToolkit.ScrollBarV, size:number) set scroll size
----@field setMaxScroll fun(self:UIToolkit.ScrollBarV, maxScroll:number, preserveProgress:boolean?) 
+---@class UIToolkit.ScrollBar : UIToolkit.Component
+---@field new fun():UIToolkit.ScrollBar
+---@field init fun(self:UIToolkit.ScrollBar, opts:UIToolkit.ScrollBarOpts)
+---@field getPosition fun(self:UIToolkit.ScrollBar):number actual position of the scroll
+---@field setPosition fun(self:UIToolkit.ScrollBar, position:number) set scroll position
+---@field getProgress fun(self:UIToolkit.ScrollBar):number [0-1] progress of the scroll
+---@field setProgress fun(self:UIToolkit.ScrollBar, progress:number) set [0-1] progress of the scroll
+---@field scroll fun(self:UIToolkit.ScrollBar, steps:number) scroll the bar by steps
+---@field setSize fun(self:UIToolkit.ScrollBar, size:number) set scroll size
+---@field setMaxScroll fun(self:UIToolkit.ScrollBar, maxScroll:number, preserveProgress:boolean?) 
 
 ---@class UIToolkit.InteractiveColors
 ---@field pressColor openmw.util.Color?

@@ -26,7 +26,7 @@ local ctx = {
 
 local Buttons = require('scripts.UIToolkit.components.buttons')
 local TextEdit = require('scripts.UIToolkit.components.text_edit')
-local ScrollBarV = require('scripts.UIToolkit.components.scroll_bar_v')
+local ScrollBar = require('scripts.UIToolkit.components.scroll_bar')
 
 local Interface = {
     ---@type UIToolkit.Components
@@ -42,9 +42,9 @@ local Interface = {
         end,
 
         ---@param opts UIToolkit.ScrollBarOpts
-        ---@return UIToolkit.ScrollBarV
-        scrollBarV = function(opts)
-            local scroll = ScrollBarV.new()
+        ---@return UIToolkit.ScrollBar
+        scrollBar = function(opts)
+            local scroll = ScrollBar.new()
             scroll:init(opts)
             return scroll
         end,

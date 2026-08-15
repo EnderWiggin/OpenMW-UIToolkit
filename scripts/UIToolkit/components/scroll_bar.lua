@@ -16,25 +16,32 @@ local T = {
     Interactive = require('scripts.UIToolkit.templates.interactive'),
 }
 
-local OUTER_WIDTH = 16
-local INNER_WIDTH = 14
+local WIDTH = 14
 
 local BTN_UP_TEX = ui.texture { path = 'textures/omw_menu_scroll_up.dds' }
 local BTN_DOWN_TEX = ui.texture { path = 'textures/omw_menu_scroll_down.dds' }
-local SCROLL_TEX = ui.texture { path = 'textures/omw_menu_scroll_center_v.dds' }
+local SCROLL_TEX_V = ui.texture { path = 'textures/omw_menu_scroll_center_v.dds' }
 
+local BTN_LEFT_TEX = ui.texture { path = 'textures/omw_menu_scroll_left.dds' }
+local BTN_RIGHT_TEX = ui.texture { path = 'textures/omw_menu_scroll_right.dds' }
+local SCROLL_TEX_H = ui.texture { path = 'textures/omw_menu_scroll_center_h.dds' }
 
----@param size number
-local function calcScrollBarSize(size)
-    return v2(INNER_WIDTH, size - ((INNER_WIDTH + omwConstants.padding) * 2))
+---@param bar UIToolkit.ScrollBar
+---@return openmw.util.Vector2
+local function calcScrollBarSize(bar)
+    if bar.horizontal then
+        return v2(bar.size - ((WIDTH + omwConstants.padding) * 2), WIDTH)
+    end
+    return v2(WIDTH, bar.size - ((WIDTH + omwConstants.padding) * 2))
 end
 
----@class UIToolkit.ScrollBarV : UIToolkit.Component
-local ScrollBarV = Class(Component)
+---@class UIToolkit.ScrollBar : UIToolkit.Component
+local ScrollBar = Class(Component)
 
 
 ---@param opts UIToolkit.ScrollBarOpts
-function ScrollBarV:init(opts)
+function ScrollBar:init(opts)
+    self.horizontal = opts.horizontal == true
     self.scrollStep = opts.scrollStep
     self.size = opts.size
     self.maxScroll = opts.maxScroll
@@ -47,34 +54,36 @@ function ScrollBarV:init(opts)
 
     local function calcHandleSize()
         return self.handleSize
-            or math.max((self.size / (self.maxScroll + self.size)) * (self.size - (INNER_WIDTH * 2)),
-                INNER_WIDTH)
+            or math.max((self.size / (self.maxScroll + self.size)) * (self.size - (WIDTH * 2)),
+                WIDTH)
     end
 
-    local function handlePosToScrollPos(y)
-        local scrollBarSize = calcScrollBarSize(self.size)
+    local function handlePosToScrollPos(p)
+        local scrollBarSize = calcScrollBarSize(self)
+        local sz = self.horizontal and scrollBarSize.x or scrollBarSize.y
         local handleSize = calcHandleSize()
 
-        y = util.clamp(y - (handleSize / 2), 0, scrollBarSize.y - handleSize)
-        local progress = y / (scrollBarSize.y - handleSize)
+        p = util.clamp(p - (handleSize / 2), 0, sz - handleSize)
+        local progress = p / (sz - handleSize)
         return progress * self.maxScroll
     end
 
+    local handSz = calcHandleSize()
     local handleProps = {
-        resource = SCROLL_TEX,
-        size = v2(INNER_WIDTH - 4, calcHandleSize()),
+        resource = self.horizontal and SCROLL_TEX_H or SCROLL_TEX_V,
+        size = self.horizontal and v2(handSz, WIDTH - 4) or v2(WIDTH - 4, handSz),
         tileV = true,
         propagateEvents = true,
     }
     ---@type openmw.ui.Element
     local barWrapper
 
-    ---@param this UIToolkit.ScrollBarV
+    ---@param this UIToolkit.ScrollBar
     function self._onScrolled(this)
         local progress = this:getProgress()
-        local handleProgress = (this.size - ((INNER_WIDTH + omwConstants.padding) * 2) - handleProps.size.y - 4) *
-            progress
-        handleProps.position = util.vector2(0, handleProgress)
+        local handleSz = self.horizontal and handleProps.size.x or handleProps.size.y
+        local handlePos = (this.size - ((WIDTH + omwConstants.padding) * 2) - handleSz - 4) * progress
+        handleProps.position = self.horizontal and v2(handlePos, 0) or v2(0, handlePos)
 
         I.UIToolkit.queueUpdate(barWrapper)
         this.onScroll(this.position, progress)
@@ -83,14 +92,14 @@ function ScrollBarV:init(opts)
     local upButton = {
         template = I.MWUI.templates.borders,
         props = {
-            size = v2(INNER_WIDTH, INNER_WIDTH),
+            size = v2(WIDTH, WIDTH),
         },
         content = ui.content {
             {
                 type = ui.TYPE.Image,
                 props = {
-                    resource = BTN_UP_TEX,
-                    size = v2(INNER_WIDTH - 4, INNER_WIDTH - 4),
+                    resource = self.horizontal and BTN_LEFT_TEX or BTN_UP_TEX,
+                    size = v2(WIDTH - 4, WIDTH - 4),
                 }
             }
         },
@@ -106,14 +115,14 @@ function ScrollBarV:init(opts)
     local downButton = {
         template = I.MWUI.templates.borders,
         props = {
-            size = v2(INNER_WIDTH, INNER_WIDTH),
+            size = v2(WIDTH, WIDTH),
         },
         content = ui.content {
             {
                 type = ui.TYPE.Image,
                 props = {
-                    resource = BTN_DOWN_TEX,
-                    size = v2(INNER_WIDTH - 4, INNER_WIDTH - 4),
+                    resource = self.horizontal and BTN_RIGHT_TEX or BTN_DOWN_TEX,
+                    size = v2(WIDTH - 4, WIDTH - 4),
                 }
             }
         },
@@ -126,7 +135,7 @@ function ScrollBarV:init(opts)
         }
     }
     self._scrollProps = {
-        size = calcScrollBarSize(self.size),
+        size = calcScrollBarSize(self),
     }
     local scrollBar = {
         template = I.MWUI.templates.borders,
@@ -142,7 +151,7 @@ function ScrollBarV:init(opts)
                         if e.button == 1 then
                             ambient.playSound('menu click')
                             self.isDragging = true
-                            self.dragOffset = e.offset.y
+                            self.dragOffset = self.horizontal and e.offset.x or e.offset.y
                         end
                         return false
                     end),
@@ -160,7 +169,8 @@ function ScrollBarV:init(opts)
             mouseMove = async:callback(function(e)
                 if e.button == 1 then
                     local halfHand = (calcHandleSize() / 2)
-                    local adjustedY = e.offset.y - (self.dragOffset or halfHand) + halfHand
+                    local offset = self.horizontal and e.offset.x or e.offset.y
+                    local adjustedY = offset - (self.dragOffset or halfHand) + halfHand
                     self:setPosition(handlePosToScrollPos(adjustedY))
                 end
                 return true
@@ -169,7 +179,8 @@ function ScrollBarV:init(opts)
                 if e.button == 1 then
                     ambient.playSound('menu click')
                     self.isDragging = true
-                    self:setPosition(handlePosToScrollPos(e.offset.y))
+                    local offset = self.horizontal and e.offset.x or e.offset.y
+                    self:setPosition(handlePosToScrollPos(offset))
                 end
             end),
             mouseRelease = async:callback(function(e)
@@ -185,8 +196,7 @@ function ScrollBarV:init(opts)
         type = ui.TYPE.Flex,
         name = 'scrollBarWrapper',
         props = {
-            position = v2(-OUTER_WIDTH + (OUTER_WIDTH - INNER_WIDTH) / 2, 0),
-            relativePosition = v2(1, 0),
+            horizontal = self.horizontal,
         },
         content = ui.content {
             upButton,
@@ -201,42 +211,42 @@ function ScrollBarV:init(opts)
 end
 
 ---@return number
-function ScrollBarV:getPosition()
+function ScrollBar:getPosition()
     return self.position
 end
 
 ---@param position number
-function ScrollBarV:setPosition(position)
+function ScrollBar:setPosition(position)
     self.position = util.clamp(position, 0, self.maxScroll)
     self:_onScrolled()
 end
 
 ---@return number
-function ScrollBarV:getProgress()
+function ScrollBar:getProgress()
     return self.maxScroll <= 0 and 0 or self.position / self.maxScroll
 end
 
 ---@param progress number
-function ScrollBarV:setProgress(progress)
+function ScrollBar:setProgress(progress)
     self:setPosition(progress * self.maxScroll)
 end
 
 ---@param steps number
-function ScrollBarV:scroll(steps)
+function ScrollBar:scroll(steps)
     self.position = util.clamp(self.position + steps * self.scrollStep, 0, self.maxScroll)
     self:_onScrolled()
 end
 
 ---@param size number
-function ScrollBarV:setSize(size)
+function ScrollBar:setSize(size)
     self.size = size
-    self._scrollProps.size = calcScrollBarSize(size)
+    self._scrollProps.size = calcScrollBarSize(self)
     self:setPosition(self.position)
 end
 
 ---@param maxScroll number
 ---@param preserveProgress boolean?
-function ScrollBarV:setMaxScroll(maxScroll, preserveProgress)
+function ScrollBar:setMaxScroll(maxScroll, preserveProgress)
     local progress = self:getProgress()
     self.maxScroll = maxScroll
     if preserveProgress then
@@ -246,4 +256,4 @@ function ScrollBarV:setMaxScroll(maxScroll, preserveProgress)
     end
 end
 
-return ScrollBarV
+return ScrollBar
