@@ -12,6 +12,7 @@
 ---@field getInteractiveColor fun(state:UIToolkit.InteractiveState, custom:UIToolkit.InteractiveColors?):openmw.util.Color?
 ---@field applyInteractiveState fun(layout:openmw.ui.Layout, state:UIToolkit.InteractiveState)
 ---@field updateInteractiveState fun(layoutOrElement:openmw.ui.Layout|openmw.ui.Element, state:UIToolkit.InteractiveState?)
+---@field texture fun(path:string, size:openmw.util.Vector2?, offset:openmw.util.Vector2?):openmw.ui.TextureResource
 ---@field Components UIToolkit.Components
 
 ---@class UIToolkit.Context

@@ -172,6 +172,28 @@ function Interface.updateInteractiveState(layoutOrElement, state)
     end)
 end
 
+local TEX_CACHE = {}
+
+---@param path string
+---@param size openmw.util.Vector2?
+---@param offset openmw.util.Vector2?
+---@return string
+local function textureKey(path, size, offset)
+    return '[' .. path .. ']:' .. tostring(size) .. ':' .. tostring(offset)
+end
+
+---@param path string
+---@param size openmw.util.Vector2?
+---@param offset openmw.util.Vector2?
+---@return openmw.ui.TextureResource
+function Interface.texture(path, size, offset)
+    local key = textureKey(path, size, offset)
+    if TEX_CACHE[key] then return TEX_CACHE[key] end
+    local tex = ui.texture { path = path, size = size, offset = offset }
+    TEX_CACHE[key] = tex
+    return tex
+end
+
 local function onFrame()
     if ctx.focusedInteractiveDelayed ~= nil then
         if ctx.focusedInteractiveDelayed == false then
