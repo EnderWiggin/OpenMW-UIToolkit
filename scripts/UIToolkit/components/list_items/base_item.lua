@@ -25,10 +25,12 @@ end
 
 ---@param data UIToolkit.ListData.Base
 ---@param size openmw.util.Vector2
----@return openmw.ui.Element
+---@return openmw.ui.Element, boolean
 function ListItemBase:getView(data, size)
     local cached = self.cache[data.id]
+    local changed = false
     if not cached or cached.size ~= size or cached.component:isDestroyed() then
+        changed = true
         cached = {
             size = size,
             component = self:makeComponent(data, size),
@@ -36,7 +38,15 @@ function ListItemBase:getView(data, size)
         self.cache[data.id] = cached
     end
 
-    return cached.component.element
+    return cached.component.element, changed
+end
+
+---@param id string
+---@param size openmw.util.Vector2
+---@return boolean
+function ListItemBase:isDirty(id, size)
+    local cached = self.cache[id]
+    return not cached or cached.size ~= size or cached.component:isDestroyed()
 end
 
 ---@param id string

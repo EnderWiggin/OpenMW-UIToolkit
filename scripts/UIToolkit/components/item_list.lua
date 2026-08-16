@@ -33,10 +33,13 @@ function ItemList:init(opts)
         --parentWindow = opts.parentWindow,
         --hadMouseMoveThisFrame = false,
         --rowCache = {} -- Stores generated row layouts by item ID or index
+        partialView = true,
     }
     self.state = state
     ---@type openmw.ui.Element[]
     self._pool = {}
+    ---@type table<integer, {id:string, element:openmw.ui.Element}>
+    self._holders = {}
 
     ---@type openmw.ui.Element
     local scrollable = ui.create {
@@ -51,7 +54,11 @@ function ItemList:init(opts)
     local scroll = I.UIToolkit.Components.scrollBar {
         onScroll = function(position)
             scrollable.layout.props.position = v2(0, -position)
-            I.UIToolkit.queueUpdate(self._scrollable)
+            if self.state.partialView then
+                self:_updateView()
+            else
+                I.UIToolkit.queueUpdate(self._scrollable)
+            end
         end,
         scrollStep = 2 * state.itemHeight,
         maxScroll = #state.sortedRows * state.itemHeight - size.y,
@@ -90,43 +97,49 @@ function ItemList:getContentWidth()
     return math.floor(math.max(0, self.state.currentSize.x - self._scrollBar:getSize().x))
 end
 
----@param old openmw.ui.Element?
----@param pos openmw.util.Vector2
----@param sz openmw.util.Vector2
+---@param n integer
+---@param id string
 ---@param view openmw.ui.Element
+---@param changed boolean
+---@param sz openmw.util.Vector2
 ---@return openmw.ui.Element
-function ItemList:_getPlaceholder(old, pos, sz, view)
-    if not old or not old.layout then
-        while #self._pool > 0 do
-            old = table.remove(self._pool)
-            if old and old.layout then break end
+function ItemList:_getHolder(n, id, view, changed, sz)
+    local state = self.state
+    local holder = self._holders[n]
+    if holder and holder.element and holder.element.layout then
+        if holder.id == id and not changed then
+            return holder.element
         end
+        holder.id = id
+        local layout = holder.element.layout
+        layout.props.size = sz
+        layout.content = ui.content { view }
+        I.UIToolkit.queueUpdate(holder.element)
+        return holder.element
     end
-    if old and old.layout then
-        old.layout.props.size = sz
-        old.layout.props.position = pos
-        old.layout.content = ui.content { view }
-        I.UIToolkit.queueUpdate(old)
-        return old
-    end
-    return ui.create {
+    local element = ui.create {
         props = {
             size = sz,
-            position = pos,
+            position = v2(0, (n - 1) * state.itemHeight),
         },
         content = ui.content { view },
     }
+    self._holders[n] = { id = id, element = element }
+    return element
 end
 
----@param old openmw.ui.Element
-function ItemList:_returnPlaceholder(old)
-    if not old.layout then return end
-    old.layout.content = nil
-    if #self._pool > 10 then
-        I.UIToolkit.queueDestroy(old, false)
-        return
-    end
-    table.insert(self._pool, old)
+---@return integer, integer
+function ItemList:_getVisibleItemRange()
+    local state = self.state
+    local total = #state.sortedRows
+    if not state.partialView then return 1, total end
+    if total == 0 then return 1, 0 end
+    local scroll = self._scrollBar:getPosition()
+    local from = math.max(math.floor(scroll / state.itemHeight) - 1, 1)
+    if from > total then return 1, 0 end
+    local to = math.min(math.ceil((scroll + state.currentSize.y) / state.itemHeight) + 1, total)
+
+    return from, to
 end
 
 function ItemList:_updateView()
@@ -135,21 +148,14 @@ function ItemList:_updateView()
     local sz = v2(width, state.itemHeight)
     local items = {}
     local layout = self._scrollable.layout
-    local old = layout.content or {}
-    local p = 0
-    for i = 1, #state.sortedRows do
+    local from, to = self:_getVisibleItemRange()
+    for i = from, to do
         local item = state.sortedRows[i]
-        local view = state.provider:getView(item, sz)
-        --TODO: reuse old widgets?
-        items[#items + 1] = self:_getPlaceholder(old[i], v2(0, p), sz, view)
-        p = p + state.itemHeight
+        local view, changed = state.provider:getView(item, sz)
+        items[#items + 1] = self:_getHolder(i, item.id, view, changed, sz)
     end
-    for i = #items + 1, #old do
-        self:_returnPlaceholder(old[i])
-    end
-    layout.props.size = v2(width, #items * state.itemHeight)
+    layout.props.size = v2(width, #state.sortedRows * state.itemHeight)
     layout.content = ui.content(items)
-    --TODO: destroy unused old widgets?
     I.UIToolkit.queueUpdate(self._scrollable)
 end
 
@@ -164,6 +170,8 @@ end
 ---@param size openmw.util.Vector2
 function ItemList:setSize(size)
     local state = self.state
+    size = v2(util.round(size.x), util.round(size.y))
+    if size == state.currentSize then return end
     state.currentSize = size
     local width = self:getContentWidth()
     local scroll = self._scrollBar

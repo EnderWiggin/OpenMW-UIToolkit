@@ -151,7 +151,7 @@ function Components.itemList(opts) end
 ---@field provider T
 
 ---@class UIToolkit.ItemList : UIToolkit.Component
----@field new fun():UIToolkit.ScrollBar
+---@field new fun():UIToolkit.ItemList
 ---@field init fun(self:UIToolkit.ItemList, opts:UIToolkit.ItemListOpts)
 ---@field setItems fun(self:UIToolkit.ItemList, items:UIToolkit.ListData.Base[])
 ---@field setSize fun(self:UIToolkit.ItemList, size:openmw.util.Vector2)
