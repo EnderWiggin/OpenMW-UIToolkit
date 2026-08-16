@@ -124,7 +124,7 @@ function Components.scrollBar(opts) end
 ---@field horizontal boolean?
 ---@field scrollStep number
 ---@field maxScroll number
----@field size number
+---@field length number
 ---@field handleSize number? if set, handle will be this size, if not - it will auto-calculate
 ---@field onScroll fun(position:number, progress:number)
 
@@ -136,7 +136,8 @@ function Components.scrollBar(opts) end
 ---@field getProgress fun(self:UIToolkit.ScrollBar):number [0-1] progress of the scroll
 ---@field setProgress fun(self:UIToolkit.ScrollBar, progress:number) set [0-1] progress of the scroll
 ---@field scroll fun(self:UIToolkit.ScrollBar, steps:number) scroll the bar by steps
----@field setSize fun(self:UIToolkit.ScrollBar, size:number) set scroll size
+---@field getSize fun(self:UIToolkit.ScrollBar):openmw.util.Vector2
+---@field setLength fun(self:UIToolkit.ScrollBar, length:number) set scroll length
 ---@field setMaxScroll fun(self:UIToolkit.ScrollBar, maxScroll:number, preserveProgress:boolean?)
 
 ---@class UIToolkit.WindowManager

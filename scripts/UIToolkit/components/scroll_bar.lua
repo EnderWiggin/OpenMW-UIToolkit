@@ -29,9 +29,9 @@ local SCROLL_TEX_H = ui.texture { path = 'textures/omw_menu_scroll_center_h.dds'
 ---@return openmw.util.Vector2
 local function calcScrollBarSize(bar)
     if bar.horizontal then
-        return v2(bar.size - ((WIDTH + omwConstants.padding) * 2), WIDTH)
+        return v2(bar.length - ((WIDTH + omwConstants.padding) * 2), WIDTH)
     end
-    return v2(WIDTH, bar.size - ((WIDTH + omwConstants.padding) * 2))
+    return v2(WIDTH, bar.length - ((WIDTH + omwConstants.padding) * 2))
 end
 
 ---@class UIToolkit.ScrollBar : UIToolkit.Component
@@ -42,8 +42,8 @@ local ScrollBar = Class(Component)
 function ScrollBar:init(opts)
     self.horizontal = opts.horizontal == true
     self.scrollStep = opts.scrollStep
-    self.size = opts.size
-    self.maxScroll = opts.maxScroll
+    self.length = opts.length
+    self.maxScroll = math.max(0, opts.maxScroll)
     self.handleSize = opts.handleSize
     self.onScroll = opts.onScroll
     self.position = 0
@@ -51,29 +51,25 @@ function ScrollBar:init(opts)
     ---@type number?
     self.dragOffset = nil
 
-    local function calcHandleSize()
-        return self.handleSize
-            or math.max((self.size / (self.maxScroll + self.size)) * (self.size - (WIDTH * 2)),
-                WIDTH)
-    end
-
     local function handlePosToScrollPos(p)
         local scrollBarSize = calcScrollBarSize(self)
         local sz = self.horizontal and scrollBarSize.x or scrollBarSize.y
-        local handleSize = calcHandleSize()
+        local handleSize = self:calcHandleSize()
 
         p = util.clamp(p - (handleSize / 2), 0, sz - handleSize)
         local progress = p / (sz - handleSize)
         return progress * self.maxScroll
     end
 
-    local handSz = calcHandleSize()
+    local handleSz = self:calcHandleSize()
     local handleProps = {
         resource = self.horizontal and SCROLL_TEX_H or SCROLL_TEX_V,
-        size = self.horizontal and v2(handSz, WIDTH - 4) or v2(WIDTH - 4, handSz),
+        size = self.horizontal and v2(handleSz, WIDTH - 4) or v2(WIDTH - 4, handleSz),
         tileV = true,
         propagateEvents = true,
     }
+    self._handleProps = handleProps
+
     ---@type openmw.ui.Element
     local barWrapper
 
@@ -81,7 +77,7 @@ function ScrollBar:init(opts)
     function self._onScrolled(this)
         local progress = this:getProgress()
         local handleSz = self.horizontal and handleProps.size.x or handleProps.size.y
-        local handlePos = (this.size - ((WIDTH + omwConstants.padding) * 2) - handleSz - 4) * progress
+        local handlePos = (this.length - ((WIDTH + omwConstants.padding) * 2) - handleSz - 4) * progress
         handleProps.position = self.horizontal and v2(handlePos, 0) or v2(0, handlePos)
 
         I.UIToolkit.queueUpdate(barWrapper)
@@ -167,7 +163,7 @@ function ScrollBar:init(opts)
         events = {
             mouseMove = async:callback(function(e)
                 if e.button == 1 then
-                    local halfHand = (calcHandleSize() / 2)
+                    local halfHand = (self:calcHandleSize() / 2)
                     local offset = self.horizontal and e.offset.x or e.offset.y
                     local adjustedY = offset - (self.dragOffset or halfHand) + halfHand
                     self:setPosition(handlePosToScrollPos(adjustedY))
@@ -197,6 +193,8 @@ function ScrollBar:init(opts)
         props = {
             horizontal = self.horizontal,
         },
+        --TODO: since we know sizes, change Flex to Widget and manually position elements
+        --but don't forget to reposition them on size change
         content = ui.content {
             upButton,
             T.Base.intervalV(omwConstants.padding),
@@ -236,9 +234,20 @@ function ScrollBar:scroll(steps)
     self:_onScrolled()
 end
 
+function ScrollBar:calcHandleSize()
+    return self.handleSize
+        or math.max((self.length / (self.maxScroll + self.length)) * (self.length - (WIDTH * 2)),
+            WIDTH)
+end
+
+---@return openmw.util.Vector2
+function ScrollBar:getSize()
+    return self._scrollProps.size
+end
+
 ---@param size number
-function ScrollBar:setSize(size)
-    self.size = size
+function ScrollBar:setLength(size)
+    self.length = size
     self._scrollProps.size = calcScrollBarSize(self)
     self:setPosition(self.position)
 end
@@ -247,7 +256,12 @@ end
 ---@param preserveProgress boolean?
 function ScrollBar:setMaxScroll(maxScroll, preserveProgress)
     local progress = self:getProgress()
-    self.maxScroll = maxScroll
+    self.maxScroll = math.max(0, maxScroll)
+    if not self.handleSize then
+        local handleSz = self:calcHandleSize()
+        self._handleProps.size = self.horizontal and v2(handleSz, WIDTH - 4) or v2(WIDTH - 4, handleSz)
+    end
+
     if preserveProgress then
         self:setProgress(progress)
     else
