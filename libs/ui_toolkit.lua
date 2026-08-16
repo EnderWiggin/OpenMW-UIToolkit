@@ -179,9 +179,9 @@ function Components.itemList(opts) end
 ---@field size openmw.util.Vector2
 
 ---@class UIToolkit.WindowHandler
----@field onOpened fun(self:UIToolkit.WindowHandler, wnd:UIToolkit.Window)?
----@field onClosed fun(self:UIToolkit.WindowHandler)?
----@field onResized fun(self:UIToolkit.WindowHandler)?
+---@field onOpened fun(self:UIToolkit.WindowHandler, wnd:UIToolkit.Window)
+---@field onClosed fun(self:UIToolkit.WindowHandler)
+---@field onResized fun(self:UIToolkit.WindowHandler, innerSize:openmw.util.Vector2)
 
 ---@class UIToolkit.Window:UIToolkit.Component
 ---@field new fun():UIToolkit.Window

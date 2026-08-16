@@ -345,7 +345,7 @@ function Window:init(opts, saved)
 
     local noResize = not opts.resizing
     local draggable = opts.draggable or not noResize
-    local onResized = opts.handler and opts.handler.onResized and function() opts.handler:onResized() end or nil
+    local handler = opts.handler
     local pinned = false
     if saved then
         pinned = saved.pinned
@@ -539,7 +539,7 @@ function Window:init(opts, saved)
                     if resized then
                         header:update()
                         body:update()
-                        if onResized then onResized() end
+                        if handler then handler:onResized(self:getInnerSize()) end
                     end
                 end
             end),
