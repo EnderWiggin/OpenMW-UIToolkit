@@ -26,6 +26,7 @@ local ctx = {
 local Buttons = require('scripts.UIToolkit.components.buttons')
 local TextEdit = require('scripts.UIToolkit.components.text_edit')
 local ScrollBar = require('scripts.UIToolkit.components.scroll_bar')
+local ItemList = require('scripts.UIToolkit.components.item_list')
 
 ---@class openmw.interfaces.UIToolkit
 local Interface = {
@@ -50,6 +51,14 @@ local Interface = {
             local scroll = ScrollBar.new()
             scroll:init(opts)
             return scroll
+        end,
+
+        ---@param opts UIToolkit.ItemListOpts
+        ---@return UIToolkit.ItemList
+        itemList = function(opts)
+            local list = ItemList.new()
+            list:init(opts)
+            return list
         end,
     },
     WindowManager = require('scripts.UIToolkit.window_manager'),

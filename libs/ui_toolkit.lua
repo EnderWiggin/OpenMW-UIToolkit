@@ -77,6 +77,10 @@ function Components.textEdit(opts) end
 ---@return UIToolkit.ScrollBar
 function Components.scrollBar(opts) end
 
+---@param opts UIToolkit.ItemListOpts
+---@return UIToolkit.ItemList
+function Components.itemList(opts) end
+
 ---@class UIToolkit.Component
 ---@field new fun():UIToolkit.Component
 ---@field init fun(self:UIToolkit.Component, element:openmw.ui.Element)
@@ -139,6 +143,18 @@ function Components.scrollBar(opts) end
 ---@field getSize fun(self:UIToolkit.ScrollBar):openmw.util.Vector2
 ---@field setLength fun(self:UIToolkit.ScrollBar, length:number) set scroll length
 ---@field setMaxScroll fun(self:UIToolkit.ScrollBar, maxScroll:number, preserveProgress:boolean?)
+
+---@generic T : UIToolkit.ListItem.Base
+---@class UIToolkit.ItemListOpts<T>
+---@field size openmw.util.Vector2
+---@field itemHeight number
+---@field provider T
+
+---@class UIToolkit.ItemList : UIToolkit.Component
+---@field new fun():UIToolkit.ScrollBar
+---@field init fun(self:UIToolkit.ItemList, opts:UIToolkit.ItemListOpts)
+---@field setItems fun(self:UIToolkit.ItemList, items:UIToolkit.ListData.Base[])
+---@field setSize fun(self:UIToolkit.ItemList, size:openmw.util.Vector2)
 
 ---@class UIToolkit.WindowManager
 ---@field register fun(id: string, opts: UIToolkit.WindowOpts)
