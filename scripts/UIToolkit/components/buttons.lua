@@ -15,7 +15,6 @@ local M = {}
 
 local T = {
     Base = require('scripts.UIToolkit.templates.base'),
-    Interactive = require('scripts.UIToolkit.templates.interactive'),
 }
 
 ---@class UIToolkit.TextButton : UIToolkit.Component
@@ -46,7 +45,7 @@ function TextButton:init(opts)
         }
     end
 
-    local element = T.Interactive.interactive(opts, {
+    local element = I.UIToolkit.Interactive.makeInteractive(opts, {
         name = opts.name or 'button',
         template = T.Base.buttonBoxBgr(opts.bgrAlpha),
         props = {},

@@ -22,7 +22,7 @@ function Component:active(value)
     if self:isDestroyed() then return nil end
 
     if value ~= nil then
-        I.UIToolkit.updateInteractiveState(self.element, { active = value })
+        I.UIToolkit.Interactive.updateState(self.element, { active = value })
         I.UIToolkit.queueUpdate(self.element)
     end
 
@@ -38,7 +38,7 @@ function Component:disabled(value)
     if self:isDestroyed() then return nil end
 
     if value ~= nil then
-        I.UIToolkit.updateInteractiveState(self.element, { disabled = value })
+        I.UIToolkit.Interactive.updateState(self.element, { disabled = value })
         I.UIToolkit.queueUpdate(self.element)
     end
 

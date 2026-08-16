@@ -13,7 +13,6 @@ local Component = require('scripts.UIToolkit.components.component')
 
 local T = {
     Base = require('scripts.UIToolkit.templates.base'),
-    Interactive = require('scripts.UIToolkit.templates.interactive'),
 }
 
 local WIDTH = 14

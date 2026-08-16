@@ -13,10 +13,8 @@
 ---@field getTheme fun():UIToolkit.Theme
 ---@field queueUpdate fun(element:openmw.ui.Element, deep:boolean?) queues element to be updated on next frame
 ---@field queueDestroy fun(element:openmw.ui.Element, deep:boolean) queues element to be destroyed on next frame
----@field getInteractiveColor fun(state:UIToolkit.InteractiveState, custom:UIToolkit.InteractiveColors?):openmw.util.Color?
----@field applyInteractiveState fun(layout:openmw.ui.Layout, state:UIToolkit.InteractiveState)
----@field updateInteractiveState fun(layoutOrElement:openmw.ui.Layout|openmw.ui.Element, state:UIToolkit.InteractiveState?)
 ---@field texture fun(path:string, size:openmw.util.Vector2?, offset:openmw.util.Vector2?):openmw.ui.TextureResource
+---@field Interactive UIToolkit.Interactive
 ---@field Components UIToolkit.Components
 ---@field WindowManager UIToolkit.WindowManager
 
@@ -26,6 +24,31 @@
 ---@class UIToolkit.Theme
 ---@field Colors UIToolkit.Theme.Colors
 ---@field Sizes UIToolkit.Theme.Sizes
+
+---@class UIToolkit.Interactive
+local Interactive = {}
+
+---Makes layout or element interactive - react to hovers and clicks and have a tooltip
+---@param opts UIToolkit.InteractiveOpts
+---@param layoutOrElement openmw.ui.Element|openmw.ui.Layout
+---@return openmw.ui.Element
+function Interactive.makeInteractive(opts, layoutOrElement) end
+
+---Applies interactive state to the layout
+---@param state UIToolkit.InteractiveState
+---@param custom UIToolkit.InteractiveColors?
+---@return openmw.util.Color?
+function Interactive.getColor(state, custom) end
+
+---Applies interactive state to the layout
+---@param layout openmw.ui.Layout
+---@param state UIToolkit.InteractiveState
+function Interactive.applyState(layout, state) end
+
+---Recursively updates interactive state of the element and its children
+---@param layoutOrElement openmw.ui.Layout|openmw.ui.Element
+---@param state UIToolkit.InteractiveState?
+function Interactive.updateState(layoutOrElement, state) end
 
 ---@class UIToolkit.InteractiveState
 ---@field active boolean? element is active - e.g. currently equipped spell in the spell list

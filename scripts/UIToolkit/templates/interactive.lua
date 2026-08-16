@@ -8,17 +8,14 @@ local ambient = require('openmw.ambient')
 local I = require('openmw.interfaces')
 
 local v2 = util.vector2
+local H = require('scripts.UIToolkit.helpers')
 
 local M = {}
-
-local T = {
-    Base = require('scripts.UIToolkit.templates.base'),
-}
 
 ---@param opts UIToolkit.InteractiveOpts
 ---@param layoutOrElement openmw.ui.Element|openmw.ui.Layout
 ---@return openmw.ui.Element
-function M.interactive(opts, layoutOrElement)
+function M.makeInteractive(opts, layoutOrElement)
     local toolkit = I.UIToolkit
     local ctx = toolkit.getCtx()
     ---@type openmw.ui.Element
@@ -46,7 +43,7 @@ function M.interactive(opts, layoutOrElement)
                 return false
             end
             ambient.playSound('menu click', { scale = false })
-            toolkit.updateInteractiveState(element.layout, { pressed = true })
+            M.updateState(element.layout, { pressed = true })
             toolkit.queueUpdate(element)
             return true
         end
@@ -60,7 +57,7 @@ function M.interactive(opts, layoutOrElement)
             if not element.layout.userData.pressed then
                 return false
             end
-            toolkit.updateInteractiveState(element.layout, { pressed = false })
+            M.updateState(element.layout, { pressed = false })
             toolkit.queueUpdate(element)
             return opts.onClick()
         end
@@ -69,14 +66,14 @@ function M.interactive(opts, layoutOrElement)
     local isAlive = function() return element.layout ~= nil end
     element.layout.events.focusLoss = async:callback(function()
         I.UTKTooltips.setTooltip(nil)
-        toolkit.updateInteractiveState(element, { hovering = false })
+        M.updateState(element, { hovering = false })
         toolkit.queueUpdate(element)
         ctx.lastMousePos = nil
         return true
     end)
     element.layout.events.focusGain = async:callback(function()
         --ctx.focusedInteractiveDelayed = element
-        toolkit.updateInteractiveState(element, { hovering = true })
+        M.updateState(element, { hovering = true })
         toolkit.queueUpdate(element)
 
         local tooltip = opts.tooltip
@@ -89,7 +86,8 @@ function M.interactive(opts, layoutOrElement)
         return true
     end)
     element.layout.events.mouseMove = async:callback(function(e, tgt)
-        ctx.lastMousePos = e.position --TODO: this is temporary, until 0.52, where `ui.mousePosition` would hopefully exist
+        ctx.lastMousePos = e
+        .position                     --TODO: this is temporary, until 0.52, where `ui.mousePosition` would hopefully exist
         if opts.onMouseMove then
             opts.onMouseMove(e, tgt, element)
         end
@@ -97,61 +95,108 @@ function M.interactive(opts, layoutOrElement)
     return element
 end
 
----@param text string
----@param onClick function
----@param name string? name for the element, defaults to 'button'
----@param bgrAlpha number?
----@return openmw.ui.Element
-function M.button(text, onClick, name, bgrAlpha)
-    local txt = ui.create {
-        template = T.Base.text(),
-        props = { text = text, },
-        userData = { colorable = true },
-    }
+---Applies interactive state to the layout
+---@param state UIToolkit.InteractiveState
+---@param custom UIToolkit.InteractiveColors?
+---@return openmw.util.Color?
+function M.getColor(state, custom)
+    local colors = I.UIToolkit.getTheme().Colors
+    ---@type openmw.util.Color?
+    local color
+    if state.active then
+        if state.pressed then
+            color = colors.ACTIVE_PRESSED
+        elseif state.hovering then
+            color = colors.ACTIVE_LIGHT
+        else
+            color = colors.ACTIVE
+        end
+    elseif state.disabled then
+        if state.pressed then
+            color = colors.DISABLED_PRESSED
+        elseif state.hovering then
+            color = colors.DISABLED_LIGHT
+        else
+            color = colors.DISABLED
+        end
+    else
+        custom = custom or {}
+        if state.pressed then
+            color = custom.pressColor or colors.DEFAULT_PRESSED
+        elseif state.hovering then
+            color = custom.hoverColor or colors.DEFAULT_LIGHT
+        else
+            color = custom.baseColor or colors.DEFAULT
+        end
+    end
+    return color
+end
 
-    local element = ui.create {
-        name = name or 'button',
-        template = bgrAlpha and T.Base.buttonBoxBgr(bgrAlpha) or T.Base.buttonBox(),
-        props = {},
-        content = ui.content {
-            {
-                template = T.Base.padding(8, 0),
-                content = ui.content { txt, }
-            }
-        },
-        events = {},
-        userData = {},
-    }
+---Applies interactive state to the layout
+---@param layout openmw.ui.Layout
+---@param state UIToolkit.InteractiveState
+function M.applyState(layout, state)
+    if layout.userData and layout.userData.colorable then
+        local color = M.getColor(state, layout.userData)
+        layout.props = layout.props or {}
+        if layout.type == ui.TYPE.Text or layout.type == ui.TYPE.TextEdit or (layout.template and (layout.template.type == ui.TYPE.Text or layout.template.type == ui.TYPE.TextEdit)) then
+            layout.props.textColor = color
+        elseif layout.type == ui.TYPE.Image or (layout.template and layout.template.type == ui.TYPE.Image) then
+            layout.props.color = color
+        end
+    end
 
-    if not onClick then return element end
+    if layout.userData and layout.userData.opacityStates then
+        local states = layout.userData.opacityStates
+        local alpha
+        if state.active then
+            if state.pressed then
+                alpha = states.activePressed or states.activeHover or states.active or states.default
+            elseif state.hovering then
+                alpha = states.activeHover or states.active or states.hover or states.default
+            else
+                alpha = states.active or states.default
+            end
+        elseif state.disabled then
+            if state.pressed then
+                alpha = states.disabledPressed or states.disabledHover or states.disabled or states.default
+            elseif state.hovering then
+                alpha = states.disabledHover or states.disabled or states.hover or states.default
+            else
+                alpha = states.disabled or states.default
+            end
+        else
+            if state.pressed then
+                alpha = states.pressed or states.hover or states.default
+            elseif state.hovering then
+                alpha = states.hover or states.default
+            else
+                alpha = states.default
+            end
+        end
 
-    local toolkit = I.UIToolkit
-    ---@type UIToolkit.InteractiveState
-    local data = element.layout.userData
+        layout.props = layout.props or {}
+        layout.props.alpha = alpha
+    end
+end
 
-    element.layout.events.focusGain = async:callback(function()
-        data.hovering = true
-        toolkit.applyInteractiveState(txt.layout, data)
-        toolkit.queueUpdate(txt)
+---Recursively updates interactive state of the element and its children
+---@param layoutOrElement openmw.ui.Layout|openmw.ui.Element
+---@param state UIToolkit.InteractiveState?
+function M.updateState(layoutOrElement, state)
+    --TODO: add option to queue updates for each changed element?
+    local layout = H.toLayout(layoutOrElement)
+    local userData = layout.userData or {}
+    if state then
+        if state.active ~= nil then userData.active = state.active end
+        if state.pressed ~= nil then userData.pressed = state.pressed end
+        if state.hovering ~= nil then userData.hovering = state.hovering end
+        if state.disabled ~= nil then userData.disabled = state.disabled end
+        layout.userData = userData
+    end
+    H.forEachInLayout(layout, function(l)
+        M.applyState(l, userData)
     end)
-    element.layout.events.focusLoss = async:callback(function()
-        data.hovering = false
-        toolkit.applyInteractiveState(txt.layout, data)
-        toolkit.queueUpdate(txt)
-    end)
-    element.layout.events.mousePress = async:callback(function()
-        ambient.playSound('menu click', { scale = false })
-        data.pressed = true
-        toolkit.applyInteractiveState(txt.layout, data)
-        toolkit.queueUpdate(txt)
-    end)
-    element.layout.events.mouseRelease = async:callback(function()
-        if onClick then onClick() end
-        data.pressed = false
-        toolkit.applyInteractiveState(txt.layout, data)
-        toolkit.queueUpdate(txt)
-    end)
-    return element
 end
 
 return M

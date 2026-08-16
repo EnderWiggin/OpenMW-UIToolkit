@@ -12,7 +12,6 @@ local Component = require('scripts.UIToolkit.components.component')
 local REVERT_TEX = ui.texture { path = 'icons/UIToolkit/revert.dds' }
 local T = {
     Base = require('scripts.UIToolkit.templates.base'),
-    Interactive = require('scripts.UIToolkit.templates.interactive'),
 }
 
 ---@generic T
@@ -107,8 +106,8 @@ function TextEdit:init(opts)
             props = self._btnProps,
             userData = { colorable = true, }
         }
-        I.UIToolkit.updateInteractiveState(btn, { disabled = true })
-        content:add(T.Interactive.interactive({
+        I.UIToolkit.Interactive.updateState(btn, { disabled = true })
+        content:add(I.UIToolkit.Interactive.makeInteractive({
             onClick = function()
                 self:setValue(self._default)
                 if self._onValueChanged then
