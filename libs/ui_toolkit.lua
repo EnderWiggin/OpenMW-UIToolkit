@@ -148,7 +148,7 @@ function Components.scrollBar(opts) end
 
 ---@class UIToolkit.WindowOpts
 ---@field title string
----@field content openmw.ui.Content?
+---@field handler UIToolkit.WindowHandler
 ---@field pinnable boolean?
 ---@field pinned boolean?
 ---@field position openmw.util.Vector2?
@@ -156,19 +156,22 @@ function Components.scrollBar(opts) end
 ---@field draggable boolean?
 ---@field resizing boolean?
 ---@field minSize openmw.util.Vector2?
----@field onOpen fun(wnd:UIToolkit.Window)?
----@field onClosed fun()?
----@field onResized fun()?
 
 ---@class UIToolkit.WindowSaveData
 ---@field pinned boolean
 ---@field position openmw.util.Vector2
 ---@field size openmw.util.Vector2
 
+---@class UIToolkit.WindowHandler
+---@field onOpened fun(self:UIToolkit.WindowHandler, wnd:UIToolkit.Window)?
+---@field onClosed fun(self:UIToolkit.WindowHandler)?
+---@field onResized fun(self:UIToolkit.WindowHandler)?
+
 ---@class UIToolkit.Window:UIToolkit.Component
 ---@field new fun():UIToolkit.Window
 ---@field init fun(self:UIToolkit.Window, opts:UIToolkit.WindowOpts, saved:UIToolkit.WindowSaveData?)
 ---@field setTitle fun(self:UIToolkit.Window, newTitle:string)
+---@field setContent fun(self:UIToolkit.Window, content:openmw.ui.Content)
 ---@field getPosition fun(self:UIToolkit.Window):openmw.util.Vector2
 ---@field getSize fun(self:UIToolkit.Window):openmw.util.Vector2
 ---@field getInnerSize fun(self:UIToolkit.Window):openmw.util.Vector2

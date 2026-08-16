@@ -345,7 +345,7 @@ function Window:init(opts, saved)
 
     local noResize = not opts.resizing
     local draggable = opts.draggable or not noResize
-    local onResized = opts.onResized
+    local onResized = opts.handler and opts.handler.onResized and function() opts.handler:onResized() end or nil
     local pinned = false
     if saved then
         pinned = saved.pinned
@@ -420,7 +420,6 @@ function Window:init(opts, saved)
             grow = 1,
             stretch = 1,
         },
-        content = opts.content or ui.content {},
     }
 
     local pinButton = makePinButton(data.pinned, function(newPinned) data.pinned = newPinned end)
@@ -561,6 +560,12 @@ function Window:init(opts, saved)
                 I.UIToolkit.getCtx().lastMousePos = e.position
             end),
         }
+    end
+
+    ---@param content openmw.ui.Content
+    self.setContent = function(_, content)
+        body.layout.content = content
+        I.UIToolkit.queueUpdate(body)
     end
 
     self.getPosition = function()

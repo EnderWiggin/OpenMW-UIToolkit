@@ -48,9 +48,11 @@ function M.open(id)
         size = toAbsolute(saved.size),
     } or nil)
     windows[id].wnd = wnd
-    if opts.onOpen then
+    local handler = opts.handler
+    local onOpened = handler and handler.onOpened
+    if onOpened then
         --TODO: load custom window state
-        opts.onOpen(wnd)
+        handler:onOpened(wnd)
     end
     return wnd
 end
@@ -81,7 +83,9 @@ function M.close(id)
     section:set(id, saved)
     data.wnd = nil
     I.UIToolkit.queueDestroy(wnd.element, true)
-    if data.opts.onClosed then data.opts.onClosed() end
+    local handler = data.opts.handler
+    local onClosed = handler and handler.onClosed
+    if onClosed then handler:onClosed() end
 end
 
 ---@param id string
