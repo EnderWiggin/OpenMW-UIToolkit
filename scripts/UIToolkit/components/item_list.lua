@@ -99,8 +99,8 @@ function ItemList:init(opts)
 
     ---@type openmw.ui.Layout
     local layout = {
-        --TODO: use customized template
-        template = I.MWUI.templates.boxSolid, --TODO: option to have no border
+        type = ui.TYPE.Container,
+        template = opts.hasBorder and T.boxSolid or nil,
         props = {},
         content = ui.content {
             {
@@ -246,7 +246,7 @@ function ItemList:setHovered(idOrIndex)
 
     if item then
         local tip = state.provider:getTooltip(item)
-        I.UTKTooltips.setTooltip(tip)
+        I.UTKTooltips.setTooltip(tip, function() return not self:isDestroyed() end)
     else
         I.UTKTooltips.setTooltip(nil)
     end

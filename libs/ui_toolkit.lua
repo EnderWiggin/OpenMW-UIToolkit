@@ -157,6 +157,7 @@ function Components.itemList(opts) end
 ---@class UIToolkit.ItemListOpts<T>
 ---@field size openmw.util.Vector2
 ---@field itemHeight number
+---@field hasBorder boolean?
 ---@field provider T
 
 ---@class UIToolkit.ItemList : UIToolkit.Component
