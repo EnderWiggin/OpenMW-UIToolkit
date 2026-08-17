@@ -144,6 +144,14 @@ function Components.itemList(opts) end
 ---@field setLength fun(self:UIToolkit.ScrollBar, length:number) set scroll length
 ---@field setMaxScroll fun(self:UIToolkit.ScrollBar, maxScroll:number, preserveProgress:boolean?)
 
+---@class UIToolkit.ListData.Base
+---@field id string
+
+---@generic T: UIToolkit.ListData.Base
+---@class UIToolkit.ListItem.Base<T>
+---@field makeComponent fun(self:UIToolkit.ListItem.Base<T>, data:T, size:openmw.util.Vector2):UIToolkit.Component
+---@field getTooltip fun(self:UIToolkit.ListItem.Base<T>, data:T):UTKTooltips.Tooltip
+
 ---@generic T : UIToolkit.ListItem.Base
 ---@class UIToolkit.ItemListOpts<T>
 ---@field size openmw.util.Vector2
@@ -276,7 +284,7 @@ function Components.itemList(opts) end
 --- Table defining a single recipe item, to form one entry in the final tooltip
 -- Required/ignored fields depend on the recipe item type.
 ---@class UTKTooltips.RecipeItem
----@field type UTKTooltips.RecipeItemType defines which builder is used to create the layout for this item. (default=default)
+---@field type UTKTooltips.RecipeItemType? defines which builder is used to create the layout for this item. (default='default')
 ---@field align openmw.ui.ALIGNMENT? Re-aligns this item. Not used by any default builders.
 ---@field text string? (used in default, note, paragraph)
 ---@field value any? (used in default) Value used by the value type. Is passed through tostring() so can be any type.

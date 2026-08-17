@@ -33,7 +33,7 @@ end
 
 ---@param data UIToolkit.ListData.Text
 ---@return UTKTooltips.Tooltip?
-function ListItemBase:getTooltip(data)
+function ListItemText:getTooltip(data)
     ---@type UTKTooltips.Tooltip
     return {
         recipe = {

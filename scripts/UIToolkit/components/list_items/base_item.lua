@@ -4,9 +4,6 @@ local I = require('openmw.interfaces')
 
 local Class = require('scripts.UIToolkit.class')
 
----@class UIToolkit.ListData.Base
----@field id string
-
 ---@generic T: UIToolkit.ListData.Base
 ---@class UIToolkit.ListItem.Base<T>
 ---@field cache table<string, {size:openmw.util.Vector2, component:UIToolkit.Component}>
