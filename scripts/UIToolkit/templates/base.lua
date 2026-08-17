@@ -82,6 +82,10 @@ M.textEditLine.props.textColor = colors.DEFAULT
 M.textEditLine.props.textSize = sizes.textNormal
 M.textEditLine.props.size = v2(0, 0)
 
+M.boxSolid = auxUi.deepLayoutCopy(I.MWUI.templates.boxSolid) --[[@as openmw.ui.Template]]
+M.boxSolidThick = auxUi.deepLayoutCopy(I.MWUI.templates.boxSolidThick) --[[@as openmw.ui.Template]]
+M.boxSolid.content[1].props.color = colors.BACKGROUND
+M.boxSolidThick.content[1].props.color = colors.BACKGROUND
 
 ---@param padX number
 ---@param padY number?
@@ -122,6 +126,11 @@ end
 ---@return openmw.ui.Layout
 function M.intervalV(size)
     return { props = { size = v2(0, size), }, }
+end
+
+function M.effectIconTexture(effectId)
+    local effectRecord = H.getMagicEffectRecord(effectId)
+    return effectRecord and I.UIToolkit.texture(effectRecord.icon)
 end
 
 --- BUTTON TEMPLATES ---

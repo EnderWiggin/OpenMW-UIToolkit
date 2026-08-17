@@ -97,6 +97,19 @@ end
 if not context.isRuntime() then return H end
 ---@omw-context-begin runtime
 
+local core = require('openmw.core')
+local I = require('openmw.interfaces')
+
+---@param id string effect id
+---@return openmw.core.MagicEffect? record, boolean isCustom
+H.getMagicEffectRecord = function(id)
+    ---@type openmw.core.MagicEffect?
+    local effect = core.magic.effects.records[id]
+    if effect then return effect, false end
+    effect = I.MagicWindow and I.MagicWindow.Spells.getCustomEffect(id)
+    if effect then return effect, true end
+    return nil, false
+end
 
 ---@omw-context-end runtime
 
