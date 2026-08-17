@@ -105,12 +105,12 @@ function Components.itemList(opts) end
 
 ---@generic T
 ---@class UIToolkit.TextEditOpts<T>
----@field default T?
+---@field default T|fun():T|nil
 ---@field textSize number?
 ---@field textAlignH openmw.ui.ALIGNMENT?
 ---@field textColorNormal openmw.util.Color? defaults to DEFAULT_LIGHT
 ---@field textColorPlaceholder openmw.util.Color? defaults to DISABLED
----@field placeholder string? will be shown when edit is not in focus and text is empty
+---@field placeholder string|fun():string|nil will be shown when edit is not in focus and text is empty
 ---@field validate? fun(text:string|T|nil):boolean,T
 ---@field onValueChanged? fun() will be called when entered value is changed
 ---@field width number? defaults to 200

@@ -35,8 +35,9 @@ function TextEdit:init(opts)
     local editTemplate = T.Base.textEditLine
     ---@type  fun(text:string|T|nil):boolean,T
     self._validate = opts.validate or validateText
+    ---@type T|fun()
     self._default = opts.default or ''
-    self._value = self._default
+    self._value = self:getDefault()
     self._placeholder = opts.placeholder
     self._textSize = opts.textSize or editTemplate.props.textSize
     self._textColorNormal = opts.textColorNormal or t.Colors.DEFAULT_LIGHT
@@ -50,7 +51,7 @@ function TextEdit:init(opts)
 
     self._editProps = {
         size = v2(w, h),
-        text = empty and self._placeholder or toText(self._value),
+        text = empty and self:getPlaceholder() or toText(self._value),
         textColor = self:_textColor(empty),
         textSize = self._textSize,
     }
@@ -85,7 +86,7 @@ function TextEdit:init(opts)
             end),
             focusLoss = async:callback(function(_, layout)
                 if self:isEmpty() then
-                    layout.props.text = self._placeholder or ''
+                    layout.props.text = self:getPlaceholder() or ''
                     layout.props.textColor = self:_textColor(true)
                     I.UIToolkit.queueUpdate(element)
                 end
@@ -109,7 +110,7 @@ function TextEdit:init(opts)
         I.UIToolkit.Interactive.updateState(btn, { disabled = true })
         content:add(I.UIToolkit.Interactive.makeInteractive({
             onClick = function()
-                self:setValue(self._default)
+                self:setValue(self:getDefault())
                 if self._onValueChanged then
                     self._onValueChanged()
                 end
@@ -137,6 +138,20 @@ function TextEdit:isEmpty()
     return toText(self._value) == ''
 end
 
+function TextEdit:getDefault()
+    if type(self._default) == "function" then
+        return self._default()
+    end
+    return self._default
+end
+
+function TextEdit:getPlaceholder()
+    if type(self._placeholder) == "function" then
+        return self._placeholder()
+    end
+    return self._placeholder
+end
+
 ---@return T
 function TextEdit:getValue()
     return self._value
@@ -150,18 +165,18 @@ function TextEdit:setValue(value)
     self._value = v
     local text = toText(self._value)
     local empty = text == ''
-    self._editProps.text = empty and self._placeholder or text
+    self._editProps.text = empty and self:getPlaceholder() or text
     self._editProps.textColor = self:_textColor(empty)
     I.UIToolkit.queueUpdate(self.element)
 end
 
----@param value string?
+---@param value string|fun()|nil
 function TextEdit:setPlaceholder(value)
     if self:isDestroyed() then return end
     self._placeholder = value
     if self:isEmpty() then
         I.UIToolkit.queueUpdate(self.element)
-        self._editProps.text = self._placeholder
+        self._editProps.text = self:getPlaceholder() or ''
         self._editProps.textColor = self:_textColor(true)
     end
 end
