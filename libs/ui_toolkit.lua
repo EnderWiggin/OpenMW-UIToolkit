@@ -20,6 +20,7 @@
 
 ---@class UIToolkit.Context
 ---@field lastMousePos openmw.util.Vector2? last mouse position detected by interactive elements. Needed until `ui.mousePosition()` is merged (0.52?)
+---@field focusedScrollable UIToolkit.Scrollable?
 
 ---@class UIToolkit.Theme
 ---@field Colors UIToolkit.Theme.Colors

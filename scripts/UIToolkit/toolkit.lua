@@ -21,6 +21,8 @@ local ctx = {
     updateQueue = {},
     ---@type table<openmw.ui.Element, boolean>
     destroyQueue = {},
+    ---@type UIToolkit.Scrollable?
+    focusedScrollable = nil,
 }
 
 local Buttons = require('scripts.UIToolkit.components.buttons')
@@ -40,7 +42,7 @@ local Interface = {
         ---@param opts UIToolkit.TextEditOpts
         ---@return UIToolkit.TextEdit
         textEdit = function(opts)
-            local edit = TextEdit.new()
+            local edit = TextEdit:new()
             edit:init(opts)
             return edit
         end,
@@ -48,7 +50,7 @@ local Interface = {
         ---@param opts UIToolkit.ScrollBarOpts
         ---@return UIToolkit.ScrollBar
         scrollBar = function(opts)
-            local scroll = ScrollBar.new()
+            local scroll = ScrollBar:new()
             scroll:init(opts)
             return scroll
         end,
@@ -56,7 +58,7 @@ local Interface = {
         ---@param opts UIToolkit.ItemListOpts
         ---@return UIToolkit.ItemList
         itemList = function(opts)
-            local list = ItemList.new()
+            local list = ItemList:new()
             list:init(opts)
             return list
         end,
@@ -133,10 +135,18 @@ local function onFrame()
     ctx.destroyQueue = {}
 end
 
+local function onMouseWheel(v)
+    local scrollable = ctx.focusedScrollable
+    if not scrollable then return end
+    if scrollable:isDestroyed() then return end
+    scrollable:onMouseScrolled(v)
+end
+
 return {
     interfaceName = 'UIToolkit',
     interface = Interface,
     engineHandlers = {
         onFrame = onFrame,
+        onMouseWheel = onMouseWheel,
     },
 }

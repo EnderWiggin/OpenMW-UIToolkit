@@ -9,12 +9,13 @@ local I = require('openmw.interfaces')
 local v2 = util.vector2
 local Class = require('scripts.UIToolkit.class')
 local Component = require('scripts.UIToolkit.components.component')
+local Scrollable = require('scripts.UIToolkit.components.scrollable')
 
 
 local T = require('scripts.UIToolkit.templates.base')
 
----@class UIToolkit.ItemList : UIToolkit.Component
-local ItemList = Class(Component)
+---@class UIToolkit.ItemList : UIToolkit.Scrollable
+local ItemList = Class(Scrollable)
 
 ---@param opts UIToolkit.ItemListOpts
 function ItemList:init(opts)
@@ -39,14 +40,14 @@ function ItemList:init(opts)
         partialView = true,
         ---@type integer|nil
         hovered = nil,
+        ---@type openmw.util.Vector2|nil
+        lastHoveredPos = nil,
     }
     self.state = state
     ---@type openmw.ui.Element[]
     self._pool = {}
     ---@type table<integer, {id:string, element:openmw.ui.Element}>
     self._holders = {}
-
-    local function getIndexByYPos(y) return math.floor(y / state.itemHeight) + 1 end
 
     ---@type openmw.ui.Element
     local scrollable = ui.create {
@@ -60,9 +61,14 @@ function ItemList:init(opts)
             ---@param e openmw.ui.MouseEvent
             mouseMove = async:callback(function(e)
                 I.UIToolkit.getCtx().lastMousePos = e.position
-                self:setHovered(getIndexByYPos(e.offset.y))
+                self.state.lastHoveredPos = e.offset.y - self._scrollBar:getPosition()
+                self:setHovered(self:getIndexByYPos(e.offset.y))
             end),
-            focusLoss = async:callback(function() self:setHovered(nil) end),
+            focusLoss = async:callback(function()
+                self:setHovered(nil)
+                self.state.lastHoveredPos = nil
+                return true
+            end),
         },
     }
 
@@ -104,8 +110,18 @@ function ItemList:init(opts)
             },
             scroll.element,
         },
+        events = {
+            focusGain = async:callback(function() I.UIToolkit.getCtx().focusedScrollable = self end),
+            focusLoss = async:callback(function() I.UIToolkit.getCtx().focusedScrollable = nil end),
+        },
     }
     Component.init(self, ui.create(layout))
+end
+
+---@param delta number
+function ItemList:onMouseScrolled(delta)
+    self._scrollBar:scroll(-delta)
+    self:updateHoveredItem()
 end
 
 function ItemList:getContentWidth()
@@ -192,6 +208,15 @@ local function setItemHoveredStatus(provider, id, hovered)
     if not view then return end
     I.UIToolkit.Interactive.updateState(view, { hovering = hovered })
     I.UIToolkit.queueUpdate(view)
+end
+
+---@param y number
+function ItemList:getIndexByYPos(y) return math.floor(y / self.state.itemHeight) + 1 end
+
+function ItemList:updateHoveredItem()
+    local p = self.state.lastHoveredPos
+    if not p then return end
+    self:setHovered(self:getIndexByYPos(p + self._scrollBar:getPosition()))
 end
 
 ---@param idOrIndex string|integer|nil

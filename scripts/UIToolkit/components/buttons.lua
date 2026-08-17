@@ -66,7 +66,7 @@ end
 ---@param opts UIToolkit.TextButtonOpts
 ---@return UIToolkit.TextButton
 function M.textButton(opts)
-    local btn = TextButton.new()
+    local btn = TextButton:new()
     btn:init(opts)
     return btn
 end
