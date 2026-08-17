@@ -22,7 +22,10 @@ function ItemList:init(opts)
 
 
     local state = {
-        sortedRows = {}, -- List of items after sorting
+        ---@type UIToolkit.ListData.Base[]
+        items = {},
+        ---@type table<string, UIToolkit.ListData.Base>
+        itemsById = {},
         ---@type UIToolkit.ListItem.Base
         provider = opts.provider,
         itemHeight = opts.itemHeight,
@@ -34,12 +37,16 @@ function ItemList:init(opts)
         --hadMouseMoveThisFrame = false,
         --rowCache = {} -- Stores generated row layouts by item ID or index
         partialView = true,
+        ---@type integer|nil
+        hovered = nil,
     }
     self.state = state
     ---@type openmw.ui.Element[]
     self._pool = {}
     ---@type table<integer, {id:string, element:openmw.ui.Element}>
     self._holders = {}
+
+    local function getIndexByYPos(y) return math.floor(y / state.itemHeight) + 1 end
 
     ---@type openmw.ui.Element
     local scrollable = ui.create {
@@ -48,6 +55,14 @@ function ItemList:init(opts)
         props = {
             position = v2(0, 0),
             size = v2(0, 0),
+        },
+        events = {
+            ---@param e openmw.ui.MouseEvent
+            mouseMove = async:callback(function(e)
+                I.UIToolkit.getCtx().lastMousePos = e.position
+                self:setHovered(getIndexByYPos(e.offset.y))
+            end),
+            focusLoss = async:callback(function() self:setHovered(nil) end),
         },
     }
 
@@ -61,7 +76,7 @@ function ItemList:init(opts)
             end
         end,
         scrollStep = 2 * state.itemHeight,
-        maxScroll = #state.sortedRows * state.itemHeight - size.y,
+        maxScroll = #state.items * state.itemHeight - size.y,
         length = size.y
     }
     local props = scroll.element.layout.props
@@ -131,7 +146,7 @@ end
 ---@return integer, integer
 function ItemList:_getVisibleItemRange()
     local state = self.state
-    local total = #state.sortedRows
+    local total = #state.items
     if not state.partialView then return 1, total end
     if total == 0 then return 1, 0 end
     local scroll = self._scrollBar:getPosition()
@@ -150,11 +165,11 @@ function ItemList:_updateView()
     local layout = self._scrollable.layout
     local from, to = self:_getVisibleItemRange()
     for i = from, to do
-        local item = state.sortedRows[i]
+        local item = state.items[i]
         local view, changed = state.provider:getView(item, sz)
         items[#items + 1] = self:_getHolder(i, item.id, view, changed, sz)
     end
-    layout.props.size = v2(width, #state.sortedRows * state.itemHeight)
+    layout.props.size = v2(width, #state.items * state.itemHeight)
     layout.content = ui.content(items)
     I.UIToolkit.queueUpdate(self._scrollable)
 end
@@ -162,9 +177,69 @@ end
 ---@param items UIToolkit.ListData.Base[]
 function ItemList:setItems(items)
     local state = self.state
-    state.sortedRows = items
-    self._scrollBar:setMaxScroll(#state.sortedRows * state.itemHeight - state.currentSize.y)
+    state.items = items
+    state.itemsById = {}
+    self._scrollBar:setMaxScroll(#state.items * state.itemHeight - state.currentSize.y)
     self:_updateView()
+end
+
+---@param provider UIToolkit.ListItem.Base
+---@param id string|nil
+---@param hovered boolean
+local function setItemHoveredStatus(provider, id, hovered)
+    if not id then return end
+    local view = provider:getCachedView(id)
+    if not view then return end
+    I.UIToolkit.Interactive.updateState(view, { hovering = hovered })
+    I.UIToolkit.queueUpdate(view)
+end
+
+---@param idOrIndex string|integer|nil
+function ItemList:setHovered(idOrIndex)
+    local state = self.state
+    ---@type string?
+    local id
+    ---@type number?
+    local index
+    local item
+    if type(idOrIndex) == "number" then
+        item = state.items[idOrIndex]
+        id = item and item.id or nil
+        index = idOrIndex
+    elseif idOrIndex ~= nil then
+        id = idOrIndex --[[@as string]]
+        item, index = self:getItemById(id)
+    end
+
+    if index == state.hovered then return end
+
+    if state.hovered then
+        local was = state.items[state.hovered]
+        setItemHoveredStatus(state.provider, was and was.id, false)
+    end
+    setItemHoveredStatus(state.provider, id, true)
+
+    if item then
+        local tip = state.provider:getTooltip(item)
+        I.UTKTooltips.setTooltip(tip)
+    else
+        I.UTKTooltips.setTooltip(nil)
+    end
+
+    state.hovered = idOrIndex
+end
+
+---@param id string
+---@return UIToolkit.ListData.Base?, integer?
+function ItemList:getItemById(id)
+    local state = self.state
+    local item = state.itemsById[id]
+    if item then return item end
+    for i = 1, #state.items do
+        item = state.items[i]
+        if item and item.id == id then return item, i end
+    end
+    return nil
 end
 
 ---@param size openmw.util.Vector2
@@ -177,7 +252,7 @@ function ItemList:setSize(size)
     local scroll = self._scrollBar
     scroll.element.layout.props.position = v2(size.x, 0)
     scroll:setLength(size.y)
-    scroll:setMaxScroll(#state.sortedRows * state.itemHeight - size.y)
+    scroll:setMaxScroll(#state.items * state.itemHeight - size.y)
     self.element.layout.content[1].props.size = v2(width, size.y)
 
     I.UIToolkit.queueUpdate(self.element)

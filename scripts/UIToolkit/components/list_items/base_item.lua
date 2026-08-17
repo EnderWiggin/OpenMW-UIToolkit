@@ -23,6 +23,14 @@ function ListItemBase:makeComponent(data, size)
     error('Need to implement `makeComponent()`!')
 end
 
+---@generic T: UIToolkit.ListData.Base
+---@param data T
+---@return UTKTooltips.Tooltip?
+---@diagnostic disable-next-line: unused-local
+function ListItemBase:getTooltip(data)
+    return nil
+end
+
 ---@param data UIToolkit.ListData.Base
 ---@param size openmw.util.Vector2
 ---@return openmw.ui.Element, boolean
@@ -39,6 +47,17 @@ function ListItemBase:getView(data, size)
     end
 
     return cached.component.element, changed
+end
+
+---@param id string
+---@return openmw.ui.Element|nil
+function ListItemBase:getCachedView(id)
+    local cached = self.cache[id]
+    if not cached or not cached.component or cached.component:isDestroyed() then
+        return nil
+    end
+
+    return cached.component.element
 end
 
 ---@param id string
