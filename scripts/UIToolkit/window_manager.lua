@@ -33,11 +33,12 @@ local function toAbsolute(c)
 end
 
 ---@param id string
+---@param data any?
 ---@return UIToolkit.Window
-function M.open(id)
-    local data = assert(windows[id])
-    if data.wnd ~= nil then return data.wnd end
-    local opts = assert(data.opts)
+function M.open(id, data)
+    local cfg = assert(windows[id])
+    if cfg.wnd ~= nil then return cfg.wnd end
+    local opts = assert(cfg.opts)
 
     ---@type UIToolkit.WindowSaveData
     local saved = section:get(id)
@@ -51,7 +52,7 @@ function M.open(id)
     local handler = opts.handler
     if handler then
         --TODO: load custom window state
-        handler:onOpened(wnd)
+        handler:onOpened(wnd, data)
     end
     return wnd
 end

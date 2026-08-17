@@ -166,7 +166,7 @@ function Components.itemList(opts) end
 
 ---@class UIToolkit.WindowManager
 ---@field register fun(id: string, opts: UIToolkit.WindowOpts)
----@field open fun(id: string):UIToolkit.Window
+---@field open fun(id: string, data:any?):UIToolkit.Window
 ---@field close fun(id: string)
 ---@field isOpen fun(id: string):boolean
 
@@ -187,7 +187,7 @@ function Components.itemList(opts) end
 ---@field size openmw.util.Vector2
 
 ---@class UIToolkit.WindowHandler
----@field onOpened fun(self:UIToolkit.WindowHandler, wnd:UIToolkit.Window)
+---@field onOpened fun(self:UIToolkit.WindowHandler, wnd:UIToolkit.Window, data:any?)
 ---@field onClosed fun(self:UIToolkit.WindowHandler)
 ---@field onResized fun(self:UIToolkit.WindowHandler, innerSize:openmw.util.Vector2)
 
