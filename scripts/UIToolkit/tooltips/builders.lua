@@ -560,24 +560,22 @@ end
 
 function Builders.value(item)
     local theme = I.UIToolkit.getTheme()
-    return fallbackGap {
-        type = ui.TYPE.Flex,
-        props = {
-            horizontal = true,
-            gap = theme.Sizes.smallGap,
-        },
+    return {
+        type = ui.TYPE.Container,
+        props = {},
         content = ui.content {
             {
                 type = ui.TYPE.Image,
                 props = {
                     resource = ui.texture { path = item.image },
-                    size = util.vector2(1, 1) * theme.Sizes.textHeader
+                    size = V2(1, 1) * theme.Sizes.textHeader,
                 }
             },
             {
                 template = T.Base.header(),
                 props = {
                     text = tostring(item.value),
+                    position = V2(theme.Sizes.textHeader + theme.Sizes.smallGap, 0)
                 },
             }
         }
