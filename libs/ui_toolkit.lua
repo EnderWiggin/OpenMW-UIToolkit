@@ -173,7 +173,7 @@ function Components.itemList(opts) end
 
 ---@class UIToolkit.WindowOpts
 ---@field title string
----@field handler UIToolkit.WindowHandler
+---@field handler UIToolkit.WindowHandler|fun():UIToolkit.WindowHandler if it is a function - it will be called each time the window opens
 ---@field pinnable boolean?
 ---@field pinned boolean?
 ---@field position openmw.util.Vector2?

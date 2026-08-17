@@ -568,21 +568,21 @@ function Window:init(opts, saved)
         I.UIToolkit.queueUpdate(body)
     end
 
-    self.getPosition = function()
+    self.getPosition = function(_)
         return window.layout.props.position
     end
 
-    self.getSize = function()
+    self.getSize = function(_)
         return window.layout.props.size
     end
 
-    self.getInnerSize = function()
+    self.getInnerSize = function(_)
         local sz = window.layout.props.size
         local borders = 4 * BORDER_THICKNESS_THICK
         return util.vector2(sz.x - borders, sz.y - borders - HEADER_HEIGHT)
     end
 
-    self.setTitle = function(newTitle)
+    self.setTitle = function(_, newTitle)
         title.props.text = newTitle
         header:update()
     end
@@ -591,7 +591,7 @@ function Window:init(opts, saved)
         return data.pinned == true
     end
 
-    self.setPinnable = function(pinnable)
+    self.setPinnable = function(_, pinnable)
         data.pinnable = pinnable
         if pinnable then
             pinButton.layout.props.visible = true
@@ -602,7 +602,7 @@ function Window:init(opts, saved)
         end
     end
 
-    self.setMinSize = function(minSz)
+    self.setMinSize = function(_, minSz)
         if data.minSize == minSz then return end
         data.minSize = minSz or MIN_SZ
         --TODO: update size if smaller?

@@ -4,6 +4,7 @@ local ui = require('openmw.ui')
 local util = require('openmw.util')
 local I = require('openmw.interfaces')
 local section = require('openmw.storage').playerSection('UIToolkit:WindowData')
+local H = require('scripts.UIToolkit.helpers')
 
 local Window = require('scripts.UIToolkit.components.window')
 
@@ -11,7 +12,7 @@ local Window = require('scripts.UIToolkit.components.window')
 ---@class UIToolkit.WindowManager
 local M = {}
 
----@type table<string, {opts:UIToolkit.WindowOpts, wnd:UIToolkit.Window?}>
+---@type table<string, {opts:UIToolkit.WindowOpts, wnd:UIToolkit.Window?, handler: UIToolkit.WindowHandler?}>
 local windows = {}
 
 ---@param id string
@@ -38,7 +39,11 @@ end
 function M.open(id, data)
     local cfg = assert(windows[id])
     if cfg.wnd ~= nil then return cfg.wnd end
-    local opts = assert(cfg.opts)
+    local opts = H.shallowCopy(assert(cfg.opts))
+    local handler = opts.handler
+    if type(handler) == 'function' then handler = handler() end
+    windows[id].handler = handler
+    opts.handler = handler
 
     ---@type UIToolkit.WindowSaveData
     local saved = section:get(id)
@@ -49,7 +54,6 @@ function M.open(id, data)
         size = toAbsolute(saved.size),
     } or nil)
     windows[id].wnd = wnd
-    local handler = opts.handler
     if handler then
         --TODO: load custom window state
         handler:onOpened(wnd, data)
@@ -83,8 +87,9 @@ function M.close(id)
     section:set(id, saved)
     data.wnd = nil
     I.UIToolkit.queueDestroy(wnd.element, true)
-    local handler = data.opts.handler
+    local handler = data.handler
     if handler then handler:onClosed() end
+    data.handler = nil
 end
 
 ---@param id string
