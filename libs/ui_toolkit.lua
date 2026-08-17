@@ -281,6 +281,7 @@ function Components.itemList(opts) end
 ---|'progressBar' # A progress bar, filled up to 'current' out of 'max'
 ---|'root' # Another @{#Recipe} instance
 ---|'spellList' # Takes a list of spells and outputs a list spells divided by type (Spell, Ability, Power, etc.)
+---|'value' # renders as an item.image + item.value
 
 --- Table defining a single recipe item, to form one entry in the final tooltip
 -- Required/ignored fields depend on the recipe item type.
@@ -304,6 +305,7 @@ function Components.itemList(opts) end
 ---@field spells string[]? (used in magicEffects) List of spell record IDs, used by the spellList recipe
 ---@field faction string? (used in faction) Faction ID. Used by the faction recipes
 ---@field rank number? (used in faction) Faction rank. Used by the faction recipes. Note that NextRank recipes use the passed in rank as-is, so the current rank + 1 should be passed in the recipe.
+---@field width number? (used in paragraph and header's subtitle) overridesaragraph width.
 
 --- Table of information defining a tooltip recipe
 ---@class UTKTooltips.Recipe

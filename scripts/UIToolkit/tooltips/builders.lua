@@ -50,13 +50,17 @@ local function textNormal(text, name)
     }
 end
 
-local function textParagraph(text, name)
+---@param text string
+---@param name string?
+---@param width number?
+---@return openmw.ui.Layout
+local function textParagraph(text, name, width)
     return {
         template = I.MWUI.templates.textParagraph,
         name = name,
         props = {
             text = text,
-            size = V2(400, 0),
+            size = V2(width or 400, 0),
         }
     }
 end
@@ -361,6 +365,7 @@ function Builders.gap(item)
     }
 end
 
+---@param item UTKTooltips.RecipeItem
 function Builders.header(item)
     local title = item.title
     local subtitle = item.subtitle
@@ -388,7 +393,7 @@ function Builders.header(item)
         textContent:add(textHeader(title, 'Title'))
     end
     if subtitle then
-        textContent:add(textParagraph(subtitle, 'Subtitle'))
+        textContent:add(textParagraph(subtitle, 'Subtitle', item.width))
     end
     local theme = I.UIToolkit.getTheme()
     return fallbackGap {
@@ -441,7 +446,7 @@ end
 
 function Builders.paragraph(item)
     assert(item.text ~= nil)
-    return textParagraph(item.text)
+    return textParagraph(item.text, nil, item.width)
 end
 
 function Builders.progressBar(item)
@@ -551,6 +556,32 @@ end
 function Builders.text(item)
     assert(item.text ~= nil)
     return textNormal(item.text)
+end
+
+function Builders.value(item)
+    local theme = I.UIToolkit.getTheme()
+    return fallbackGap {
+        type = ui.TYPE.Flex,
+        props = {
+            horizontal = true,
+            gap = theme.Sizes.smallGap,
+        },
+        content = ui.content {
+            {
+                type = ui.TYPE.Image,
+                props = {
+                    resource = ui.texture { path = item.image },
+                    size = util.vector2(1, 1) * theme.Sizes.textHeader
+                }
+            },
+            {
+                template = T.Base.header(),
+                props = {
+                    text = tostring(item.value),
+                },
+            }
+        }
+    }
 end
 
 function Builders.default(item)
