@@ -6,13 +6,10 @@ local auxUi = require('openmw_aux.ui')
 local async = require('openmw.async')
 local ambient = require('openmw.ambient')
 
-local omwConstants = require('scripts.omw.mwui.constants')
 local I = require('openmw.interfaces')
 local Class = require('scripts.UIToolkit.class')
 local Component = require('scripts.UIToolkit.components.component')
-local T = {
-    Base = require('scripts.UIToolkit.templates.base'),
-}
+local T = require('scripts.UIToolkit.templates.base')
 
 local v2 = util.vector2
 
@@ -21,8 +18,6 @@ local Window = Class(Component)
 
 local MIN_SZ = v2(150, 90)
 local HEADER_HEIGHT = 20
-local BORDER_THICKNESS = omwConstants.border
-local BORDER_THICKNESS_THICK = omwConstants.thickBorder
 
 local borderSideParts = {
     left = v2(0, 0),
@@ -76,7 +71,8 @@ for _, thickness in ipairs { 'thin', 'thick' } do
 end
 
 local function borderTemplates(thickness)
-    local borderSize = (thickness == 'thin') and omwConstants.border or omwConstants.thickBorder
+    local theme = I.UIToolkit.getTheme()
+    local borderSize = (thickness == 'thin') and theme.Sizes.border or theme.Sizes.thickBorder
     local borderV = v2(1, 1) * borderSize
     local result = {}
 
@@ -274,8 +270,15 @@ local function makePinButton(pinned, onPinChanged)
     return element
 end
 
-local bordersDraggable = borderTemplates('thin').bordersDraggable
-local bordersDraggableThick = borderTemplates('thick').bordersDraggable
+--local bordersDraggable = borderTemplates('thin').bordersDraggable
+
+local _bordersDraggableThick
+local function bordersDraggableThick()
+    if not _bordersDraggableThick then
+        _bordersDraggableThick = borderTemplates('thick').bordersDraggable
+    end
+    return _bordersDraggableThick
+end
 
 ---@enum DragType
 local DragType = {
@@ -356,6 +359,7 @@ function Window:init(opts, saved)
     local position = saved and saved.position or opts.position or v2(0, 0)
     local size = saved and saved.size or opts.size or minSize
 
+    self._borderThickness = I.UIToolkit.getTheme().Sizes.thickBorder
     ---@type openmw.ui.Template
     local baseTemplate = I.MWUI.templates.bordersThick
     local data = {
@@ -372,11 +376,11 @@ function Window:init(opts, saved)
     end
 
     if draggable then
-        baseTemplate = makeDraggable(bordersDraggableThick, setDragType, noResize)
+        baseTemplate = makeDraggable(bordersDraggableThick(), setDragType, noResize)
     end
     local title = {
         name = 'title',
-        template = T.Base.text(),
+        template = T.text(),
         props = {
             text = opts.title,
             textSize = theme.Sizes.textHeader,
@@ -393,9 +397,9 @@ function Window:init(opts, saved)
         },
         content = ui.content {
             headerSection,
-            T.Base.intervalH(8),
+            T.intervalH(8),
             title,
-            T.Base.intervalH(8),
+            T.intervalH(8),
             headerSection,
         },
         events = {
@@ -578,7 +582,7 @@ function Window:init(opts, saved)
 
     self.getInnerSize = function(_)
         local sz = window.layout.props.size
-        local borders = 4 * BORDER_THICKNESS_THICK
+        local borders = 4 * self._borderThickness
         return util.vector2(sz.x - borders, sz.y - borders - HEADER_HEIGHT)
     end
 

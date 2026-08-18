@@ -1,20 +1,11 @@
 ---@omw-context player
 
-local core = require('openmw.core')
 local ui = require('openmw.ui')
-local storage = require('openmw.storage')
-local util = require('openmw.util')
 local auxUi = require('openmw_aux.ui')
-local input = require('openmw.input')
-
-local I = require('openmw.interfaces')
-local v2 = util.vector2
 
 local Theme = require('scripts.UIToolkit.themes.theme')
 
 local theme = Theme:new()
-local sizes = theme.Sizes
-local colors = theme.Colors
 
 local ctx = {
     ---@type table<openmw.ui.Element, boolean>
@@ -25,44 +16,15 @@ local ctx = {
     focusedScrollable = nil,
 }
 
-local Buttons = require('scripts.UIToolkit.components.buttons')
-local TextEdit = require('scripts.UIToolkit.components.text_edit')
-local ScrollBar = require('scripts.UIToolkit.components.scroll_bar')
-local ItemList = require('scripts.UIToolkit.components.item_list')
-
 ---@class openmw.interfaces.UIToolkit
 local Interface = {
     version = 1,
+    ---@type UIToolkit.Templates
+    Templates = require('scripts.UIToolkit.templates.base'),
     ---@type UIToolkit.Interactive
     Interactive = require('scripts.UIToolkit.templates.interactive'),
     ---@type UIToolkit.Components
-    Components = {
-        textButton = Buttons.textButton,
-
-        ---@param opts UIToolkit.TextEditOpts
-        ---@return UIToolkit.TextEdit
-        textEdit = function(opts)
-            local edit = TextEdit:new()
-            edit:init(opts)
-            return edit
-        end,
-
-        ---@param opts UIToolkit.ScrollBarOpts
-        ---@return UIToolkit.ScrollBar
-        scrollBar = function(opts)
-            local scroll = ScrollBar:new()
-            scroll:init(opts)
-            return scroll
-        end,
-
-        ---@param opts UIToolkit.ItemListOpts
-        ---@return UIToolkit.ItemList
-        itemList = function(opts)
-            local list = ItemList:new()
-            list:init(opts)
-            return list
-        end,
-    },
+    Components = require('scripts.UIToolkit.components.all_components'),
     WindowManager = require('scripts.UIToolkit.window_manager'),
 }
 

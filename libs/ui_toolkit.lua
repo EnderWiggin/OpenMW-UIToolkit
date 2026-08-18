@@ -14,6 +14,7 @@
 ---@field queueUpdate fun(element:openmw.ui.Element, deep:boolean?) queues element to be updated on next frame
 ---@field queueDestroy fun(element:openmw.ui.Element, deep:boolean) queues element to be destroyed on next frame
 ---@field texture fun(path:string, size:openmw.util.Vector2?, offset:openmw.util.Vector2?):openmw.ui.TextureResource
+---@field Templates UIToolkit.Templates
 ---@field Interactive UIToolkit.Interactive
 ---@field Components UIToolkit.Components
 ---@field WindowManager UIToolkit.WindowManager
@@ -210,6 +211,44 @@ function Components.itemList(opts) end
 ---@field hoverColor openmw.util.Color?
 ---@field baseColor openmw.util.Color?
 
+---@class UIToolkit.Templates
+---@field boxSolid openmw.ui.Template
+---@field boxSolidThick openmw.ui.Template
+local M = {}
+
+---@return openmw.ui.Template
+function M.text() end
+
+---@return openmw.ui.Template
+function M.header() end
+
+---@return openmw.ui.Template
+function M.paragraph() end
+
+---@return openmw.ui.Template
+function M.editLine() end
+
+---@return openmw.ui.Template
+function M.editBox() end
+
+---@param padX number
+---@param padY number?
+---@return openmw.ui.Template
+function M.padding(padX, padY) end
+
+---@return openmw.ui.Layout
+function M.intervalH(size) end
+
+---@return openmw.ui.Layout
+function M.intervalV(size) end
+
+---@return openmw.ui.TextureResource
+function M.effectIconTexture(effectId) end
+
+---@param bgrAlpha number
+---@return openmw.ui.Template
+function M.buttonBoxBgr(bgrAlpha) end
+
 ---@class UIToolkit.Theme.Colors
 ---@field DEFAULT openmw.util.Color
 ---@field DEFAULT_LIGHT openmw.util.Color
@@ -306,7 +345,8 @@ function Components.itemList(opts) end
 ---@field spells string[]? (used in magicEffects) List of spell record IDs, used by the spellList recipe
 ---@field faction string? (used in faction) Faction ID. Used by the faction recipes
 ---@field rank number? (used in faction) Faction rank. Used by the faction recipes. Note that NextRank recipes use the passed in rank as-is, so the current rank + 1 should be passed in the recipe.
----@field width number? (used in paragraph and header's subtitle) overridesaragraph width.
+---@field width number? (used in paragraph and header's subtitle) overrides paragraph width.
+---@field iconSize openmw.util.Vector2? (used in heder) overrides icon size.
 
 --- Table of information defining a tooltip recipe
 ---@class UTKTooltips.Recipe

@@ -3,7 +3,6 @@
 local ui = require('openmw.ui')
 local util = require('openmw.util')
 local async = require('openmw.async')
-local omwConstants = require('scripts.omw.mwui.constants')
 local I = require('openmw.interfaces')
 
 local v2 = util.vector2

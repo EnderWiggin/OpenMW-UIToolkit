@@ -8,7 +8,7 @@ local function colorFromGMST(gmst)
     return util.color.commaString(core.getGMST(gmst))
 end
 
----@class Colors
+---@class UIToolkit.Theme.Colors
 local Colors = {
     DEFAULT = colorFromGMST('fontcolor_color_normal'),
     DEFAULT_LIGHT = colorFromGMST('fontcolor_color_normal_over'),

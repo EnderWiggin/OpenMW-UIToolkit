@@ -1,0 +1,37 @@
+---@omw-context player
+
+local Buttons = require('scripts.UIToolkit.components.buttons')
+local TextEdit = require('scripts.UIToolkit.components.text_edit')
+local ScrollBar = require('scripts.UIToolkit.components.scroll_bar')
+local ItemList = require('scripts.UIToolkit.components.item_list')
+
+local M = {}
+
+M.textButton = Buttons.textButton
+
+---@param opts UIToolkit.TextEditOpts
+---@return UIToolkit.TextEdit
+M.textEdit = function(opts)
+    local edit = TextEdit:new()
+    edit:init(opts)
+    return edit
+end
+
+---@param opts UIToolkit.ScrollBarOpts
+---@return UIToolkit.ScrollBar
+M.scrollBar = function(opts)
+    local scroll = ScrollBar:new()
+    scroll:init(opts)
+    return scroll
+end
+
+---@param opts UIToolkit.ItemListOpts
+---@return UIToolkit.ItemList
+M.itemList = function(opts)
+    local list = ItemList:new()
+    list:init(opts)
+    return list
+end
+
+---@cast M UIToolkit.Components
+return M

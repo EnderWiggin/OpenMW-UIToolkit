@@ -3,9 +3,11 @@
 local omwConstants = require('scripts.omw.mwui.constants')
 
 
----@class Sizes
+---@class UIToolkit.Theme.Sizes
 local Sizes = {
+    ---@type number
     textNormal = omwConstants.textNormalSize,
+    ---@type number
     textHeader = omwConstants.textHeaderSize,
     border = 2,
     thickBorder = 4,

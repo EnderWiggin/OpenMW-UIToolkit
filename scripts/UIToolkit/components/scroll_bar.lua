@@ -4,16 +4,13 @@ local ui = require('openmw.ui')
 local util = require('openmw.util')
 local ambient = require('openmw.ambient')
 local async = require('openmw.async')
-local omwConstants = require('scripts.omw.mwui.constants')
 local I = require('openmw.interfaces')
 
 local v2 = util.vector2
 local Class = require('scripts.UIToolkit.class')
 local Component = require('scripts.UIToolkit.components.component')
 
-local T = {
-    Base = require('scripts.UIToolkit.templates.base'),
-}
+local T = require('scripts.UIToolkit.templates.base')
 
 local WIDTH = 14
 
@@ -28,10 +25,11 @@ local SCROLL_TEX_H = ui.texture { path = 'textures/omw_menu_scroll_center_h.dds'
 ---@param bar UIToolkit.ScrollBar
 ---@return openmw.util.Vector2
 local function calcScrollBarSize(bar)
+    local padding = I.UIToolkit.getTheme().Sizes.padding
     if bar.horizontal then
-        return v2(bar.length - ((WIDTH + omwConstants.padding) * 2), WIDTH)
+        return v2(bar.length - ((WIDTH + padding) * 2), WIDTH)
     end
-    return v2(WIDTH, bar.length - ((WIDTH + omwConstants.padding) * 2))
+    return v2(WIDTH, bar.length - ((WIDTH + padding) * 2))
 end
 
 ---@class UIToolkit.ScrollBar : UIToolkit.Component
@@ -75,9 +73,10 @@ function ScrollBar:init(opts)
 
     ---@param this UIToolkit.ScrollBar
     function self._onScrolled(this)
+        local padding = I.UIToolkit.getTheme().Sizes.padding
         local progress = this:getProgress()
-        local handleSz = self.horizontal and handleProps.size.x or handleProps.size.y
-        local handlePos = (this.length - ((WIDTH + omwConstants.padding) * 2) - handleSz - 4) * progress
+        local hsz = self.horizontal and handleProps.size.x or handleProps.size.y
+        local handlePos = (this.length - ((WIDTH + padding) * 2) - hsz - 4) * progress
         handleProps.position = self.horizontal and v2(handlePos, 0) or v2(0, handlePos)
 
         I.UIToolkit.queueUpdate(barWrapper)
@@ -186,6 +185,7 @@ function ScrollBar:init(opts)
             end),
         }
     }
+    local padding = I.UIToolkit.getTheme().Sizes.padding
 
     barWrapper = ui.create {
         type = ui.TYPE.Flex,
@@ -197,9 +197,9 @@ function ScrollBar:init(opts)
         --but don't forget to reposition them on size change
         content = ui.content {
             upButton,
-            T.Base.intervalV(omwConstants.padding),
+            T.intervalV(padding),
             scrollBar,
-            T.Base.intervalV(omwConstants.padding),
+            T.intervalV(padding),
             downButton,
         }
     }

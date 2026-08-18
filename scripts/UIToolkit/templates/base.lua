@@ -4,8 +4,6 @@ local ui = require('openmw.ui')
 local auxUi = require('openmw_aux.ui')
 local util = require('openmw.util')
 local I = require('openmw.interfaces')
-local async = require('openmw.async')
-local ambient = require('openmw.ambient')
 
 local v2 = util.vector2
 local H = require('scripts.UIToolkit.helpers')
@@ -63,6 +61,65 @@ end
 ---@return openmw.ui.Template
 function M.header()
     return GetCachedOrCalculate('header', header)
+end
+
+local function paragraph()
+    local theme = I.UIToolkit.getTheme()
+    return {
+        type = ui.TYPE.TextEdit,
+        props = {
+            textSize = theme.Sizes.textNormal,
+            textColor = theme.Colors.DEFAULT,
+            autoSize = true,
+            readOnly = true,
+            multiline = true,
+            wordWrap = true,
+            size = v2(100, 0),
+        },
+    }
+end
+
+---@return openmw.ui.Template
+function M.paragraph()
+    return GetCachedOrCalculate('paragraph', paragraph)
+end
+
+local function editLine()
+    local theme = I.UIToolkit.getTheme()
+    return {
+        type = ui.TYPE.TextEdit,
+        props = {
+            size = util.vector2(150, 0),
+            autoSize = true,
+            textSize = theme.Sizes.textNormal,
+            textColor = theme.Colors.DEFAULT,
+            multiline = false,
+        },
+    }
+end
+
+---@return openmw.ui.Template
+function M.editLine()
+    return GetCachedOrCalculate('editLine', editLine)
+end
+
+local function editBox()
+    local theme = I.UIToolkit.getTheme()
+    return {
+        type = ui.TYPE.TextEdit,
+        props = {
+            size = util.vector2(150, 5 * theme.Sizes.textNormal),
+            textSize = theme.Sizes.textNormal,
+            textColor = theme.Colors.DEFAULT,
+            multiline = true,
+            wordWrap = true,
+        },
+    }
+end
+
+---@return openmw.ui.Template
+function M.editBox()
+    return GetCachedOrCalculate('editBox', editBox)
 end
 
 M.textNormal = H.deepCopy(I.MWUI.templates.textNormal)
@@ -280,5 +337,5 @@ end
 
 ------------------------
 
-
+---@cast M UIToolkit.Templates
 return M

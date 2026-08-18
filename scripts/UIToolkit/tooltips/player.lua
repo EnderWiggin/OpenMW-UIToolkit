@@ -9,9 +9,7 @@ local core = require('openmw.core')
 local self = require('openmw.self')
 local helpers = require('scripts.UIToolkit.tooltips.utils')
 local Tooltips = require('scripts.UIToolkit.tooltips.tooltips')
-local T = {
-    Base = require('scripts.UIToolkit.templates.base'),
-}
+local T = require('scripts.UIToolkit.templates.base')
 
 local tooltipElement = ui.create {
     type = ui.TYPE.Container,
@@ -103,7 +101,7 @@ local function isAllowedToUse(obj, actor)
         return false
     end
 
-    return obj.recordid ~= 'stolen_goods'
+    return obj.recordId ~= 'stolen_goods'
 end
 
 local objectType = {
@@ -179,7 +177,7 @@ local function createTooltipLayout(tooltip)
         layout = {
             template = template,
             content = ui.content { {
-                template = T.Base.padding(8),
+                template = T.padding(8),
                 content = ui.content { layout }
             } },
             props = {},

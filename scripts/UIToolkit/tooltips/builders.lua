@@ -10,9 +10,7 @@ local hasGapAPI = core.API_REVISION >= 132
 
 -- Short-hands
 local V2 = util.vector2
-local T = {
-    Base = require('scripts.UIToolkit.templates.base'),
-}
+local T = require('scripts.UIToolkit.templates.base')
 local Builders = {}
 
 local resources =
@@ -103,7 +101,7 @@ local function effectDescription(content, effect, noTarget, noMagnitude, noDurat
     local mgef = effect.effect
     local tex = ui.texture { path = mgef.icon }
     local icon = {
-        template = T.Base.padding(4),
+        template = T.padding(4),
         content = ui.content { {
             type = ui.TYPE.Image,
             props = {
@@ -168,7 +166,7 @@ local function fallbackGap(layout)
         local gap = layout.props and layout.props.gap
         if gap and (layout.type == ui.TYPE.Flex or layout.template and layout.template.type == ui.TYPE.Flex) then
             layout.props.gap = nil
-            local interval = layout.props.horizontal and T.Base.intervalH(gap) or T.Base.intervalV(gap)
+            local interval = layout.props.horizontal and T.intervalH(gap) or T.intervalV(gap)
             local newContent = ui.content {}
             for i = 1, #content do
                 if i > 1 then
@@ -572,7 +570,7 @@ function Builders.value(item)
                 }
             },
             {
-                template = T.Base.header(),
+                template = T.header(),
                 props = {
                     text = tostring(item.value),
                     position = V2(theme.Sizes.textHeader + theme.Sizes.smallGap, 0)
