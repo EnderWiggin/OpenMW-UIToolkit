@@ -88,6 +88,7 @@ function Components.itemList(opts) end
 ---@field init fun(self:UIToolkit.Component, element:openmw.ui.Element)
 ---@field isDestroyed fun(self:UIToolkit.Component):boolean
 ---@field element openmw.ui.Element
+---@field visible fun(self:UIToolkit.Component, value: boolean?):boolean|nil  If value is set - will update visibility of the control. Returns visible flag. If element is destroyed - returns nil.
 ---@field active fun(self:UIToolkit.Component, value: boolean?):boolean|nil  If value is set - will update active state of the control. Returns active flag. If element is destroyed - returns nil.
 ---@field disabled fun(self:UIToolkit.Component, value: boolean?):boolean|nil  If value is set - will update disabled state of the control. Returns disabled flag. If element is destroyed - returns nil.
 
@@ -106,12 +107,12 @@ function Components.itemList(opts) end
 
 ---@generic T
 ---@class UIToolkit.TextEditOpts<T>
----@field default T|fun():T|nil
+---@field default? T|fun():T|nil
 ---@field textSize number?
 ---@field textAlignH openmw.ui.ALIGNMENT?
 ---@field textColorNormal openmw.util.Color? defaults to DEFAULT_LIGHT
 ---@field textColorPlaceholder openmw.util.Color? defaults to DISABLED
----@field placeholder string|fun():string|nil will be shown when edit is not in focus and text is empty
+---@field placeholder? string|fun():string will be shown when edit is not in focus and text is empty
 ---@field validate? fun(text:string|T|nil):boolean,T
 ---@field onValueChanged? fun() will be called when entered value is changed
 ---@field width number? defaults to 200
@@ -151,6 +152,8 @@ function Components.itemList(opts) end
 
 ---@generic T: UIToolkit.ListData.Base
 ---@class UIToolkit.ListItem.Base<T>
+---@field getComponent fun(self:UIToolkit.ListItem.Base<T>, data:T, size:openmw.util.Vector2):UIToolkit.Component, boolean
+---@field getCachedComponent fun(self:UIToolkit.ListItem.Base<T>, id:string):UIToolkit.Component?
 ---@field makeComponent fun(self:UIToolkit.ListItem.Base<T>, data:T, size:openmw.util.Vector2):UIToolkit.Component
 ---@field getTooltip fun(self:UIToolkit.ListItem.Base<T>, data:T):UTKTooltips.Tooltip
 
@@ -160,10 +163,12 @@ function Components.itemList(opts) end
 ---@field itemHeight number
 ---@field hasBorder boolean?
 ---@field provider T
+---@field onItemClicked fun(data:T, idx:integer)
 
 ---@class UIToolkit.ItemList : UIToolkit.Component
 ---@field new fun():UIToolkit.ItemList
 ---@field init fun(self:UIToolkit.ItemList, opts:UIToolkit.ItemListOpts)
+---@field getItems fun(self:UIToolkit.ItemList):UIToolkit.ListData.Base[]
 ---@field setItems fun(self:UIToolkit.ItemList, items:UIToolkit.ListData.Base[])
 ---@field setSize fun(self:UIToolkit.ItemList, size:openmw.util.Vector2)
 
@@ -214,40 +219,45 @@ function Components.itemList(opts) end
 ---@class UIToolkit.Templates
 ---@field boxSolid openmw.ui.Template
 ---@field boxSolidThick openmw.ui.Template
-local M = {}
+local Templates = {}
 
 ---@return openmw.ui.Template
-function M.text() end
+function Templates.text() end
 
 ---@return openmw.ui.Template
-function M.header() end
+function Templates.header() end
 
 ---@return openmw.ui.Template
-function M.paragraph() end
+function Templates.paragraph() end
 
 ---@return openmw.ui.Template
-function M.editLine() end
+function Templates.editLine() end
 
 ---@return openmw.ui.Template
-function M.editBox() end
+function Templates.editBox() end
 
 ---@param padX number
 ---@param padY number?
 ---@return openmw.ui.Template
-function M.padding(padX, padY) end
+function Templates.padding(padX, padY) end
 
 ---@return openmw.ui.Layout
-function M.intervalH(size) end
+function Templates.intervalH(size) end
 
 ---@return openmw.ui.Layout
-function M.intervalV(size) end
+function Templates.intervalV(size) end
 
 ---@return openmw.ui.TextureResource
-function M.effectIconTexture(effectId) end
+function Templates.effectIconTexture(effectId) end
+
+---@param effectId string
+---@param sz number
+---@return openmw.ui.Layout
+function Templates.effectIcon(effectId, sz) end
 
 ---@param bgrAlpha number
 ---@return openmw.ui.Template
-function M.buttonBoxBgr(bgrAlpha) end
+function Templates.buttonBoxBgr(bgrAlpha) end
 
 ---@class UIToolkit.Theme.Colors
 ---@field DEFAULT openmw.util.Color

@@ -190,6 +190,20 @@ function M.effectIconTexture(effectId)
     return effectRecord and I.UIToolkit.texture(effectRecord.icon)
 end
 
+---@param effectId string
+---@param sz number
+---@return openmw.ui.Layout
+function M.effectIcon(effectId, sz)
+    local layout = {
+        type = ui.TYPE.Image,
+        props = {
+            size = v2(1, 1) * sz,
+            resource = M.effectIconTexture(effectId),
+        },
+    }
+    return layout
+end
+
 --- BUTTON TEMPLATES ---
 
 local buttonBorderSize = 4

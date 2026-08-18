@@ -2,7 +2,6 @@
 
 local ui = require('openmw.ui')
 local util = require('openmw.util')
-local auxUi = require('openmw_aux.ui')
 local async = require('openmw.async')
 local ambient = require('openmw.ambient')
 local I = require('openmw.interfaces')
@@ -35,6 +34,8 @@ function M.makeInteractive(opts, layoutOrElement)
 
     element.layout.events = element.layout.events or {}
     element.layout.events.mousePress = async:callback(function(e)
+        --TODO: this is temporary, until 0.52, where `ui.mousePosition` would hopefully exist
+        ctx.lastMousePos = e.position
         if e.button ~= 1 then
             return false
         end
@@ -50,6 +51,8 @@ function M.makeInteractive(opts, layoutOrElement)
         return false
     end)
     element.layout.events.mouseRelease = async:callback(function(e)
+        --TODO: this is temporary, until 0.52, where `ui.mousePosition` would hopefully exist
+        ctx.lastMousePos = e.position
         if e.button ~= 1 then
             return false
         end
@@ -86,8 +89,8 @@ function M.makeInteractive(opts, layoutOrElement)
         return true
     end)
     element.layout.events.mouseMove = async:callback(function(e, tgt)
-        ctx.lastMousePos = e
-        .position                     --TODO: this is temporary, until 0.52, where `ui.mousePosition` would hopefully exist
+        --TODO: this is temporary, until 0.52, where `ui.mousePosition` would hopefully exist
+        ctx.lastMousePos = e.position
         if opts.onMouseMove then
             opts.onMouseMove(e, tgt, element)
         end

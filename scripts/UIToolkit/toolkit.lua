@@ -68,6 +68,17 @@ function Interface.texture(path, size, offset)
     return tex
 end
 
+---@return UIToolkit.Scrollable?
+local function getFocusedScrollable()
+    local scrollable = ctx.focusedScrollable
+    if not scrollable then return nil end
+    if scrollable:isDestroyed() or not scrollable:visible() then
+        ctx.focusedScrollable = nil
+        return nil
+    end
+    return scrollable
+end
+
 local function onFrame()
     if ctx.focusedInteractiveDelayed ~= nil then
         if ctx.focusedInteractiveDelayed == false then
@@ -98,9 +109,8 @@ local function onFrame()
 end
 
 local function onMouseWheel(v)
-    local scrollable = ctx.focusedScrollable
+    local scrollable = getFocusedScrollable()
     if not scrollable then return end
-    if scrollable:isDestroyed() then return end
     scrollable:onMouseScrolled(v)
 end
 

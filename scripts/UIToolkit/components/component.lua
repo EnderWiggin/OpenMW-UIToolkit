@@ -18,6 +18,22 @@ end
 --- If value is set - will update active state of the control
 ---@param value boolean?
 ---@return boolean|nil --Returns active flag. If control is destroyed - returns nil.
+function Component:visible(value)
+    if self:isDestroyed() then return nil end
+    local props = self.element.layout.props
+    if value ~= nil then
+        props = props or {}
+        props.visible = value
+        self.element.layout.props = props
+        I.UIToolkit.queueUpdate(self.element)
+    end
+
+    return props == nil or props.visible ~= false
+end
+
+--- If value is set - will update active state of the control
+---@param value boolean?
+---@return boolean|nil --Returns active flag. If control is destroyed - returns nil.
 function Component:active(value)
     if self:isDestroyed() then return nil end
 

@@ -3,6 +3,7 @@
 local ui = require('openmw.ui')
 local util = require('openmw.util')
 local async = require('openmw.async')
+local ambient = require('openmw.ambient')
 local I = require('openmw.interfaces')
 
 local v2 = util.vector2
@@ -19,7 +20,7 @@ local ItemList = Class(Scrollable)
 ---@param opts UIToolkit.ItemListOpts
 function ItemList:init(opts)
     local size = opts.size
-
+    local onClicked = opts.onItemClicked
 
     local state = {
         ---@type UIToolkit.ListData.Base[]
@@ -57,6 +58,23 @@ function ItemList:init(opts)
             size = v2(0, 0),
         },
         events = {
+            ---@param e openmw.ui.MouseEvent
+            mousePress = async:callback(function(e)
+                if onClicked then
+                    local idx = self:getIndexByYPos(e.offset.y)
+                    local item = self.state.items[idx]
+                    if item then ambient.playSound('menu click', { scale = false }) end
+                    self.state.lastHoveredPos = e.offset.y - self._scrollBar:getPosition()
+                end
+            end),
+            mouseRelease = async:callback(function(e)
+                if onClicked then
+                    local idx = self:getIndexByYPos(e.offset.y)
+                    local item = self.state.items[idx]
+                    if item then onClicked(item, idx) end
+                    self.state.lastHoveredPos = e.offset.y - self._scrollBar:getPosition()
+                end
+            end),
             ---@param e openmw.ui.MouseEvent
             mouseMove = async:callback(function(e)
                 I.UIToolkit.getCtx().lastMousePos = e.position
@@ -189,15 +207,6 @@ function ItemList:_updateView()
     I.UIToolkit.queueUpdate(self._scrollable)
 end
 
----@param items UIToolkit.ListData.Base[]
-function ItemList:setItems(items)
-    local state = self.state
-    state.items = items
-    state.itemsById = {}
-    self._scrollBar:setMaxScroll(#state.items * state.itemHeight - state.currentSize.y)
-    self:_updateView()
-end
-
 ---@param provider UIToolkit.ListItem.Base
 ---@param id string|nil
 ---@param hovered boolean
@@ -207,6 +216,26 @@ local function setItemHoveredStatus(provider, id, hovered)
     if not view then return end
     I.UIToolkit.Interactive.updateState(view, { hovering = hovered })
     I.UIToolkit.queueUpdate(view)
+end
+
+---@return UIToolkit.ListData.Base[]
+function ItemList:getItems()
+    return self.state.items
+end
+
+---@param items UIToolkit.ListData.Base[]
+function ItemList:setItems(items)
+    local state = self.state
+    if state.hovered then --cleanup previously hovered item - it might be gone in new list
+        local was = state.items[state.hovered]
+        setItemHoveredStatus(state.provider, was and was.id, false)
+        state.hovered = nil
+    end
+    state.items = items
+    state.itemsById = {}
+    self._scrollBar:setMaxScroll(#state.items * state.itemHeight - state.currentSize.y)
+    self:_updateView()
+    self:updateHoveredItem()
 end
 
 ---@param y number
