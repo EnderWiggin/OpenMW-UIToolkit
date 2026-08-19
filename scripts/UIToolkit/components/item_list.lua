@@ -37,7 +37,6 @@ function ItemList:init(opts)
         --parentWindow = opts.parentWindow,
         --hadMouseMoveThisFrame = false,
         --rowCache = {} -- Stores generated row layouts by item ID or index
-        partialView = true,
         ---@type integer|nil
         hovered = nil,
         ---@type openmw.util.Vector2|nil
@@ -92,11 +91,7 @@ function ItemList:init(opts)
     local scroll = I.UIToolkit.Components.scrollBar {
         onScroll = function(position)
             scrollable.layout.props.position = v2(0, -position)
-            if self.state.partialView then
-                self:_updateView()
-            else
-                I.UIToolkit.queueUpdate(self._scrollable)
-            end
+            self:_updateScrollable()
         end,
         scrollStep = 2 * state.itemHeight,
         maxScroll = #state.items * state.itemHeight - size.y,
@@ -148,26 +143,23 @@ end
 ---@param n integer
 ---@param id string
 ---@param view openmw.ui.Element
----@param changed boolean
----@param sz openmw.util.Vector2
 ---@return openmw.ui.Element
-function ItemList:_getHolder(n, id, view, changed, sz)
+function ItemList:_getHolder(n, id, view)
     local state = self.state
     local holder = self._holders[n]
-    if holder and holder.element and holder.element.layout then
-        if holder.id == id and not changed then
-            return holder.element
-        end
+    local element = holder and holder.element
+    local layout = element and element.layout
+    if layout then
         holder.id = id
-        local layout = holder.element.layout
-        layout.props.size = sz
-        layout.content = ui.content { view }
-        I.UIToolkit.queueUpdate(holder.element)
+        if layout.content[1] ~= view then
+            layout.content = ui.content { view }
+            I.UIToolkit.queueUpdate(holder.element)
+        end
         return holder.element
     end
-    local element = ui.create {
+    element = ui.create {
+        type = ui.TYPE.Container,
         props = {
-            size = sz,
             position = v2(0, (n - 1) * state.itemHeight),
         },
         content = ui.content { view },
@@ -180,7 +172,6 @@ end
 function ItemList:_getVisibleItemRange()
     local state = self.state
     local total = #state.items
-    if not state.partialView then return 1, total end
     if total == 0 then return 1, 0 end
     local scroll = self._scrollBar:getPosition()
     local from = math.max(math.floor(scroll / state.itemHeight) - 1, 1)
@@ -190,7 +181,7 @@ function ItemList:_getVisibleItemRange()
     return from, to
 end
 
-function ItemList:_updateView()
+function ItemList:_updateScrollable()
     local state = self.state
     local width = self:getContentWidth()
     local sz = v2(width, state.itemHeight)
@@ -199,8 +190,8 @@ function ItemList:_updateView()
     local from, to = self:_getVisibleItemRange()
     for i = from, to do
         local item = state.items[i]
-        local view, changed = state.provider:getView(item, sz)
-        items[#items + 1] = self:_getHolder(i, item.id, view, changed, sz)
+        local view = state.provider:getView(item, sz)
+        items[#items + 1] = self:_getHolder(i, item.id, view)
     end
     layout.props.size = v2(width, #state.items * state.itemHeight)
     layout.content = ui.content(items)
@@ -234,7 +225,7 @@ function ItemList:setItems(items)
     state.items = items
     state.itemsById = {}
     self._scrollBar:setMaxScroll(#state.items * state.itemHeight - state.currentSize.y)
-    self:_updateView()
+    self:_updateScrollable()
     self:updateHoveredItem()
 end
 
@@ -306,10 +297,12 @@ function ItemList:setSize(size)
     scroll.element.layout.props.position = v2(size.x, 0)
     scroll:setLength(size.y)
     scroll:setMaxScroll(#state.items * state.itemHeight - size.y)
+    I.UIToolkit.queueUpdate(scroll.element)
+
     self.element.layout.content[1].props.size = v2(width, size.y)
 
     I.UIToolkit.queueUpdate(self.element)
-    self:_updateView()
+    self:_updateScrollable()
 end
 
 return ItemList

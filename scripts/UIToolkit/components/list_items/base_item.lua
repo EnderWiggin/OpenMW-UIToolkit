@@ -14,9 +14,10 @@ end)
 ---@generic T: UIToolkit.ListData.Base
 ---@param data T
 ---@param size openmw.util.Vector2
+---@param old UIToolkit.Component
 ---@return UIToolkit.Component
 ---@diagnostic disable-next-line: unused-local
-function ListItemBase:makeComponent(data, size)
+function ListItemBase:makeComponent(data, size, old)
     error('Need to implement `makeComponent()`!')
 end
 
@@ -30,28 +31,29 @@ end
 
 ---@param data UIToolkit.ListData.Base
 ---@param size openmw.util.Vector2
----@return openmw.ui.Element, boolean
+---@return openmw.ui.Element
 function ListItemBase:getView(data, size)
-    local component, changed = self:getComponent(data, size)
-    return component.element, changed
+    local component = self:getComponent(data, size)
+    return component.element
 end
 
 ---@param data UIToolkit.ListData.Base
 ---@param size openmw.util.Vector2
----@return UIToolkit.Component, boolean
+---@return UIToolkit.Component
 function ListItemBase:getComponent(data, size)
     local cached = self.cache[data.id]
-    local changed = false
     if not cached or cached.size ~= size or cached.component:isDestroyed() then
-        changed = true
+        local old = cached and cached.component or nil
+        local component
+        component = self:makeComponent(data, size, old)
         cached = {
             size = size,
-            component = self:makeComponent(data, size),
+            component = component,
         }
         self.cache[data.id] = cached
     end
 
-    return cached.component, changed
+    return cached.component
 end
 
 ---@param id string

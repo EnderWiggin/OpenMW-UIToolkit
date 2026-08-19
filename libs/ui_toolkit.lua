@@ -152,9 +152,9 @@ function Components.itemList(opts) end
 
 ---@generic T: UIToolkit.ListData.Base
 ---@class UIToolkit.ListItem.Base<T>
----@field getComponent fun(self:UIToolkit.ListItem.Base<T>, data:T, size:openmw.util.Vector2):UIToolkit.Component, boolean
+---@field getComponent fun(self:UIToolkit.ListItem.Base<T>, data:T, size:openmw.util.Vector2):UIToolkit.Component
 ---@field getCachedComponent fun(self:UIToolkit.ListItem.Base<T>, id:string):UIToolkit.Component?
----@field makeComponent fun(self:UIToolkit.ListItem.Base<T>, data:T, size:openmw.util.Vector2):UIToolkit.Component
+---@field makeComponent fun(self:UIToolkit.ListItem.Base<T>, data:T, size:openmw.util.Vector2,old:UIToolkit.Component):UIToolkit.Component
 ---@field getTooltip fun(self:UIToolkit.ListItem.Base<T>, data:T):UTKTooltips.Tooltip
 
 ---@generic T : UIToolkit.ListItem.Base
