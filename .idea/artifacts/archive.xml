@@ -1,0 +1,21 @@
+<component name="ArtifactManager">
+  <artifact name="archive">
+    <output-path>$PROJECT_DIR$/artifacts/</output-path>
+    <root id="root">
+      <element id="archive" name="UIToolkit.zip">
+        <element id="directory" name="UIToolkit">
+          <element id="directory" name="scripts">
+            <element id="dir-copy" path="$PROJECT_DIR$/scripts" />
+          </element>
+          <element id="directory" name="l10n">
+            <element id="dir-copy" path="$PROJECT_DIR$/l10n" />
+          </element>
+          <element id="directory" name="icons">
+            <element id="dir-copy" path="$PROJECT_DIR$/icons" />
+          </element>
+          <element id="file-copy" path="$PROJECT_DIR$/UIToolkit.omwscripts" />
+        </element>
+      </element>
+    </root>
+  </artifact>
+</component>
