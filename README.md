@@ -23,6 +23,9 @@ Add `colorable = true` to the userData of layout to make it react to the interac
 ## Item List
 `itemList(opts)` - creates a list of items. Uses item provider to get Components representing items. Items can have tooltips.
 
+## Windows
+`I.UIToolkit.WindowManager` handles registering, opening and closing windows. Windows can be draggable, resizable. They store their position and size between opens.
+
 
 # Tooltips
 Taken almost as-is from the [Dehardcode tooltips MR](https://gitlab.com/OpenMW/openmw/-/merge_requests/5336). Only some small tweaks to accommodate for the lack of newer API in 0.51. The idea is to allow modders to play with the dehardcode API before it is released and, hopefully, make transition to it easier when it happens.
