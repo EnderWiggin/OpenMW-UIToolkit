@@ -31,7 +31,10 @@ Add `colorable = true` to the userData of layout to make it react to the interac
 Taken almost as-is from the [Dehardcode tooltips MR](https://gitlab.com/OpenMW/openmw/-/merge_requests/5336). Only some small tweaks to accommodate for the lack of newer API in 0.51. The idea is to allow modders to play with the dehardcode API before it is released and, hopefully, make transition to it easier when it happens.
 
 Unlike the Dehardode MR version, This API cannot replace any existing tooltips but allows creating and displaying custom ones with the same customization API.
-To allow tooltip positioning without `ui.mousePosition()` - interactive elements in this library are storing the last mouse position when hovered, and it is used when positioning tooltips.
+
+To allow tooltip positioning without `ui.mousePosition()` (part of the tooltip dehardoce MR) - interactive elements in this library are storing the last mouse position when hovered, and it is used when positioning tooltips.
+
+To allow tooltips to be automatically hidden when element that spawned it is destroyed, the `setTooltip` accepts `isAlive` function as a second parameter - if it is present and returns false - tooltip will be destroyed. This won't be necessary in the future when `focusLoss` event handler would fire on destruction (see [Issue #9051](https://gitlab.com/OpenMW/openmw/-/work_items/9051) and [MR #5324](https://gitlab.com/OpenMW/openmw/-/merge_requests/5324)).
 
 You can read [Dehardcode tooltips MR docs](https://openmw-vr.readthedocs.io/en/dehardcode-tooltips/reference/lua-scripting/interface_tooltips.html) for more info – most of the API is the same, only replace `I.Tooltips` with `I.UTKTooltips`.
 
@@ -43,6 +46,10 @@ You can read [Dehardcode tooltips MR docs](https://openmw-vr.readthedocs.io/en/d
 - [ ] Add list item provider with columns
 - [ ] Make `Controls` able to subscribe to `onUpdate` event
 - [ ] Settings menu to customize templates
+- [ ] Helper methods to create Tooltip objects for common types of custom tooltips
+  - [ ] Text line
+  - [ ] Text paragraph (with optional title)
+- [ ] Modal popups?
 
 
 # Credits
