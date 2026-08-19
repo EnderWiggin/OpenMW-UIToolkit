@@ -10,6 +10,7 @@ local Class = require('scripts.UIToolkit.class')
 local Component = require('scripts.UIToolkit.components.component')
 
 local REVERT_TEX = ui.texture { path = 'icons/UIToolkit/revert.dds' }
+local PAD = 2
 local T = require('scripts.UIToolkit.templates.base')
 
 ---@generic T
@@ -33,7 +34,7 @@ function TextEdit:init(opts)
     local editTemplate = T.editLine()
     ---@type  fun(text:string|T|nil):boolean,T
     self._validate = opts.validate or validateText
-    ---@type T|fun()
+    ---@type T|fun()|string
     self._default = opts.default or ''
     self._value = self:getDefault()
     self._placeholder = opts.placeholder
@@ -46,6 +47,7 @@ function TextEdit:init(opts)
     ---@type openmw.ui.Element
     local element
     local w, h = opts.width or 200, self._textSize
+    w = w - 2 * PAD
 
     self._editProps = {
         size = v2(w, h),
@@ -96,6 +98,7 @@ function TextEdit:init(opts)
         self._btnProps = {
             size = v2(h, h),
             position = v2(w, 0),
+            anchor = v2(1, 0),
             resource = REVERT_TEX,
             alpha = 0.5,
         }
@@ -123,7 +126,7 @@ function TextEdit:init(opts)
         content = ui.content {
             {
                 name = 'padding',
-                template = I.MWUI.templates.padding,
+                template = I.UIToolkit.Templates.padding(PAD),
                 content = content,
             }
         },
@@ -183,6 +186,7 @@ end
 function TextEdit:setSize(width)
     if self:isDestroyed() then return end
     local w, h = width or 200, self._textSize
+    w = w - 2 * PAD
     self._editProps.size = v2(w, h)
     local deep = false
     if self._btnProps then
