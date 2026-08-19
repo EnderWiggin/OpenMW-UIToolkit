@@ -72,7 +72,12 @@ function ScrollBar:init(opts)
     local barWrapper
 
     ---@param this UIToolkit.ScrollBar
-    function self._onScrolled(this)
+    ---@param position number
+    function self.setPosition(this, position)
+        position = util.clamp(position, 0, self.maxScroll)
+        if position == self.position then return end
+
+        self.position = position
         local padding = I.UIToolkit.getTheme().Sizes.padding
         local progress = this:getProgress()
         local hsz = self.horizontal and handleProps.size.x or handleProps.size.y
@@ -212,12 +217,6 @@ function ScrollBar:getPosition()
     return self.position
 end
 
----@param position number
-function ScrollBar:setPosition(position)
-    self.position = util.clamp(position, 0, self.maxScroll)
-    self:_onScrolled()
-end
-
 ---@return number
 function ScrollBar:getProgress()
     return self.maxScroll <= 0 and 0 or self.position / self.maxScroll
@@ -230,8 +229,7 @@ end
 
 ---@param steps number
 function ScrollBar:scroll(steps)
-    self.position = util.clamp(self.position + steps * self.scrollStep, 0, self.maxScroll)
-    self:_onScrolled()
+    self:setPosition(self.position + steps * self.scrollStep)
 end
 
 function ScrollBar:calcHandleSize()
@@ -247,8 +245,10 @@ end
 
 ---@param size number
 function ScrollBar:setLength(size)
+    if self.length == size then return end
     self.length = size
     self._scrollProps.size = calcScrollBarSize(self)
+    I.UIToolkit.queueUpdate(self.element)
     self:setPosition(self.position)
 end
 
