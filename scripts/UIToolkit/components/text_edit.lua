@@ -192,7 +192,7 @@ function TextEdit:setSize(width)
     if self._btnProps then
         deep = true
         self._btnProps.size = v2(h, h)
-        self._btnProps.position = v2(w - h, 0)
+        self._btnProps.position = v2(w, 0)
     end
     I.UIToolkit.queueUpdate(self.element, deep)
 end
