@@ -17,7 +17,8 @@ I.UIToolkit.Interactive.makeInteractive({
 }, {
     type = ui.TYPE.Image,
     props = {
-        --white rectangle, use your own texture here (should be white or grayscale for coloring to look good)
+        --white rectangle, use your own texture here 
+        --should be white or grayscale for coloring to look good
         resource = ui.texture {path = 'white'},
         size = v2(16, 16),
     },
@@ -27,6 +28,29 @@ I.UIToolkit.Interactive.makeInteractive({
 
 # Components
 `I.UIToolkit.Components` contains functions that create various UI components.
+
+Note that all component creation methods return `UIToolkit.Component` objects, not `Element` or `Layout`. To add them to layout use `component.element`.
+
+Component objects have methods to get/set their visibility, active and disables states:
+```lua
+-- returns whether component is visible
+component:visible()
+-- makes component invisible
+component:visible(false)
+
+-- returns whether component is active
+component:active()
+-- makes component active (will look like selected spell in magic list does)
+component:active(true)
+
+-- returns whether component is disabled
+component:disabled()
+-- makes component look disabled - still can be clicked or hovered
+component:disabled(true)
+
+-- returns true if component's element is destroyed (or empty)
+component:isDestroyed()
+```
 
 ## Text Button
 `textButton(opts)` - creates a text button. Can have tooltip, onClick callback. Can be fixed-width.
@@ -116,6 +140,7 @@ I've added simplified tooltip formats that can be used in most places where UTKT
   - other stuff?
 - [ ] Add list item provider with columns
 - [ ] Make `Controls` able to subscribe to `onUpdate` event
+- [ ] Option to make `Interactives` not react to hovers/clicks when disabled 
 - [ ] Settings menu to customize templates
 - [ ] Helper methods to create Tooltip objects for common types of custom tooltips
   - [ ] Text line
