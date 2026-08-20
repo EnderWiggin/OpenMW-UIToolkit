@@ -157,10 +157,12 @@ UI Toolkit adds support simplified tooltip formats that can be used in most plac
 -- tooltip for the "Bonemeal" ingredient
 { key = 'ingred_bonemeal_01', type = I.UTKTooltips.TYPE.Ingredient, observer = player }
 
--- tooltip for the fisrt found potion in player's inventory
+-- tooltip for the first found potion in player's inventory
 { object = types.Actor.inventory(player):getAll(types.Potion)[1], observer = player }
 ```
+The `type` field is optional in these cases, but it will make the tooltip creation faster, as it won't need to seek for the record in all types.
 
+The `observer` field is optional, it is used to determine how many effects potions/ingredients will show. If omitted, all info is shown.
 
 # Planned Features
 - [ ] Add controller support
