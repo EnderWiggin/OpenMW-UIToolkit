@@ -8,14 +8,64 @@ Library to make creating LUA UI for OpenMW easier. Contains basic templates, int
 
 Add `colorable = true` to the userData of layout to make it react to the interactivity states in parent's `userData`.
 
+## Example
+Create an Element that behaves like 'icon' button with tooltip and a click callback:
+```lua
+I.UIToolkit.Interactive.makeInteractive({
+    onClick = function() print('Hello World!') end,
+    tooltip = 'Hello World!',
+}, {
+    type = ui.TYPE.Image,
+    props = {
+        --white rectangle, use your own texture here (should be white or grayscale for coloring to look good)
+        resource = ui.texture {path = 'white'},
+        size = v2(16, 16),
+    },
+    userData = { colorable = true, },
+})
+```
+
 # Components
 `I.UIToolkit.Components` contains functions that create various UI components.
 
 ## Text Button
 `textButton(opts)` - creates a text button. Can have tooltip, onClick callback. Can be fixed-width.
 
+### Example
+create a button with text `Hello`, tooltip `World!` and that prints `Hello World!` when clicked:
+```lua
+I.UIToolkit.Components.textButton { text = "Hello", tooltip = 'World!', onClick = function()
+    print('Hello World!')
+end}
+```
+
 ## Text Edit
 `textEdit(opts)` - creates a text edit. With optional placeholder text, clear button, value validation and on change callback.
+
+### Examples
+Create text edit with placeholder text, clear button and callback that prints the value when changed:
+```lua
+I.UIToolkit.Components.textEdit({
+        placeholder = 'enter something!',
+        onValueChanged = function(value) print('Value changed:', value) end,
+        showClearButton = true,
+})
+```
+
+Create a text edit that accepts only positive numbers:
+```lua
+I.UIToolkit.Components.textEdit {
+    default = 1,
+    validate = function(text)
+        local number = tonumber(text)
+        if not number then return false end
+        return true, math.max(1, number)
+    end,
+    width = 60,
+    textAlignH = ui.ALIGNMENT.Center,
+    showClearButton = true,
+}
+```
 
 ## Scroll Bar
 `scrollBar(opts)` - creates a scrollbar. Can be horizontal or vertical. Has callback for position change.
@@ -40,24 +90,24 @@ You can read [Dehardcode tooltips MR docs](https://openmw-vr.readthedocs.io/en/d
 
 I've added simplified tooltip formats that can be used in most places where UTKTooltips.Tooltip is used:
   - Plain string will create a simple text line tooltip, equivalent to: 
-  ```lua
-  { recipe = { items = { { text = 'your string' } } } }
-  ```
+    ```lua
+    { recipe = { items = { { text = 'your string' } } } }
+    ```
   - `{ body = 'your text' }` will create a text paragraph tooltip, equivalent to:
-  ```lua
-  { recipe = { items = { { type ='paragraph', text = 'your text' } } } }
-  ```
+    ```lua
+    { recipe = { items = { { type ='paragraph', text = 'your text' } } } }
+    ```
   - `{ title = 'your title' }` will create a header with a title, equivalent to:
-  ```lua
-  { recipe = { items = { { type ='header', title = 'your title' } } } }
-  ```
-- `{ title = 'your title', body = 'your text' }` will create a centered header with a title, followed by a paragraph, equivalent to:
-  ```lua
-  { recipe = { items = { 
-    { type ='header', title = 'your title' }, 
-    { type ='paragraph', text = 'your text' }, 
-  } } }
-  ```
+    ```lua
+    { recipe = { items = { { type ='header', title = 'your title' } } } }
+    ```
+  - `{ title = 'your title', body = 'your text' }` will create a centered header with a title, followed by a paragraph, equivalent to:
+    ```lua
+    { recipe = { items = { 
+      { type ='header', title = 'your title' }, 
+      { type ='paragraph', text = 'your text' }, 
+    } } }
+    ```
 
 # Planned Features
 - [ ] Add controller support
