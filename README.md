@@ -26,6 +26,22 @@ I.UIToolkit.Interactive.makeInteractive({
 })
 ```
 
+Create an interactive text Element that shows a tooltip with how many potions the player has:
+```lua
+local function getPlayerPotionCount()
+    return #types.Actor.inventory(player):getAll(types.Potion)
+end
+
+I.UIToolkit.Interactive.makeInteractive({
+    tooltip = function() return 'Potions: ' .. getPlayerPotionCount() end,
+}, {
+    template = I.MWUI.templates.textNormal,
+    props = {
+        text = 'Player potions',
+    },
+    userData = { colorable = true, },
+})
+```
 # Components
 `I.UIToolkit.Components` contains functions that create various UI components.
 
@@ -69,11 +85,11 @@ end}
 ### Examples
 Create text edit with placeholder text, clear button and callback that prints the value when changed:
 ```lua
-I.UIToolkit.Components.textEdit({
+I.UIToolkit.Components.textEdit {
         placeholder = 'enter something!',
         onValueChanged = function(value) print('Value changed:', value) end,
         showClearButton = true,
-})
+}
 ```
 
 Create a text edit that accepts only positive numbers:
@@ -112,7 +128,8 @@ To allow tooltips to be automatically hidden when element that spawned it is des
 
 You can read [Dehardcode tooltips MR docs](https://openmw-vr.readthedocs.io/en/dehardcode-tooltips/reference/lua-scripting/interface_tooltips.html) for more info – most of the API is the same, only replace `I.Tooltips` with `I.UTKTooltips`.
 
-I've added simplified tooltip formats that can be used in most places where UTKTooltips.Tooltip is used:
+## Simplified tooltip formats
+UI Toolkit adds support simplified tooltip formats that can be used in most places where UTKTooltips.Tooltip is used:
   - Plain string will create a simple text line tooltip, equivalent to: 
     ```lua
     { recipe = { items = { { text = 'your string' } } } }
@@ -132,6 +149,18 @@ I've added simplified tooltip formats that can be used in most places where UTKT
       { type ='paragraph', text = 'your text' }, 
     } } }
     ```
+## Tooltip examples
+```lua
+-- tooltip for the "Resist Poison" magic effect
+{ key = 'resistpoison', type = I.UTKTooltips.TYPE.MagicEffect }
+
+-- tooltip for the "Bonemeal" ingredient
+{ key = 'ingred_bonemeal_01', type = I.UTKTooltips.TYPE.Ingredient, observer = player }
+
+-- tooltip for the fisrt found potion in player's inventory
+{ object = types.Actor.inventory(player):getAll(types.Potion)[1], observer = player }
+```
+
 
 # Planned Features
 - [ ] Add controller support
