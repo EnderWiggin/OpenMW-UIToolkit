@@ -250,6 +250,20 @@ function Templates.intervalV(size) end
 ---@return openmw.ui.TextureResource
 function Templates.effectIconTexture(effectId) end
 
+---Rectangular borders.
+---Can have padding and background.
+---Has size of its own, dictates size to children.
+---@param opts UIToolkit.Templates.BoxOpts?
+---@return openmw.ui.Template
+function Templates.border(opts) end
+
+---Container wrapping the content with borders.
+---Can have padding and background.
+---Has no size of its own - wraps around children.
+---@param opts UIToolkit.Templates.BoxOpts?
+---@return openmw.ui.Template
+function Templates.box(opts) end
+
 ---@param effectId string
 ---@param sz number
 ---@return openmw.ui.Layout
@@ -258,6 +272,11 @@ function Templates.effectIcon(effectId, sz) end
 ---@param bgrAlpha number
 ---@return openmw.ui.Template
 function Templates.buttonBoxBgr(bgrAlpha) end
+
+---@class UIToolkit.Templates.BoxOpts
+---@field thickness? 'thin' | 'thick' defaults to 'thin'
+---@field padding? number defaults to 0
+---@field background? 'solid' | 'transparent' | number no background if omitted.
 
 ---@class UIToolkit.Theme.Colors
 ---@field DEFAULT openmw.util.Color
