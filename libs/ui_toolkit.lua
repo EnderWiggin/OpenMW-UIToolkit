@@ -114,7 +114,7 @@ function Components.itemList(opts) end
 ---@field textColorPlaceholder openmw.util.Color? defaults to DISABLED
 ---@field placeholder? string|fun():string will be shown when edit is not in focus and text is empty
 ---@field validate? fun(text:string|T|nil):boolean,T
----@field onValueChanged? fun() will be called when entered value is changed
+---@field onValueChanged? fun(value:T) will be called when entered value is changed
 ---@field width number? defaults to 200
 ---@field showClearButton boolean?
 

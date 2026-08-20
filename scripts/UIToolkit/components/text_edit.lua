@@ -65,6 +65,7 @@ function TextEdit:init(opts)
         props = self._editProps,
         events = {
             textChanged = async:callback(function(text, layout)
+                local prev = self._value
                 local ok, value = self._validate(text)
                 if ok then
                     self._value = value
@@ -73,8 +74,8 @@ function TextEdit:init(opts)
                 if layout.props.text ~= text then
                     I.UIToolkit.queueUpdate(element)
                 end
-                if ok and self._onValueChanged then
-                    self._onValueChanged()
+                if self._onValueChanged and prev ~= self._value then
+                    self._onValueChanged(self._value)
                 end
             end),
             focusGain = async:callback(function(_, layout)
@@ -111,9 +112,10 @@ function TextEdit:init(opts)
         I.UIToolkit.Interactive.updateState(btn, { disabled = true })
         content:add(I.UIToolkit.Interactive.makeInteractive({
             onClick = function()
+                local prev = self._value
                 self:setValue(self:getDefault())
-                if self._onValueChanged then
-                    self._onValueChanged()
+                if self._onValueChanged and prev ~= self._value then
+                    self._onValueChanged(self._value)
                 end
             end
         }, btn))
