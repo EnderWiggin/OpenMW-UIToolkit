@@ -32,19 +32,9 @@ function ListItemText:makeComponent(data, size)
 end
 
 ---@param data UIToolkit.ListData.Text
----@return UTKTooltips.Tooltip?
+---@return UTKTooltips.AnyTooltip?
 function ListItemText:getTooltip(data)
-    ---@type UTKTooltips.Tooltip
-    return {
-        recipe = {
-            arrange = ui.ALIGNMENT.Center,
-            items = {
-                --{ type = 'header', title = data.text, subtitle = 'id: ' .. data.id },
-                { text = data.text },
-                --{ type = 'default', text = data.text, value = data.id },
-            },
-        }
-    }
+    return data.text
 end
 
 return ListItemText

@@ -59,7 +59,7 @@ function Interactive.updateState(layoutOrElement, state) end
 ---@field disabled boolean? element is disabled
 
 ---@class UIToolkit.InteractiveOpts
----@field tooltip? UTKTooltips.Tooltip|UIToolkit.TooltipProvider|nil optional tooltip or tooltip provider function
+---@field tooltip? UTKTooltips.AnyTooltip|UIToolkit.TooltipProvider|nil optional tooltip or tooltip provider function
 ---@field onClick? fun() optional function to be called when element is clicked. Note: element won't change colors if there's no click callback set
 ---@field canClick? fun():boolean
 ---@field onMouseMove? fun(e, tgt, element)
@@ -155,7 +155,7 @@ function Components.itemList(opts) end
 ---@field getComponent fun(self:UIToolkit.ListItem.Base<T>, data:T, size:openmw.util.Vector2):UIToolkit.Component
 ---@field getCachedComponent fun(self:UIToolkit.ListItem.Base<T>, id:string):UIToolkit.Component?
 ---@field makeComponent fun(self:UIToolkit.ListItem.Base<T>, data:T, size:openmw.util.Vector2,old:UIToolkit.Component):UIToolkit.Component
----@field getTooltip fun(self:UIToolkit.ListItem.Base<T>, data:T):UTKTooltips.Tooltip
+---@field getTooltip fun(self:UIToolkit.ListItem.Base<T>, data:T):UTKTooltips.AnyTooltip
 
 ---@generic T : UIToolkit.ListItem.Base
 ---@class UIToolkit.ItemListOpts<T>
@@ -292,7 +292,7 @@ function Templates.buttonBoxBgr(bgrAlpha) end
 ---@class openmw.interfaces.UTKTooltips
 ---@field version number
 ---@field currentTooltip fun():UTKTooltips.Tooltip?
----@field setTooltip fun(tooltip:UTKTooltips.Tooltip?, isAlive:UTKTooltips.CurrentTipIsAlive?)
+---@field setTooltip fun(tooltip:UTKTooltips.AnyTooltip?, isAlive:UTKTooltips.CurrentTipIsAlive?)
 ---@field createTooltipLayout fun(tooltip:UTKTooltips.Tooltip):openmw.ui.Layout?
 ---@field addPreCreateTooltipHandler fun(handler:UTKTooltips.PreCreateHandler)
 ---@field addPostCreateTooltipHandler fun(handler:UTKTooltips.PostCreateHandler)
@@ -457,4 +457,7 @@ function Templates.buttonBoxBgr(bgrAlpha) end
 ---@alias UTKTooltips.PreCreateHandler fun(recipe:UTKTooltips.Recipe, tooltip:UTKTooltips.Tooltip)
 ---@alias UTKTooltips.PostCreateHandler fun(layout:openmw.ui.Layout, tooltip:UTKTooltips.Tooltip)
 ---@alias UTKTooltips.CurrentTipIsAlive fun():boolean
----@alias UIToolkit.TooltipProvider fun():UTKTooltips.Tooltip?
+---@alias UIToolkit.TooltipProvider fun():UTKTooltips.AnyTooltip?
+---@alias UTKTooltips.SimpleTextTooltip string
+---@alias UTKTooltips.SimpleTooltip {title:string?, body:string?, width:number?}
+---@alias UTKTooltips.AnyTooltip UTKTooltips.Tooltip|UTKTooltips.SimpleTooltip|UTKTooltips.SimpleTextTooltip

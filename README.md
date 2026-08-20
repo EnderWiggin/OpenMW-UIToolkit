@@ -38,6 +38,27 @@ To allow tooltips to be automatically hidden when element that spawned it is des
 
 You can read [Dehardcode tooltips MR docs](https://openmw-vr.readthedocs.io/en/dehardcode-tooltips/reference/lua-scripting/interface_tooltips.html) for more info – most of the API is the same, only replace `I.Tooltips` with `I.UTKTooltips`.
 
+I've added simplified tooltip formats that can be used in most places where UTKTooltips.Tooltip is used:
+  - Plain string will create a simple text line tooltip, equivalent to: 
+  ```lua
+  { recipe = { items = { { text = 'your string' } } } }
+  ```
+  - `{ body = 'your text' }` will create a text paragraph tooltip, equivalent to:
+  ```lua
+  { recipe = { items = { { type ='paragraph', text = 'your text' } } } }
+  ```
+  - `{ title = 'your title' }` will create a header with a title, equivalent to:
+  ```lua
+  { recipe = { items = { { type ='header', title = 'your title' } } } }
+  ```
+- `{ title = 'your title', body = 'your text' }` will create a centered header with a title, followed by a paragraph, equivalent to:
+  ```lua
+  { recipe = { items = { 
+    { type ='header', title = 'your title' }, 
+    { type ='paragraph', text = 'your text' }, 
+  } } }
+  ```
+
 # Planned Features
 - [ ] Add controller support
   - [ ] for list scrolling 

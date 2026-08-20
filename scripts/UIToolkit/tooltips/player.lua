@@ -294,10 +294,31 @@ local function update()
     end
 end
 
----@param newTooltip? UTKTooltips.Tooltip
+---@param tip UTKTooltips.AnyTooltip?
+---@return UTKTooltips.Tooltip?
+local function processAnyTooltip(tip)
+    if not tip then return nil end
+    if type(tip) == 'string' then
+        ---@type UTKTooltips.Tooltip
+        return { recipe = { items = { { text = tip --[[@as string]] } } } }
+    end
+    if tip.key or tip.object or tip.recipe or tip.layout then
+        return tip --[[@as UTKTooltips.Tooltip]]
+    end
+    ---@type UTKTooltips.RecipeItem[]
+    local items = {}
+    if tip.title then items[#items + 1] = { type = 'header', text = tip.title } end
+    if tip.body then items[#items + 1] = { type = 'paragraph', text = tip.body, width = tip.width } end
+    if #items <= 0 then return nil end
+    ---@type UTKTooltips.Tooltip
+    return { recipe = { items = items, arrange = ui.ALIGNMENT.Center } }
+end
+
+---@param newTooltip? UTKTooltips.AnyTooltip
 ---@param isAlive? fun():boolean
 local function setTooltip(newTooltip, isAlive)
     clear()
+    newTooltip = processAnyTooltip(newTooltip)
     if newTooltip then
         if not newTooltip.layout and not newTooltip.recipe and not newTooltip.type and not autoType(newTooltip) then
             error('Cannot use new tooltip: Unable to determine type')
