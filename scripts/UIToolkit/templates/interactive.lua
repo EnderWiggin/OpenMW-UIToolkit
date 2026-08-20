@@ -95,6 +95,7 @@ function M.makeInteractive(opts, layoutOrElement)
             opts.onMouseMove(e, tgt, element)
         end
     end)
+    M.updateState(element.layout)
     return element
 end
 
