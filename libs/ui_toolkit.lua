@@ -88,10 +88,13 @@ function Components.itemList(opts) end
 ---@field init fun(self:UIToolkit.Component, element:openmw.ui.Element)
 ---@field isDestroyed fun(self:UIToolkit.Component):boolean
 ---@field element openmw.ui.Element
----@field visible fun(self:UIToolkit.Component, value: boolean?):boolean|nil  If value is set - will update visibility of the control. Returns visible flag. If element is destroyed - returns nil.
----@field active fun(self:UIToolkit.Component, value: boolean?):boolean|nil  If value is set - will update active state of the control. Returns active flag. If element is destroyed - returns nil.
----@field disabled fun(self:UIToolkit.Component, value: boolean?):boolean|nil  If value is set - will update disabled state of the control. Returns disabled flag. If element is destroyed - returns nil.
----@field updateProps fun(self:UIToolkit.Component, props: table):UIToolkit.Component update props, return self
+---@field isVisible fun(self:UIToolkit.Component):boolean|nil Returns whether component is visible or `nil` if destroyed.
+---@field setVisible fun(self:UIToolkit.Component, value: boolean?):UIToolkit.Component Sets component's visibility and queues update, return self.
+---@field isActive fun(self:UIToolkit.Component):boolean|nil Returns active flag. If component is destroyed - returns nil.
+---@field setActive fun(self:UIToolkit.Component, value: boolean?):self:UIToolkit.Component Sets active state of the component and queues update, return self.
+---@field isDisabled fun(self:UIToolkit.Component):boolean|nil Returns disabled flag. If component is destroyed - returns nil.
+---@field setDisabled fun(self:UIToolkit.Component, value: boolean?):self:UIToolkit.Component Sets disabled state of the component and queues update, return self.
+---@field updateProps fun(self:UIToolkit.Component, props: table):UIToolkit.Component update props, return self.
 
 ---@class UIToolkit.ButtonOpts : UIToolkit.InteractiveOpts
 ---@field name string? name to give to button layout

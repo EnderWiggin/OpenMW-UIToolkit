@@ -50,19 +50,22 @@ Note that all component creation methods return `UIToolkit.Component` objects, n
 Component objects have methods to get/set their visibility, active and disables states:
 ```lua
 -- returns whether component is visible
-component:visible()
--- makes component invisible
-component:visible(false)
+component:isVisible()
+-- makes component invisible, returns `self`
+component:setVisible(false)
 
 -- returns whether component is active
-component:active()
--- makes component active (will look like selected spell in magic list does)
-component:active(true)
+component:isActive()
+-- makes component active (will look like selected spell in magic list does), returns `self`
+component:setActive(true)
 
 -- returns whether component is disabled
-component:disabled()
--- makes component look disabled - still can be clicked or hovered
-component:disabled(true)
+component:isDisabled()
+-- makes component look disabled - still can be clicked or hovered, returns `self`
+component:setDisabled(true)
+
+-- updates component's props, returns `self`
+component:updateProps {position = v2(100,200)}
 
 -- returns true if component's element is destroyed (or empty)
 component:isDestroyed()

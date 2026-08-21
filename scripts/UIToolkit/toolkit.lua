@@ -72,7 +72,7 @@ end
 local function getFocusedScrollable()
     local scrollable = ctx.focusedScrollable
     if not scrollable then return nil end
-    if scrollable:isDestroyed() or not scrollable:visible() then
+    if scrollable:isDestroyed() or not scrollable:isVisible() then
         ctx.focusedScrollable = nil
         return nil
     end
