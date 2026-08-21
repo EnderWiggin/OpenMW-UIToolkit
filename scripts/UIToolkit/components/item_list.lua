@@ -19,6 +19,7 @@ local ItemList = Class(Scrollable)
 
 ---@param opts UIToolkit.ItemListOpts
 function ItemList:init(opts)
+    local t = I.UIToolkit.getTheme()
     local size = opts.size
     local onClicked = opts.onItemClicked
 
@@ -97,9 +98,10 @@ function ItemList:init(opts)
         maxScroll = #state.items * state.itemHeight - size.y,
         length = size.y
     }
-    local props = scroll.element.layout.props
-    props.anchor = v2(1, 0)
-    props.position = v2(size.x, 0)
+    scroll:updateProps {
+        anchor = v2(1, 0),
+        relativePosition = v2(1, 0)
+    }
     I.UIToolkit.queueUpdate(scroll.element)
 
 
@@ -111,9 +113,10 @@ function ItemList:init(opts)
 
     ---@type openmw.ui.Layout
     local layout = {
-        type = ui.TYPE.Container,
-        template = opts.hasBorder and T.boxSolid or nil,
-        props = {},
+        template = I.UIToolkit.Templates.border { padding = t.Sizes.padding },
+        props = {
+            size = size,
+        },
         content = ui.content {
             {
                 name = 'content',
@@ -137,7 +140,8 @@ function ItemList:onMouseScrolled(delta)
 end
 
 function ItemList:getContentWidth()
-    return math.floor(math.max(0, self.state.currentSize.x - self._scrollBar:getSize().x))
+    local s = I.UIToolkit.getTheme().Sizes
+    return math.floor(math.max(0, self.state.currentSize.x - self._scrollBar:getSize().x - 3 * s.padding - 2 * s.border))
 end
 
 ---@param n integer
@@ -288,17 +292,18 @@ end
 
 ---@param size openmw.util.Vector2
 function ItemList:setSize(size)
+    local s = I.UIToolkit.getTheme().Sizes
     local state = self.state
     size = v2(util.round(size.x), util.round(size.y))
     if size == state.currentSize then return end
     state.currentSize = size
     local width = self:getContentWidth()
     local scroll = self._scrollBar
-    scroll.element.layout.props.position = v2(size.x, 0)
-    scroll:setLength(size.y)
+    scroll:setLength(size.y - 2 * (s.border + s.padding))
     scroll:setMaxScroll(#state.items * state.itemHeight - size.y)
     I.UIToolkit.queueUpdate(scroll.element)
 
+    self:updateProps { size = size }
     self.element.layout.content[1].props.size = v2(width, size.y)
 
     I.UIToolkit.queueUpdate(self.element)
