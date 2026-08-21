@@ -126,7 +126,7 @@ function Components.itemList(opts) end
 ---@field getValue fun(self:UIToolkit.TextEdit):T
 ---@field setValue fun(self:UIToolkit.TextEdit, value:T)
 ---@field setPlaceholder fun(self:UIToolkit.TextEdit, value:string?)
----@field setSize fun(self:UIToolkit.TextEdit, width:number)
+---@field setWidth fun(self:UIToolkit.TextEdit, width:number):UIToolkit.TextEdit
 
 ---@class UIToolkit.ScrollBarOpts
 ---@field horizontal boolean?

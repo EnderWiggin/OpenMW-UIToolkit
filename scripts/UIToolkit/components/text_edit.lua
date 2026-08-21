@@ -50,10 +50,12 @@ function TextEdit:init(opts)
     w = w - 2 * PAD
 
     self._editProps = {
-        size = v2(w, h),
+        position = v2(t.Sizes.padding, 0),
         text = empty and self:getPlaceholder() or toText(self._value),
         textColor = self:_textColor(empty),
         textSize = self._textSize,
+        textAlignV = ui.ALIGNMENT.Center,
+        relativeSize = v2(1, 1),
     }
     if opts.textAlignH then
         self._editProps.textAlignH = opts.textAlignH
@@ -98,8 +100,9 @@ function TextEdit:init(opts)
     if opts.showClearButton then
         self._btnProps = {
             size = v2(h, h),
-            position = v2(w, 0),
-            anchor = v2(1, 0),
+            position = v2(-t.Sizes.padding, 0),
+            anchor = v2(1, 0.5),
+            relativePosition = v2(1, 0.5),
             resource = REVERT_TEX,
             alpha = 0.5,
         }
@@ -123,15 +126,11 @@ function TextEdit:init(opts)
 
     element = ui.create {
         name = 'edit-box',
-        template = I.MWUI.templates.box,
-        props = {},
-        content = ui.content {
-            {
-                name = 'padding',
-                template = I.UIToolkit.Templates.padding(PAD),
-                content = content,
-            }
+        template = I.UIToolkit.Templates.border(),
+        props = {
+            size = v2(w, h + 4 * (t.Sizes.padding + t.Sizes.border))
         },
+        content = content
     }
 
     Component.init(self, element)
@@ -185,18 +184,13 @@ function TextEdit:setPlaceholder(value)
 end
 
 ---@param width number
-function TextEdit:setSize(width)
-    if self:isDestroyed() then return end
-    local w, h = width or 200, self._textSize
-    w = w - 2 * PAD
-    self._editProps.size = v2(w, h)
-    local deep = false
-    if self._btnProps then
-        deep = true
-        self._btnProps.size = v2(h, h)
-        self._btnProps.position = v2(w, 0)
-    end
-    I.UIToolkit.queueUpdate(self.element, deep)
+---@return UIToolkit.TextEdit
+function TextEdit:setWidth(width)
+    if self:isDestroyed() then return self end
+    local props = self.element.layout.props
+    props.size = v2(width, props.size.y)
+    I.UIToolkit.queueUpdate(self.element)
+    return self
 end
 
 ---@private
