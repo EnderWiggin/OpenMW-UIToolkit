@@ -10,7 +10,6 @@ local Class = require('scripts.UIToolkit.class')
 local Component = require('scripts.UIToolkit.components.component')
 
 local REVERT_TEX = ui.texture { path = 'icons/UIToolkit/revert.dds' }
-local PAD = 2
 local T = require('scripts.UIToolkit.templates.base')
 
 ---@generic T
@@ -47,7 +46,6 @@ function TextEdit:init(opts)
     ---@type openmw.ui.Element
     local element
     local w, h = opts.width or 200, self._textSize
-    w = w - 2 * PAD
 
     self._editProps = {
         position = v2(t.Sizes.padding, 0),
@@ -55,6 +53,7 @@ function TextEdit:init(opts)
         textColor = self:_textColor(empty),
         textSize = self._textSize,
         textAlignV = ui.ALIGNMENT.Center,
+        size = v2(0, 0),
         relativeSize = v2(1, 1),
     }
     if opts.textAlignH then
@@ -98,6 +97,7 @@ function TextEdit:init(opts)
     } }
 
     if opts.showClearButton then
+        self._editProps.size = v2(-h, 0)
         self._btnProps = {
             size = v2(h, h),
             position = v2(-t.Sizes.padding, 0),
@@ -128,7 +128,7 @@ function TextEdit:init(opts)
         name = 'edit-box',
         template = I.UIToolkit.Templates.border(),
         props = {
-            size = v2(w, h + 4 * (t.Sizes.padding + t.Sizes.border))
+            size = v2(w, h + 2 * (t.Sizes.padding + t.Sizes.border))
         },
         content = content
     }
