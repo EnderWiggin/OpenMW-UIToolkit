@@ -91,6 +91,7 @@ function Components.itemList(opts) end
 ---@field visible fun(self:UIToolkit.Component, value: boolean?):boolean|nil  If value is set - will update visibility of the control. Returns visible flag. If element is destroyed - returns nil.
 ---@field active fun(self:UIToolkit.Component, value: boolean?):boolean|nil  If value is set - will update active state of the control. Returns active flag. If element is destroyed - returns nil.
 ---@field disabled fun(self:UIToolkit.Component, value: boolean?):boolean|nil  If value is set - will update disabled state of the control. Returns disabled flag. If element is destroyed - returns nil.
+---@field updateProps fun(self:UIToolkit.Component, props: table):UIToolkit.Component update props, return self
 
 ---@class UIToolkit.ButtonOpts : UIToolkit.InteractiveOpts
 ---@field name string? name to give to button layout

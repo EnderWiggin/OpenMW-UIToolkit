@@ -1,6 +1,7 @@
 ---@omw-context player
 
 local I = require('openmw.interfaces')
+local H = require('scripts.UIToolkit.helpers')
 local Class = require('scripts.UIToolkit.class')
 
 ---@class UIToolkit.Component
@@ -61,6 +62,15 @@ function Component:disabled(value)
     ---@type UIToolkit.InteractiveState
     local userData = self.element.layout.userData
     return userData ~= nil and userData.disabled == true
+end
+
+---@param props table
+---@return UIToolkit.Component
+function Component:updateProps(props)
+    if self:isDestroyed() then return self end
+
+    self.element.layout.props = H.mergeTables(self.element.layout.props or {}, props)
+    return self
 end
 
 return Component
