@@ -19,17 +19,28 @@ local M = {}
 --TODO: extract cache to separate file
 local CACHE = {}
 
----@param opt any?
+---@param arg any?
 ---@return string
-local function getKey(opt)
-    if not opt then return 'default' end
-    if type(opt) ~= 'table' then return tostring(table) end
+local function getArgKey(arg)
+    if type(arg) ~= 'table' then return tostring(arg) end
     local entries = {}
-    for k, v in pairs(opt) do
+    for k, v in pairs(arg) do
         table.insert(entries, tostring(k) .. "=" .. tostring(v))
     end
     table.sort(entries)
     return '{' .. table.concat(entries, ",") .. '}'
+end
+
+---@return string
+local function constructKey(key, ...)
+    local n = select("#", ...)
+    if n <= 0 then return key end
+    local opts = { ... }
+    local parts = { key }
+    for i = 1, n do
+        parts[#parts + 1] = getArgKey(opts[i])
+    end
+    return table.concat(parts, '|')
 end
 
 ---@generic T : any
@@ -37,14 +48,7 @@ end
 ---@param calc fun(...):T
 ---@return T
 local function GetCachedOrCalculate(key, calc, ...)
-    local opts = { ... }
-    if #opts > 0 then
-        local parts = { key }
-        for i = 1, #opts do
-            parts[#parts + 1] = getKey(opts[i])
-        end
-        key = table.concat(parts, ':')
-    end
+    key = constructKey(key, ...)
 
     if not CACHE[key] then
         local val = calc(...)
