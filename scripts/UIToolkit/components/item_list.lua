@@ -12,8 +12,7 @@ local Component = require('scripts.UIToolkit.components.component')
 local Scrollable = require('scripts.UIToolkit.components.scrollable')
 
 
-local T = require('scripts.UIToolkit.templates.base')
-
+---@generic T : UIToolkit.ListItem.Base
 ---@class UIToolkit.ItemList : UIToolkit.Scrollable
 local ItemList = Class(Scrollable)
 
@@ -22,22 +21,20 @@ function ItemList:init(opts)
     local t = I.UIToolkit.getTheme()
     local size = opts.size
     local onClicked = opts.onItemClicked
-
+    ---@type UIToolkit.ListItem.Base
+    local provider = opts.provider
     local state = {
         ---@type UIToolkit.ListData.Base[]
         items = {},
         ---@type table<string, UIToolkit.ListData.Base>
         itemsById = {},
         ---@type UIToolkit.ListItem.Base
-        provider = opts.provider,
-        itemHeight = opts.itemHeight,
-        --columns = columns,
-        --columnWidths = {},
+        provider = provider,
+        itemHeight = provider:getItemHeight(),
         currentSize = size,
         filters = {},
         --parentWindow = opts.parentWindow,
         --hadMouseMoveThisFrame = false,
-        --rowCache = {} -- Stores generated row layouts by item ID or index
         ---@type integer|nil
         hovered = nil,
         ---@type openmw.util.Vector2|nil
@@ -162,9 +159,10 @@ function ItemList:_getHolder(n, id, view)
         return holder.element
     end
     element = ui.create {
-        type = ui.TYPE.Container,
         props = {
             position = v2(0, (n - 1) * state.itemHeight),
+            size = v2(0, state.itemHeight),
+            relativeSize = v2(1, 0),
         },
         content = ui.content { view },
     }

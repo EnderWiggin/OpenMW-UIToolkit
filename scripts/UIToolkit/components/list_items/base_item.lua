@@ -6,19 +6,22 @@ local Class = require('scripts.UIToolkit.class')
 
 ---@generic T: UIToolkit.ListData.Base
 ---@class UIToolkit.ListItem.Base<T>
----@field cache table<string, {size:openmw.util.Vector2, component:UIToolkit.Component}>
+---@field cache table<string, UIToolkit.Component>
 local ListItemBase = Class(nil, function(self)
     self.cache = {}
 end)
 
 ---@generic T: UIToolkit.ListData.Base
 ---@param data T
----@param size openmw.util.Vector2
----@param old UIToolkit.Component
 ---@return UIToolkit.Component
 ---@diagnostic disable-next-line: unused-local
-function ListItemBase:makeComponent(data, size, old)
+function ListItemBase:makeComponent(data)
     error('Need to implement `makeComponent()`!')
+end
+
+---@return number
+function ListItemBase:getItemHeight()
+    error('Need to implement `getItemHeight()`!')
 end
 
 ---@generic T: UIToolkit.ListData.Base
@@ -30,30 +33,21 @@ function ListItemBase:getTooltip(data)
 end
 
 ---@param data UIToolkit.ListData.Base
----@param size openmw.util.Vector2
 ---@return openmw.ui.Element
-function ListItemBase:getView(data, size)
-    local component = self:getComponent(data, size)
+function ListItemBase:getView(data)
+    local component = self:getComponent(data)
     return component.element
 end
 
 ---@param data UIToolkit.ListData.Base
----@param size openmw.util.Vector2
 ---@return UIToolkit.Component
-function ListItemBase:getComponent(data, size)
+function ListItemBase:getComponent(data)
     local cached = self.cache[data.id]
-    if not cached or cached.size ~= size or cached.component:isDestroyed() then
-        local old = cached and cached.component or nil
-        local component
-        component = self:makeComponent(data, size, old)
-        cached = {
-            size = size,
-            component = component,
-        }
-        self.cache[data.id] = cached
-    end
+    if cached and not cached:isDestroyed() then return cached end
 
-    return cached.component
+    local component = self:makeComponent(data)
+    self.cache[data.id] = component
+    return component
 end
 
 ---@param id string
@@ -67,34 +61,26 @@ end
 ---@return UIToolkit.Component|nil
 function ListItemBase:getCachedComponent(id)
     local cached = self.cache[id]
-    if not cached or not cached.component or cached.component:isDestroyed() then
+    if not cached or cached:isDestroyed() then
         return nil
     end
 
-    return cached.component
-end
-
----@param id string
----@param size openmw.util.Vector2
----@return boolean
-function ListItemBase:isDirty(id, size)
-    local cached = self.cache[id]
-    return not cached or cached.size ~= size or cached.component:isDestroyed()
+    return cached
 end
 
 ---@param id string
 function ListItemBase:remove(id)
     local cached = self.cache[id]
-    if cached and not cached.component:isDestroyed() then
-        I.UIToolkit.queueDestroy(cached.component.element, true)
+    if cached and not cached:isDestroyed() then
+        I.UIToolkit.queueDestroy(cached.element, true)
     end
     self.cache[id] = nil
 end
 
 function ListItemBase:clear()
     for _, cached in pairs(self.cache) do
-        if cached and not cached.component:isDestroyed() then
-            I.UIToolkit.queueDestroy(cached.component.element, true)
+        if cached and not cached:isDestroyed() then
+            I.UIToolkit.queueDestroy(cached.element, true)
         end
     end
 

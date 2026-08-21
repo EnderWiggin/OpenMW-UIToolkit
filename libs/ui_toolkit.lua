@@ -158,15 +158,15 @@ function Components.itemList(opts) end
 
 ---@generic T: UIToolkit.ListData.Base
 ---@class UIToolkit.ListItem.Base<T>
----@field getComponent fun(self:UIToolkit.ListItem.Base<T>, data:T, size:openmw.util.Vector2):UIToolkit.Component
+---@field getItemHeight fun(self:UIToolkit.ListItem.Base<T>):number
+---@field getComponent fun(self:UIToolkit.ListItem.Base<T>, data:T):UIToolkit.Component
 ---@field getCachedComponent fun(self:UIToolkit.ListItem.Base<T>, id:string):UIToolkit.Component?
----@field makeComponent fun(self:UIToolkit.ListItem.Base<T>, data:T, size:openmw.util.Vector2,old:UIToolkit.Component):UIToolkit.Component
+---@field makeComponent fun(self:UIToolkit.ListItem.Base<T>, data:T):UIToolkit.Component
 ---@field getTooltip fun(self:UIToolkit.ListItem.Base<T>, data:T):UTKTooltips.AnyTooltip
 
 ---@generic T : UIToolkit.ListItem.Base
 ---@class UIToolkit.ItemListOpts<T>
 ---@field size openmw.util.Vector2
----@field itemHeight number
 ---@field provider T
 ---@field onItemClicked fun(data:T, idx:integer)
 
