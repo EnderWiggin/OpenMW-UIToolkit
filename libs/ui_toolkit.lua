@@ -121,6 +121,7 @@ function Components.itemList(opts) end
 ---@field onValueChanged? fun(value:T) will be called when entered value is changed
 ---@field width number? defaults to 200
 ---@field showClearButton boolean?
+---@field onClearClicked? fun()
 
 ---@generic T
 ---@class UIToolkit.TextEdit<T> : UIToolkit.Component

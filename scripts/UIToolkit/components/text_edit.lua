@@ -120,6 +120,9 @@ function TextEdit:init(opts)
                 if self._onValueChanged and prev ~= self._value then
                     self._onValueChanged(self._value)
                 end
+                if opts.onClearClicked then
+                    opts.onClearClicked()
+                end
             end
         }, btn))
     end
