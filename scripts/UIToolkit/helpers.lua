@@ -1,7 +1,9 @@
 ---@omw-context all
 local context = require('scripts.UIToolkit.scriptContext')
+local storage = require('openmw.storage')
 local util = require('openmw.util')
 
+local C = require('scripts.UIToolkit.constants')
 local H = {}
 
 H.deepPrint = function(tbl, indent)
@@ -66,6 +68,32 @@ function H.mergeTables(t1, t2)
         merged[k] = v
     end
     return merged
+end
+
+H.roundToPlaces = function(num, places)
+    local m = 10 ^ (places or 0)
+    return math.floor(num * m + 0.5) / m
+end
+
+H.addSeparators = function(number)
+    local mode = C.SEPARATOR_OPTS.Space --TODO: add settings
+    local separator
+
+    if mode == C.SEPARATOR_OPTS.Comma then
+        separator = ','
+    elseif mode == C.SEPARATOR_OPTS.Space then
+        separator = ' '
+    end
+    if separator == nil then return tostring(number) end
+
+    local _, _, minus, int, fraction = tostring(number):find('([-]?)(%d+)([.]?%d*)')
+
+    -- reverse the int-string and append a comma to all blocks of 3 digits
+    int = int:reverse():gsub("(%d%d%d)", "%1" .. separator)
+
+    -- reverse the int-string back remove an optional comma and put the
+    -- optional minus and fractional part back
+    return minus .. int:reverse():gsub("^" .. separator, "") .. fraction
 end
 
 ---@param layoutOrElement openmw.ui.Element|openmw.ui.Layout

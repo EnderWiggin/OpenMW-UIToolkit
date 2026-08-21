@@ -1,0 +1,132 @@
+---@omw-context player
+
+local ui = require('openmw.ui')
+local util = require('openmw.util')
+local I = require('openmw.interfaces')
+
+local v2 = util.vector2
+local H = require("scripts.UIToolkit.helpers")
+
+local Class = require('scripts.UIToolkit.class')
+local Component = require('scripts.UIToolkit.components.component')
+local ListItemBase = require('scripts.UIToolkit.components.list_items.base_item')
+
+---@class UIToolkit.ListItem.Column: UIToolkit.ListItem.Base<UIToolkit.ListData.Column>
+local Item = Class(ListItemBase)
+
+---@param columns UIToolkit.ListData.ColumnConfig[]
+---@param rowHeight number
+function Item:init(columns, rowHeight)
+    self.columns = columns
+    self.rowHeight = rowHeight
+end
+
+---@return number
+function Item:getItemHeight()
+    return self.rowHeight
+end
+
+---@param data UIToolkit.ListData.Column
+---@return UIToolkit.Component
+function Item:makeComponent(data)
+    local active = data.isActive and data.isActive()
+
+    local columns = {}
+    for i = 1, #self.columns do
+        local cfg = self.columns[i]
+        columns[#columns + 1] = cfg.render(data, cfg, self.rowHeight)
+    end
+    local layout = {
+        name = data.id,
+        type = ui.TYPE.Flex,
+        props = {
+            horizontal = true,
+            autoSize = false,
+            relativeSize = v2(1, 1),
+        },
+        content = ui.content(columns),
+        userData = { active = active }
+    }
+    I.UIToolkit.Interactive.updateState(layout)
+    local component = Component:new()
+    component:init(ui.create(layout))
+    return component
+end
+
+---@param data UIToolkit.ListData.Column
+---@return UTKTooltips.AnyTooltip?
+function Item:getTooltip(data)
+    local tip = data.tooltip
+    if not tip then return nil end
+    if type(tip) == "function" then
+        ---@cast tip UIToolkit.TooltipProvider
+        return tip()
+    end
+    return tip
+end
+
+---@type UIToolkit.ListItem.Column.Renderer
+function Item.renderText(data, cfg, height)
+    local value = data[cfg.id] or ''
+    if type(value) == 'number' then
+        value = H.addSeparators(H.roundToPlaces(value, 2))
+    end
+    local textSize = cfg.arg and cfg.arg.textSize or nil
+    ---@type openmw.ui.Layout
+    local layout = {
+        name = cfg.id,
+        template = I.UIToolkit.Templates.text(),
+        props = {
+            textAlignV = ui.ALIGNMENT.Center,
+            autoSize = false,
+            textSize = textSize,
+            text = tostring(value),
+        },
+        userData = { colorable = true },
+    }
+
+    Item.applySize(layout, cfg, height)
+    return layout
+end
+
+---@type UIToolkit.ListItem.Column.Renderer
+function Item.renderIcon(data, cfg, height)
+    local sz = cfg.arg and cfg.arg.sz or math.min(height, cfg.width or height)
+    ---@type openmw.ui.Layout
+    local layout = {
+        name = cfg.id,
+        type = ui.TYPE.Widget,
+        props = {},
+        content = ui.content { {
+            name = 'icon',
+            type = ui.TYPE.Image,
+            props = {
+                resource = I.UIToolkit.texture(data[cfg.id]),
+                size = v2(sz, sz),
+                anchor = v2(0, 0.5),
+                relativePosition = v2(0, 0.5),
+            },
+        } },
+    }
+
+    Item.applySize(layout, cfg, height)
+    return ui.create(layout)
+end
+
+---@param layout openmw.ui.Layout
+---@param cfg UIToolkit.ListData.ColumnConfig
+---@param height number
+function Item.applySize(layout, cfg, height)
+    local width = cfg.width or 0
+    local auto = (width == 0 and (cfg.auto or 1)) or nil
+
+    local props = layout.props or {}
+    props.size = v2(width, height)
+    layout.props = props
+
+    local external = layout.external or {}
+    external.grow = auto
+    layout.external = external
+end
+
+return Item

@@ -171,7 +171,7 @@ function ItemList:_getHolder(n, id, view)
 end
 
 ---@return integer, integer
-function ItemList:_getVisibleItemRange()
+function ItemList:getVisibleItemRange()
     local state = self.state
     local total = #state.items
     if total == 0 then return 1, 0 end
@@ -189,7 +189,7 @@ function ItemList:_updateScrollable()
     local sz = v2(width, state.itemHeight)
     local items = {}
     local layout = self._scrollable.layout
-    local from, to = self:_getVisibleItemRange()
+    local from, to = self:getVisibleItemRange()
     for i = from, to do
         local item = state.items[i]
         local view = state.provider:getView(item, sz)
@@ -227,6 +227,7 @@ function ItemList:setItems(items)
     state.items = items
     state.itemsById = {}
     self._scrollBar:setMaxScroll(#state.items * state.itemHeight - state.currentSize.y)
+    I.UIToolkit.queueUpdate(self._scrollBar.element)
     self:_updateScrollable()
     self:updateHoveredItem()
 end
@@ -273,6 +274,26 @@ function ItemList:setHovered(idOrIndex)
     end
 
     state.hovered = idOrIndex
+end
+
+---@return number
+function ItemList:getPosition()
+    return self._scrollBar:getPosition()
+end
+
+---@param position number
+function ItemList:setPosition(position)
+    self._scrollBar:setPosition(position)
+end
+
+---@return number
+function ItemList:getProgress()
+    return self._scrollBar:getProgress()
+end
+
+---@param progress number
+function ItemList:setProgress(progress)
+    self._scrollBar:setProgress(progress)
 end
 
 ---@param id string

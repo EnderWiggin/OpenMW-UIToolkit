@@ -163,6 +163,29 @@ function Components.itemList(opts) end
 ---@field getCachedComponent fun(self:UIToolkit.ListItem.Base<T>, id:string):UIToolkit.Component?
 ---@field makeComponent fun(self:UIToolkit.ListItem.Base<T>, data:T):UIToolkit.Component
 ---@field getTooltip fun(self:UIToolkit.ListItem.Base<T>, data:T):UTKTooltips.AnyTooltip
+---@field remove fun(self:UIToolkit.ListItem.Base<T>, id:string) removes cached item
+---@field clear fun(self:UIToolkit.ListItem.Base<T>) removes all cached items
+
+---@alias UIToolkit.ListItem.Column.Renderer fun(data:UIToolkit.ListData.Column, cfg:UIToolkit.ListData.ColumnConfig, height:number):openmw.ui.Layout|openmw.ui.Element
+
+---@class UIToolkit.ListData.ColumnConfig
+---@field id string
+---@field width number?
+---@field auto number?
+---@field render UIToolkit.ListItem.Column.Renderer
+---@field arg any? additional info for renderer
+
+---@class UIToolkit.ListData.Column: UIToolkit.ListData.Base
+---@field isActive? fun():boolean
+---@field tooltip? UTKTooltips.AnyTooltip|UIToolkit.TooltipProvider
+
+---@class UIToolkit.ListItem.Column: UIToolkit.ListItem.Base<UIToolkit.ListData.Column>
+---@field new fun(self:UIToolkit.ListItem.Column):UIToolkit.ListItem.Column
+---@field init fun(self:UIToolkit.ListItem.Column, columns:UIToolkit.ListData.ColumnConfig[], rowHeight:number)
+---@field getItemHeight fun(self:UIToolkit.ListItem.Column):number
+---@field getItemHeight fun(self:UIToolkit.ListItem.Column):number
+---@field renderText UIToolkit.ListItem.Column.Renderer
+---@field renderIcon UIToolkit.ListItem.Column.Renderer
 
 ---@generic T : UIToolkit.ListItem.Base
 ---@class UIToolkit.ItemListOpts<T>
@@ -176,6 +199,11 @@ function Components.itemList(opts) end
 ---@field getItems fun(self:UIToolkit.ItemList):UIToolkit.ListData.Base[]
 ---@field setItems fun(self:UIToolkit.ItemList, items:UIToolkit.ListData.Base[])
 ---@field setSize fun(self:UIToolkit.ItemList, size:openmw.util.Vector2)
+---@field getPosition fun(self:UIToolkit.ItemList):number actual position of the scroll
+---@field setPosition fun(self:UIToolkit.ItemList, position:number) set scroll position
+---@field getProgress fun(self:UIToolkit.ItemList):number [0-1] progress of the scroll
+---@field setProgress fun(self:UIToolkit.ItemList, progress:number) set [0-1] progress of the scroll
+---@field getVisibleItemRange fun(self:UIToolkit.ItemList):integer, integer
 
 ---@class UIToolkit.WindowManager
 ---@field register fun(id: string, opts: UIToolkit.WindowOpts)
