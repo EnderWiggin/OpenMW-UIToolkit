@@ -167,7 +167,7 @@ function Components.itemList(opts) end
 ---@field remove fun(self:UIToolkit.ListItem.Base<T>, id:string) removes cached item
 ---@field clear fun(self:UIToolkit.ListItem.Base<T>) removes all cached items
 
----@alias UIToolkit.ListItem.Column.Renderer fun(data:UIToolkit.ListData.Column, cfg:UIToolkit.ListData.ColumnConfig, height:number):openmw.ui.Layout|openmw.ui.Element
+---@alias UIToolkit.ListItem.Column.Renderer fun(data:UIToolkit.ListData.Column, cfg:UIToolkit.ListData.ColumnConfig, height:number):openmw.ui.Element
 
 ---@class UIToolkit.ListData.ColumnConfig
 ---@field id string
@@ -183,8 +183,7 @@ function Components.itemList(opts) end
 ---@class UIToolkit.ListItem.Column: UIToolkit.ListItem.Base<UIToolkit.ListData.Column>
 ---@field new fun(self:UIToolkit.ListItem.Column):UIToolkit.ListItem.Column
 ---@field init fun(self:UIToolkit.ListItem.Column, columns:UIToolkit.ListData.ColumnConfig[], rowHeight:number)
----@field getItemHeight fun(self:UIToolkit.ListItem.Column):number
----@field getItemHeight fun(self:UIToolkit.ListItem.Column):number
+---@field refreshColumn fun(self:UIToolkit.ListItem.Column, data:UIToolkit.ListData.Column, column:string|integer)
 ---@field renderText UIToolkit.ListItem.Column.Renderer
 ---@field renderIcon UIToolkit.ListItem.Column.Renderer
 

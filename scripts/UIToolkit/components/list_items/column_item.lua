@@ -54,6 +54,26 @@ function Item:makeComponent(data)
 end
 
 ---@param data UIToolkit.ListData.Column
+---@param column string|integer
+function Item:refreshColumn(data, column)
+    local cached = self:getCachedComponent(data.id)
+    if not cached or cached:isDestroyed() then return end
+    local content = cached.element.layout.content
+    if not content then return end
+    for i = 1, #content do
+        local part = content[i] --[[@as openmw.ui.Element]]
+        if i == column or part.layout.name == column then
+            local cfg = self.columns[i]
+            --TODO: add possibility to update instead of re-render?
+            I.UIToolkit.queueDestroy(part, true)
+            content[i] = cfg.render(data, cfg, self.rowHeight)
+            I.UIToolkit.queueUpdate(cached.element)
+            return
+        end
+    end
+end
+
+---@param data UIToolkit.ListData.Column
 ---@return UTKTooltips.AnyTooltip?
 function Item:getTooltip(data)
     local tip = data.tooltip
@@ -86,7 +106,7 @@ function Item.renderText(data, cfg, height)
     }
 
     Item.applySize(layout, cfg, height)
-    return layout
+    return ui.create(layout)
 end
 
 ---@type UIToolkit.ListItem.Column.Renderer
