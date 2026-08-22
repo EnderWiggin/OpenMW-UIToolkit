@@ -159,7 +159,7 @@ function ItemList:_getHolder(n, id, view)
         if viewUserData._index ~= n or layout.content[1] ~= view then
             viewUserData._index = n
             layout.content[1] = view
-            I.UIToolkit.queueUpdate(holder.element)
+            I.UIToolkit.queueUpdate(holder.element, true)
         end
         return holder.element
     end
