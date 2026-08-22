@@ -213,7 +213,7 @@ local function setItemHoveredStatus(provider, id, hovered)
     local view = provider:getCachedView(id)
     if not view then return end
     I.UIToolkit.Interactive.updateState(view, { hovering = hovered })
-    I.UIToolkit.queueUpdate(view)
+    I.UIToolkit.queueUpdate(view, true)
 end
 
 ---@return UIToolkit.ListData.Base[]
