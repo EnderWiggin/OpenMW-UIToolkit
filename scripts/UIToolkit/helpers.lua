@@ -122,6 +122,24 @@ function H.forEachInLayout(layoutOrElement, func)
     end
 end
 
+---@param layoutOrElement openmw.ui.Layout|openmw.ui.Element
+---@return table
+function H.props(layoutOrElement)
+    local layout = H.toLayout(layoutOrElement)
+    if not layout then return {} end
+    layout.props = layout.props or {}
+    return layout.props
+end
+
+---@param layoutOrElement openmw.ui.Layout|openmw.ui.Element
+---@return table
+function H.userData(layoutOrElement)
+    local layout = H.toLayout(layoutOrElement)
+    if not layout then return {} end
+    layout.userData = layout.userData or {}
+    return layout.userData
+end
+
 if not context.isRuntime() then return H end
 ---@omw-context-begin runtime
 

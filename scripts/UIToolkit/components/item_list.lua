@@ -7,6 +7,7 @@ local ambient = require('openmw.ambient')
 local I = require('openmw.interfaces')
 
 local v2 = util.vector2
+local H = require('scripts.UIToolkit.helpers')
 local Class = require('scripts.UIToolkit.class')
 local Component = require('scripts.UIToolkit.components.component')
 local Scrollable = require('scripts.UIToolkit.components.scrollable')
@@ -152,8 +153,12 @@ function ItemList:_getHolder(n, id, view)
     local layout = element and element.layout
     if layout then
         holder.id = id
-        if layout.content[1] ~= view then
-            layout.content = ui.content { view }
+        local viewUserData = H.userData(view)
+        -- In some cases view might have been re-parented to another holder
+        -- check its stored index to see if that's the case
+        if viewUserData._index ~= n or layout.content[1] ~= view then
+            viewUserData._index = n
+            layout.content[1] = view
             I.UIToolkit.queueUpdate(holder.element)
         end
         return holder.element
