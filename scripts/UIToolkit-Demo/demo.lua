@@ -18,17 +18,17 @@ local isOpen     = false
 ---@class Handler: UIToolkit.WindowHandler
 local Handler    = {}
 
-local textSize   = I.MWUI.templates.textNormal.props.textSize
+local textSize   = I.UIToolkit.getTheme().Sizes.textNormal
 local rowHeight  = 1.5 * (textSize + 2)
 ---@type UIToolkit.ItemList?
 local list
 local provider   = ColumnItem:new()
 provider:init({
-    { id = 'icon',   render = ColumnItem.renderIcon, arg = { sz = 1.5 * textSize },           width = rowHeight + 5 },
+    { id = 'icon',   render = ColumnItem.renderIcon, width = rowHeight + 5,   arg = { sz = 1.5 * textSize } },
     { id = 'name',   render = ColumnItem.renderText, },
-    { id = 'weight', render = ColumnItem.renderText, arg = { textAlignH = ui.ALIGNMENT.End }, width = 1.5 * rowHeight },
-    { id = 'value',  render = ColumnItem.renderText, arg = { textAlignH = ui.ALIGNMENT.End }, width = 2 * rowHeight },
-    { id = 'V/W',    render = ColumnItem.renderText, arg = { textAlignH = ui.ALIGNMENT.End }, width = 2 * rowHeight },
+    { id = 'weight', render = ColumnItem.renderText, width = 1.5 * rowHeight, arg = { textAlignH = ui.ALIGNMENT.End } },
+    { id = 'value',  render = ColumnItem.renderText, width = 2 * rowHeight,   arg = { textAlignH = ui.ALIGNMENT.End } },
+    { id = 'V/W',    render = ColumnItem.renderText, width = 2 * rowHeight,   arg = { textAlignH = ui.ALIGNMENT.End } },
 }, rowHeight)
 
 
@@ -52,10 +52,14 @@ function Handler:onOpened(wnd)
         rows[#rows + 1] = {
             id = item.id,
             icon = record.icon,
-            name = record.name .. (item.count > 1 and ' (' .. H.addSeparators(item.count) .. ")" or ''),
-            weight = record.weight,
-            value = record.value,
-            ['V/W'] = function() return record.weight > 0 and record.value / record.weight or '--' end,
+            name = function()
+                return item.count > 1
+                    and record.name .. ' (' .. H.addSeparators(item.count) .. ')'
+                    or record.name
+            end,
+            weight = record.weight > 0 and record.weight or '-',
+            value = record.value > 0 and record.value or '-',
+            ['V/W'] = record.value > 0 and record.weight > 0 and record.value / record.weight or '-',
             tooltip = { object = item, observer = player }
         }
     end
