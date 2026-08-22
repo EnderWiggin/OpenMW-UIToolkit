@@ -121,7 +121,7 @@ function Item.renderIcon(data, cfg, height)
             name = 'icon',
             type = ui.TYPE.Image,
             props = {
-                resource = I.UIToolkit.texture(data[cfg.id]),
+                resource = I.UIToolkit.texture(data[cfg.id] or 'icons/UIToolkit/unknown-effect.dds'),
                 size = v2(sz, sz),
                 anchor = v2(0, 0.5),
                 relativePosition = v2(0, 0.5),
