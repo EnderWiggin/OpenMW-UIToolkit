@@ -93,7 +93,7 @@ function ItemList:init(opts)
             self:_updateScrollable()
         end,
         scrollStep = 2 * state.itemHeight,
-        maxScroll = #state.items * state.itemHeight - size.y,
+        maxScroll = self:_getMaxScroll(),
         length = size.y
     }
     scroll:updateProps {
@@ -231,10 +231,16 @@ function ItemList:setItems(items)
     end
     state.items = items
     state.itemsById = {}
-    self._scrollBar:setMaxScroll(#state.items * state.itemHeight - state.currentSize.y)
+    self._scrollBar:setMaxScroll(self:_getMaxScroll())
     I.UIToolkit.queueUpdate(self._scrollBar.element)
     self:_updateScrollable()
     self:updateHoveredItem()
+end
+
+function ItemList:_getMaxScroll()
+    local t = I.UIToolkit.getTheme()
+    local state = self.state
+    return #state.items * state.itemHeight - state.currentSize.y + 2 * t.Sizes.padding;
 end
 
 ---@param y number
@@ -324,7 +330,7 @@ function ItemList:setSize(size)
     local width = self:getContentWidth()
     local scroll = self._scrollBar
     scroll:setLength(size.y - 2 * (s.border + s.padding))
-    scroll:setMaxScroll(#state.items * state.itemHeight - size.y)
+    scroll:setMaxScroll(self:_getMaxScroll())
     I.UIToolkit.queueUpdate(scroll.element)
 
     self:updateProps { size = size }
