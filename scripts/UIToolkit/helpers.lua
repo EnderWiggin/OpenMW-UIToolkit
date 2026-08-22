@@ -4,6 +4,8 @@ local storage = require('openmw.storage')
 local util = require('openmw.util')
 
 local C = require('scripts.UIToolkit.constants')
+
+---@class UIToolkit.Helpers
 local H = {}
 
 H.deepPrint = function(tbl, indent)
@@ -96,6 +98,26 @@ H.addSeparators = function(number)
     return minus .. int:reverse():gsub("^" .. separator, "") .. fraction
 end
 
+---Returns list of `str` parts split by `separator`
+---@param str string string to split
+---@param separator string? defaults to `%s` (space)
+---@return string[]
+function H.splitString(str, separator)
+    separator = separator or "%s" -- Default to whitespace separator
+    local result = {}
+    for part in string.gmatch(str, "([^" .. separator .. "]+)") do
+        table.insert(result, part)
+    end
+    return result
+end
+
+---Returns `str` with spaces in front and end trimmed
+---@param str string
+---@return string
+function H.trim(str)
+    return str:match("^%s*(.-)%s*$")
+end
+
 ---@param layoutOrElement openmw.ui.Element|openmw.ui.Layout
 ---@return openmw.ui.Layout
 function H.toLayout(layoutOrElement)
@@ -122,6 +144,46 @@ function H.forEachInLayout(layoutOrElement, func)
     end
 end
 
+---@param content openmw.ui.Content
+---@param name string|integer
+---@return openmw.ui.Layout?
+local function getContentLayoutByName(content, name)
+    local ok, tmp = pcall(function() return content[name] end)
+    if ok then
+        if not tmp then return nil end
+        return H.toLayout(tmp)
+    end
+
+    --In some cases there may be content with names child, but wrong name-to-index table
+    --try finding proper layout by iterating
+    for i = 1, #content do
+        local w = content[i]
+        local layout = w and H.toLayout(w)
+        if layout and layout.name == name then
+            return layout
+        end
+    end
+    return nil
+end
+
+---@param layoutOrElement openmw.ui.Element|openmw.ui.Layout
+---@param path (string|integer)[]
+---@return openmw.ui.Layout layout the requested layout, otherwise throws error
+function H.findLayoutByPath(layoutOrElement, path)
+    assert(layoutOrElement, 'empty layoutOrElement')
+    ---@type openmw.ui.Layout?
+    local layout = H.toLayout(layoutOrElement)
+    ---@cast layout openmw.ui.Layout
+    for i = 1, #path do
+        local msg = ' for path: "' .. table.concat(path, '/') .. '", part: ' .. i
+        assert(layout, 'empty layout' .. msg)
+        local content = layout.content
+        assert(content, 'empty content' .. msg)
+        layout = getContentLayoutByName(content, path[i])
+    end
+    return layout or error('empty layout for path: "' .. table.concat(path, '/') .. '"')
+end
+
 ---@param layoutOrElement openmw.ui.Layout|openmw.ui.Element
 ---@return table
 function H.props(layoutOrElement)
@@ -145,6 +207,26 @@ if not context.isRuntime() then return H end
 
 local core = require('openmw.core')
 local I = require('openmw.interfaces')
+
+---@param gmst string
+---@return string
+local function hexFromGMST(gmst)
+    local color = util.color.commaString(core.getGMST(gmst))
+    local str = string.format("#%02X%02X%02X",
+        util.round(255 * color.r),
+        util.round(255 * color.g),
+        util.round(255 * color.b)
+    ):lower()
+    return str
+end
+
+---To be used in l10n files for text coloring
+H.TextColorParams = {
+    color_normal = hexFromGMST('fontcolor_color_normal'),
+    color_header = hexFromGMST('fontcolor_color_header'),
+    color_positive = hexFromGMST('fontcolor_color_positive'),
+    color_negative = hexFromGMST('fontcolor_color_negative'),
+}
 
 ---@param id string effect id
 ---@return openmw.core.MagicEffect? record, boolean isCustom
