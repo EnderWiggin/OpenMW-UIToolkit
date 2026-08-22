@@ -88,16 +88,21 @@ end
 ---@type UIToolkit.ListItem.Column.Renderer
 function Item.renderText(data, cfg, height)
     local value = data[cfg.id] or ''
+    if type(value) == 'function' then
+        value = value()
+    end
     if type(value) == 'number' then
         value = H.addSeparators(H.roundToPlaces(value, 2))
     end
     local textSize = cfg.arg and cfg.arg.textSize or nil
+    local textAlignH = cfg.arg and cfg.arg.textAlignH or nil
     ---@type openmw.ui.Layout
     local layout = {
         name = cfg.id,
         template = I.UIToolkit.Templates.text(),
         props = {
             textAlignV = ui.ALIGNMENT.Center,
+            textAlignH = textAlignH,
             autoSize = false,
             textSize = textSize,
             text = tostring(value),
