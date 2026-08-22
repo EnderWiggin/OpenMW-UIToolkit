@@ -116,6 +116,55 @@ I.UIToolkit.Components.textEdit {
 ## Item List
 `itemList(opts)` - creates a list of items. Uses item provider to get Components representing items. Items can have tooltips.
 
+### Example
+Create a list of items in player's inventory with icon, name, weight, value and value-per-weight columns:
+```lua
+local player     = require 'openmw.self'
+local types      = require 'openmw.types'
+local ui         = require 'openmw.ui'
+local util       = require 'openmw.util'
+local I          = require 'openmw.interfaces'
+local H          = require 'scripts.UIToolkit.helpers'
+local ColumnItem = require 'scripts.UIToolkit.components.list_items.column_item'
+
+local textSize   = I.UIToolkit.getTheme().Sizes.textNormal
+local rowHeight  = 1.5 * (textSize + 2)
+
+local provider   = ColumnItem:new()
+provider:init({
+    { id = 'icon',   render = ColumnItem.renderIcon, arg = { sz = 1.5 * textSize },           width = rowHeight + 5 },
+    { id = 'name',   render = ColumnItem.renderText, },
+    { id = 'weight', render = ColumnItem.renderText, arg = { textAlignH = ui.ALIGNMENT.End }, width = 1.5 * rowHeight },
+    { id = 'value',  render = ColumnItem.renderText, arg = { textAlignH = ui.ALIGNMENT.End, textSize = textSize-1 }, width = 2 * rowHeight },
+    { id = 'V/W',    render = ColumnItem.renderText, arg = { textAlignH = ui.ALIGNMENT.End }, width = 2 * rowHeight },
+}, rowHeight)
+
+---@type UIToolkit.ListData.Column[]
+local rows = {}
+local items = types.Actor.inventory(player):getAll()
+for i = 1, #items do
+    ---@type openmw.Object
+    local item = items[i]
+    local record = item.type.records[item.recordId]
+    rows[#rows + 1] = {
+        id = item.id,
+        icon = record.icon,
+        name = record.name .. (item.count > 1 and ' (' .. H.addSeparators(item.count) .. ")" or ''),
+        weight = record.weight,
+        value = record.value,
+        ['V/W'] = function() return record.weight > 0 and record.value / record.weight or '--' end,
+        tooltip = { object = item, observer = player }
+    }
+end
+
+local list = I.UIToolkit.Components.itemList {
+    provider = provider,
+    size = util.vector2(300, 400),
+    onItemClicked = function(data, idx) print('Clicked on', idx, data.id) end,
+}
+list:setItems(rows)
+```
+
 ## Windows
 `I.UIToolkit.WindowManager` handles registering, opening and closing windows. Windows can be draggable, resizable. They store their position and size between opens.
 
