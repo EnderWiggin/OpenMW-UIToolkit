@@ -357,8 +357,8 @@ function Templates.buttonBoxBgr(bgrAlpha) end
 ---@class UTKTooltips.Tooltip
 ---@field type UTKTooltips.TooltipType? (Optional) Tooltip type. If not set, will be automatically determined based on object or key. Type can only be determined automatically for objects and records in openmw.types. Not needed if tooltip has pre-set recipe or layout.
 ---@field key string? (Optional) key defining specifics of the tooltip. See @{#TooltipType}
----@field object GameObject? (Optional) object to construct a tooltip from.
----@field observer openmw.types.Actor? (Optional) Actor used to read dynamic values, such as current/max health, skill progression, etc.
+---@field object openmw.Object? (Optional) object to construct a tooltip from.
+---@field observer openmw.Object? (Optional) Actor used to read dynamic values, such as current/max health, skill progression, etc.
 ---@field caption string? (Optional) caption, used by @{#TooltipType.MapMarker} and @{#TooltipType.Caption}
 ---@field notes string[]? (Optional) notes, used by @{#TooltipType.MapMarker}.
 ---@field recipe UTKTooltips.Recipe? (Optional) recipe. If set, this recipe is used directly.
