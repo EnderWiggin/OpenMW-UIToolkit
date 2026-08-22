@@ -1,17 +1,12 @@
 ---@omw-context player
 
 local ui = require('openmw.ui')
-local auxUi = require('openmw_aux.ui')
 
 local Theme = require('scripts.UIToolkit.themes.theme')
 
 local theme = Theme:new()
 
 local ctx = {
-    ---@type table<openmw.ui.Element, boolean>
-    updateQueue = {},
-    ---@type table<openmw.ui.Element, boolean>
-    destroyQueue = {},
     ---@type UIToolkit.Scrollable?
     focusedScrollable = nil,
 }
@@ -32,18 +27,111 @@ function Interface.getCtx() return ctx end
 
 function Interface.getTheme() return theme end
 
+---@type openmw.ui.Element[]
+local updateQueue = {}
+
+---@type openmw.ui.Element[]
+local deepUpdateQueue = {}
+
+---@type openmw.ui.Element[]
+local destroyQueue = {}
+
+---@type openmw.ui.Element[]
+local deepDestroyQueue = {}
+
+--Elements that were destroyed or updated this frame.
+--Used to not update or destroy more than once per frame.
+--And to not update elements that have just been destroyed.
+---@type table<openmw.ui.Element, boolean>
+local touched = {}
+
+local function isUiElement(v)
+    return v.__type and v.__type.name == 'LuaUi::Element'
+end
+
+local function deepElementCallback(layout, callback)
+    if not layout.content then return end
+    for i = 1, #layout.content do
+        local child = layout.content[i]
+        if isUiElement(child) then
+            callback(child)
+            deepElementCallback(child.layout, callback)
+        else
+            deepElementCallback(child, callback)
+        end
+    end
+end
+
+---@param element openmw.ui.Element
+local function tryDestroy(element)
+    if touched[element] then return end
+    element:destroy()
+    --TODO: add custom 'destroyed' callback check for components
+    touched[element] = true
+end
+
+---@param element openmw.ui.Element
+local function tryUpdate(element)
+    if touched[element] then return end
+    element:update()
+    --TODO: add custom 'updated' callback check for components
+    touched[element] = true
+end
+
+local function processUpdateAndDestroyQueues()
+    local _updateQueue = updateQueue
+    updateQueue = {}
+
+    local _deepUpdateQueue = deepUpdateQueue
+    deepUpdateQueue = {}
+
+    local _destroyQueue = destroyQueue
+    destroyQueue = {}
+
+    local _deepDestroyQueue = deepDestroyQueue
+    deepDestroyQueue = {}
+
+    for i = 1, #_deepDestroyQueue do
+        local element = _deepDestroyQueue[i]
+        tryDestroy(element)
+        deepElementCallback(element.layout, tryDestroy)
+    end
+
+    for i = 1, #_destroyQueue do
+        tryDestroy(_destroyQueue[i])
+    end
+
+    for i = 1, #_deepUpdateQueue do
+        local element = _deepUpdateQueue[i]
+        tryUpdate(element)
+        deepElementCallback(element.layout, tryUpdate)
+    end
+
+    for i = 1, #_updateQueue do
+        tryUpdate(_updateQueue[i])
+    end
+
+    touched = {}
+end
+
 ---@param element openmw.ui.Element
 ---@param deep boolean?
 function Interface.queueUpdate(element, deep)
-    if ctx.destroyQueue[element] ~= nil then return end
-    ctx.updateQueue[element] = deep == true
+    if deep == true then
+        deepUpdateQueue[#deepUpdateQueue + 1] = element
+    else
+        updateQueue[#updateQueue + 1] = element
+    end
 end
 
 ---@param element openmw.ui.Element
 ---@param deep boolean
 function Interface.queueDestroy(element, deep)
-    ctx.updateQueue[element] = nil
-    ctx.destroyQueue[element] = deep
+    if deep == true then
+        deepDestroyQueue[#deepDestroyQueue + 1] = element
+    else
+        destroyQueue[#destroyQueue + 1] = element
+    end
 end
 
 local TEX_CACHE = {}
@@ -89,23 +177,7 @@ local function onFrame()
         ctx.focusedInteractiveDelayed = nil
     end
 
-    for element, deep in pairs(ctx.updateQueue) do
-        if deep then
-            auxUi.deepUpdate(element)
-        else
-            element:update()
-        end
-    end
-    ctx.updateQueue = {}
-
-    for element, deep in pairs(ctx.destroyQueue) do
-        if deep then
-            auxUi.deepDestroy(element)
-        else
-            element:destroy()
-        end
-    end
-    ctx.destroyQueue = {}
+    processUpdateAndDestroyQueues()
 end
 
 local function onMouseWheel(v)
