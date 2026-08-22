@@ -191,13 +191,12 @@ end
 function ItemList:_updateScrollable()
     local state = self.state
     local width = self:getContentWidth()
-    local sz = v2(width, state.itemHeight)
     local items = {}
     local layout = self._scrollable.layout
     local from, to = self:getVisibleItemRange()
     for i = from, to do
         local item = state.items[i]
-        local view = state.provider:getView(item, sz)
+        local view = state.provider:getView(item)
         items[#items + 1] = self:_getHolder(i, item.id, view)
     end
     layout.props.size = v2(width, #state.items * state.itemHeight)
