@@ -13,7 +13,6 @@ local ColumnItem = require 'scripts.UIToolkit.components.list_items.column_item'
 
 local v2         = util.vector2
 local WND_NAME   = 'uitoolkit-demo'
-local isOpen     = false
 
 ---@class Handler: UIToolkit.WindowHandler
 local Handler    = {}
@@ -38,8 +37,10 @@ function Handler:onOpened(wnd)
     list = I.UIToolkit.Components.itemList {
         provider = provider,
         size = v2(200, 300),
-        onItemClicked = function(data, idx)
-
+        onItemClicked = function(data)
+            local cached = provider:getCachedComponent(data.id)
+            if not cached then return end
+            cached:setActive(not cached:isActive())
         end
     }
     ---@type UIToolkit.ListData.Column[]
@@ -97,11 +98,10 @@ I.UIToolkit.WindowManager.register(WND_NAME, {
 local function onKeyRelease(key)
     if key.code ~= input.KEY.Backspace then return end
 
-    isOpen = not isOpen
-    if isOpen then
-        I.UIToolkit.WindowManager.open(WND_NAME)
-    else
+    if I.UIToolkit.WindowManager.isOpen(WND_NAME) then
         I.UIToolkit.WindowManager.close(WND_NAME)
+    else
+        I.UIToolkit.WindowManager.open(WND_NAME)
     end
 end
 
