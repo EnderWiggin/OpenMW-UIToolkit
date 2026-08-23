@@ -218,8 +218,8 @@ The `observer` field is optional, it is used to determine how many effects potio
 
 # Planned Features
 - [ ] Add controller support
-  - [ ] for list scrolling 
-  - [ ] send button events to windows
+  - [x] for list scrolling 
+  - [x] send button events to windows
   - other stuff?
 - [x] Add list item provider with columns
 - [ ] Add `Column Sorter` component that can display columns with sorting and provide events for List to use
