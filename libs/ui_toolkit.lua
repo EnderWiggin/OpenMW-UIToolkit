@@ -87,6 +87,7 @@ function Components.itemList(opts) end
 ---@field new fun():UIToolkit.Component
 ---@field init fun(self:UIToolkit.Component, element:openmw.ui.Element)
 ---@field isDestroyed fun(self:UIToolkit.Component):boolean
+---@field beforeElementDestroy fun(self:UIToolkit.Component)
 ---@field element openmw.ui.Element
 ---@field isVisible fun(self:UIToolkit.Component):boolean|nil Returns whether component is visible or `nil` if destroyed.
 ---@field setVisible fun(self:UIToolkit.Component, value: boolean?):UIToolkit.Component Sets component's visibility and queues update, return self.

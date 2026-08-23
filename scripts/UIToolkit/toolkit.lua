@@ -52,7 +52,7 @@ local function isUiElement(v)
 end
 
 local function deepElementCallback(layout, callback)
-    if not layout.content then return end
+    if not layout or not layout.content then return end
     for i = 1, #layout.content do
         local child = layout.content[i]
         if isUiElement(child) then
@@ -65,10 +65,19 @@ local function deepElementCallback(layout, callback)
 end
 
 ---@param element openmw.ui.Element
+---@return UIToolkit.Component?
+local function tryGetComponent(element)
+    if not element.layout then return nil end
+    local userData = element.layout.userData
+    return userData and userData._component --[[@as UIToolkit.Component?]]
+end
+
+---@param element openmw.ui.Element
 local function tryDestroy(element)
     if touched[element] then return end
+    local component = tryGetComponent(element)
+    if component then component:beforeElementDestroy() end
     element:destroy()
-    --TODO: add custom 'destroyed' callback check for components
     touched[element] = true
 end
 

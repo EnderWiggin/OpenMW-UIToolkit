@@ -129,6 +129,10 @@ function ItemList:init(opts)
     Component.init(self, ui.create(layout))
 end
 
+function ItemList:beforeElementDestroy()
+    self.state.provider:clear()
+end
+
 ---@param delta number
 function ItemList:onMouseScrolled(delta)
     self._scrollBar:scroll(-delta)

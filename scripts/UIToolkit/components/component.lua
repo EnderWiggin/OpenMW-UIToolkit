@@ -10,11 +10,14 @@ local Component = Class()
 ---@param element openmw.ui.Element
 function Component:init(element)
     self.element = element
+    H.userData(element)._component = self
 end
 
 function Component:isDestroyed()
     return self.element == nil or self.element.layout == nil
 end
+
+function Component:beforeElementDestroy() end
 
 ---@return boolean|nil -- whether component is visible, `nil` if destroyed.
 function Component:isVisible()
