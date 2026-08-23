@@ -9,13 +9,15 @@ local util       = require 'openmw.util'
 local I          = require 'openmw.interfaces'
 local H          = require 'scripts.UIToolkit.helpers'
 
+local Class = require 'scripts.UIToolkit.class'
+local WindowHandler = require 'scripts.UIToolkit.window_handler'
 local ColumnItem = require 'scripts.UIToolkit.components.list_items.column_item'
 
 local v2         = util.vector2
 local WND_NAME   = 'uitoolkit-demo'
 
 ---@class Handler: UIToolkit.WindowHandler
-local Handler    = {}
+local Handler    = Class(WindowHandler)
 
 local textSize   = I.UIToolkit.getTheme().Sizes.textNormal
 local rowHeight  = 1.5 * (textSize + 2)
