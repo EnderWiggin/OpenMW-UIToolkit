@@ -355,6 +355,7 @@ function Templates.buttonBoxBgr(bgrAlpha) end
 ---@field version number
 ---@field currentTooltip fun():UTKTooltips.Tooltip?
 ---@field setTooltip fun(tooltip:UTKTooltips.AnyTooltip?, extra:UTKTooltips.ExtraParams?)
+---@field convertAnyTooltip fun(tip:UTKTooltips.AnyTooltip?):UTKTooltips.Tooltip?
 ---@field createTooltipLayout fun(tooltip:UTKTooltips.Tooltip):openmw.ui.Layout?
 ---@field addPreCreateTooltipHandler fun(handler:UTKTooltips.PreCreateHandler)
 ---@field addPostCreateTooltipHandler fun(handler:UTKTooltips.PostCreateHandler)

@@ -206,6 +206,14 @@ function H.findLayoutByPath(layoutOrElement, path)
     return layout or error('empty layout for path: "' .. table.concat(path, '/') .. '"')
 end
 
+---@param layoutOrElement openmw.ui.Element|openmw.ui.Layout
+---@param path (string|integer)[]
+---@return openmw.ui.Layout? layout the requested layout, otherwise nil
+function H.findLayoutByPathSafe(layoutOrElement, path)
+    local ok, layout = pcall(H.findLayoutByPath, layoutOrElement, path)
+    return ok and layout or nil
+end
+
 ---@param layoutOrElement openmw.ui.Layout|openmw.ui.Element
 ---@return table
 function H.props(layoutOrElement)

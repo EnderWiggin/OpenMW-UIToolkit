@@ -43,6 +43,7 @@ local function textNormal(text, name)
         name = name,
         props = {
             text = text,
+            multiline = true,
             textAlignH = ui.ALIGNMENT.Center
         }
     }

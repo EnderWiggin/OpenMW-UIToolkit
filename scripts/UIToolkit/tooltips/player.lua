@@ -350,6 +350,7 @@ return {
 
         currentTooltip = function() return currentTooltip end,
         setTooltip = setTooltip,
+        convertAnyTooltip = processAnyTooltip,
         createTooltipLayout = createTooltipLayout,
         addPreCreateTooltipHandler = function(handler)
             preCreateTooltipHandlers[#preCreateTooltipHandlers + 1] = handler
