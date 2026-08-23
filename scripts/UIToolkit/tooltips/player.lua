@@ -20,8 +20,9 @@ local tooltipElement = ui.create {
 local currentTooltip
 ---@type openmw.ui.Element?
 local currentTipElement
----@type UTKTooltips.CurrentTipIsAlive?
-local currentTipIsAlive
+
+---@type UTKTooltips.ExtraParams?
+local extraParams
 
 
 ---@type UTKTooltips.PreCreateHandler[]
@@ -191,6 +192,7 @@ local function createTooltipLayout(tooltip)
 end
 
 local function getMousePosition()
+    if extraParams and extraParams.fixedTipPos then return extraParams.fixedTipPos end
     ---@diagnostic disable-next-line: undefined-field
     if ui.mousePosition then return ui.mousePosition() end
 
@@ -254,12 +256,15 @@ local function updatePosition()
             props.anchor = util.vector2(0.5, 1)
         end
     end
+    if extraParams and extraParams.fixedTipAnchor then
+        props.anchor = extraParams.fixedTipAnchor
+    end
     fixedPositionSet = true
 end
 
 local function clear()
     currentTooltip = nil
-    currentTipIsAlive = nil
+    extraParams = nil
     tooltipElement.layout.content = nil
     fixedPositionSet = false
     if currentTipElement then
@@ -268,8 +273,14 @@ local function clear()
     end
 end
 
+local function tooltipIsDead()
+    if not extraParams then return false end
+    if not extraParams.isAlive then return false end
+    return not extraParams.isAlive()
+end
+
 local function update()
-    if currentTipIsAlive and not currentTipIsAlive() then
+    if tooltipIsDead() then
         clear()
     end
     if currentTooltip ~= nil then
@@ -315,8 +326,8 @@ local function processAnyTooltip(tip)
 end
 
 ---@param newTooltip? UTKTooltips.AnyTooltip
----@param isAlive? fun():boolean
-local function setTooltip(newTooltip, isAlive)
+---@param extra UTKTooltips.ExtraParams?
+local function setTooltip(newTooltip, extra)
     clear()
     newTooltip = processAnyTooltip(newTooltip)
     if newTooltip then
@@ -324,7 +335,7 @@ local function setTooltip(newTooltip, isAlive)
             error('Cannot use new tooltip: Unable to determine type')
         end
         currentTooltip = newTooltip
-        currentTipIsAlive = isAlive
+        extraParams = extra
     end
 end
 

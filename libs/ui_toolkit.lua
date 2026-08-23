@@ -203,7 +203,10 @@ function Components.itemList(opts) end
 ---@field setPosition fun(self:UIToolkit.ItemList, position:number) set scroll position
 ---@field getProgress fun(self:UIToolkit.ItemList):number [0-1] progress of the scroll
 ---@field setProgress fun(self:UIToolkit.ItemList, progress:number) set [0-1] progress of the scroll
----@field getVisibleItemRange fun(self:UIToolkit.ItemList):integer, integer
+---@field getVisibleItemRange fun(self:UIToolkit.ItemList, strict:boolean?):integer, integer
+---@field getVisibleItemCount fun(self:UIToolkit.ItemList):integer
+---@field setHovered fun(self:UIToolkit.ItemList, idOrIndex:string|integer|nil, fixedTipPos:openmw.util.Vector2?, fixedTipAnchor:openmw.util.Vector2?)
+---@field shiftHoveredItem fun(self:UIToolkit.ItemList, shift:integer, fixedTipPos:openmw.util.Vector2?, fixedTipAnchor:openmw.util.Vector2?)
 
 ---@class UIToolkit.WindowManager
 ---@field register fun(id: string, opts: UIToolkit.WindowOpts)
@@ -234,7 +237,7 @@ function Components.itemList(opts) end
 
 ---@class UIToolkit.Window:UIToolkit.Component
 ---@field new fun():UIToolkit.Window
----@field init fun(self:UIToolkit.Window, opts:UIToolkit.WindowOpts, saved:UIToolkit.WindowSaveData?)
+---@field init fun(self:UIToolkit.Window, opts:UIToolkit.WindowOpts, id:string, saved:UIToolkit.WindowSaveData?)
 ---@field setTitle fun(self:UIToolkit.Window, newTitle:string)
 ---@field setContent fun(self:UIToolkit.Window, content:openmw.ui.Content)
 ---@field getPosition fun(self:UIToolkit.Window):openmw.util.Vector2
@@ -339,10 +342,15 @@ function Templates.buttonBoxBgr(bgrAlpha) end
 ---@field standardGap number
 ---@field padding number
 
+---@class UTKTooltips.ExtraParams
+---@field isAlive UTKTooltips.CurrentTipIsAlive?
+---@field fixedTipPos openmw.util.Vector2?
+---@field fixedTipAnchor openmw.util.Vector2?
+
 ---@class openmw.interfaces.UTKTooltips
 ---@field version number
 ---@field currentTooltip fun():UTKTooltips.Tooltip?
----@field setTooltip fun(tooltip:UTKTooltips.AnyTooltip?, isAlive:UTKTooltips.CurrentTipIsAlive?)
+---@field setTooltip fun(tooltip:UTKTooltips.AnyTooltip?, extra:UTKTooltips.ExtraParams?)
 ---@field createTooltipLayout fun(tooltip:UTKTooltips.Tooltip):openmw.ui.Layout?
 ---@field addPreCreateTooltipHandler fun(handler:UTKTooltips.PreCreateHandler)
 ---@field addPostCreateTooltipHandler fun(handler:UTKTooltips.PostCreateHandler)

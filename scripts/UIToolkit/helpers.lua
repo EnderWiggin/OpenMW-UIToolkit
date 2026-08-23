@@ -72,6 +72,28 @@ function H.mergeTables(t1, t2)
     return merged
 end
 
+---
+---@param array any[]
+---@param what any
+---@return integer? index of the item, or nil if not fount
+function H.findInArray(array, what)
+    for i = 1, #array do
+        if array[i] == what then return i end
+    end
+    return nil
+end
+
+---Removes all instances of `what` from `array`
+---@param array any[]
+---@param what any
+function H.removeFromArray(array, what)
+    local idx = H.findInArray(array, what)
+    while idx do
+        table.remove(array, idx)
+        idx = H.findInArray(array, what)
+    end
+end
+
 H.roundToPlaces = function(num, places)
     local m = 10 ^ (places or 0)
     return math.floor(num * m + 0.5) / m

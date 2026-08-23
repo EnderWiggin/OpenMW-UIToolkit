@@ -324,11 +324,13 @@ local function makeDraggable(borderTemplate, onDragTypeChanged, noResize)
                     if onDragTypeChanged then
                         onDragTypeChanged(dragType)
                     end
+                    return true
                 end),
                 focusLoss = async:callback(function()
                     if onDragTypeChanged then
                         onDragTypeChanged(nil)
                     end
+                    return true
                 end),
             }
         end
@@ -342,8 +344,10 @@ local function makeDraggable(borderTemplate, onDragTypeChanged, noResize)
 end
 
 ---@param opts UIToolkit.WindowOpts
+---@param id string
 ---@param saved? UIToolkit.WindowSaveData
-function Window:init(opts, saved)
+function Window:init(opts, id, saved)
+    self.id = id
     local theme = I.UIToolkit.getTheme()
 
     local noResize = not opts.resizing
@@ -475,6 +479,7 @@ function Window:init(opts, saved)
 
         window.layout.events = {
             mousePress = async:callback(function(e, layout)
+                I.UIToolkit.WindowManager._queueFocusedWindow(self.id)
                 if e.button ~= 1 then return end
                 if data.dragType == nil then return end
                 data.dragging = true
@@ -486,6 +491,7 @@ function Window:init(opts, saved)
                 end
             end),
             mouseMove = async:callback(function(e, layout)
+                I.UIToolkit.WindowManager._queueFocusedWindow(self.id)
                 local minWidth = data.minSize.x
                 local minHeight = data.minSize.y
                 --userData.hadMouseMoveThisFrame = true
@@ -548,12 +554,14 @@ function Window:init(opts, saved)
                 end
             end),
             focusGain = async:callback(function()
+                I.UIToolkit.WindowManager._queueFocusedWindow(self.id)
                 window.layout.userData.focusDelayed = true
             end),
             focusLoss = async:callback(function()
                 window.layout.userData.focusDelayed = false
             end),
             mouseRelease = async:callback(function(e)
+                I.UIToolkit.WindowManager._queueFocusedWindow(self.id)
                 if e.button ~= 1 then return end
                 data.dragging = false
             end),
@@ -561,6 +569,15 @@ function Window:init(opts, saved)
     else
         window.layout.events = {
             mouseMove = async:callback(function(e)
+                I.UIToolkit.getCtx().lastMousePos = e.position
+                I.UIToolkit.WindowManager._queueFocusedWindow(self.id)
+            end),
+            mousePress = async:callback(function(e)
+                I.UIToolkit.WindowManager._queueFocusedWindow(self.id)
+                I.UIToolkit.getCtx().lastMousePos = e.position
+            end),
+            mouseRelease = async:callback(function(e)
+                I.UIToolkit.WindowManager._queueFocusedWindow(self.id)
                 I.UIToolkit.getCtx().lastMousePos = e.position
             end),
         }

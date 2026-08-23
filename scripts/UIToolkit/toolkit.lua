@@ -1,5 +1,7 @@
 ---@omw-context player
 
+local core = require('openmw.core')
+local input = require('openmw.input')
 local ui = require('openmw.ui')
 
 local Theme = require('scripts.UIToolkit.themes.theme')
@@ -168,6 +170,7 @@ local function getFocusedScrollable()
 end
 
 local function onFrame()
+    local dt = core.getRealFrameDuration()
     if ctx.focusedInteractiveDelayed ~= nil then
         if ctx.focusedInteractiveDelayed == false then
             ctx.focusedInteractive = nil
@@ -176,6 +179,14 @@ local function onFrame()
         end
         ctx.focusedInteractiveDelayed = nil
     end
+
+    local scrollable = getFocusedScrollable()
+    if scrollable then
+        local rightStick = input.getAxisValue(input.CONTROLLER_AXIS.RightY)
+        scrollable:onMouseScrolled(-20 * rightStick * dt)
+    end
+
+    Interface.WindowManager._onFrame(dt)
 
     processUpdateAndDestroyQueues()
 end
@@ -186,11 +197,23 @@ local function onMouseWheel(v)
     scrollable:onMouseScrolled(v)
 end
 
+---@param id number
+local function onControllerButtonPress(id)
+    Interface.WindowManager._onControllerButtonPress(id)
+end
+
+---@param id number
+local function onControllerButtonRelease(id)
+    Interface.WindowManager._onControllerButtonRelease(id)
+end
+
 return {
     interfaceName = 'UIToolkit',
     interface = Interface,
     engineHandlers = {
         onFrame = onFrame,
         onMouseWheel = onMouseWheel,
+        onControllerButtonPress = onControllerButtonPress,
+        onControllerButtonRelease = onControllerButtonRelease
     },
 }

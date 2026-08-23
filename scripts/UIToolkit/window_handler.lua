@@ -22,4 +22,22 @@ function WindowHandler:onResized(innerSize)
 
 end
 
+---@param dt number
+---@diagnostic disable-next-line: unused-local
+function WindowHandler:onFrame(dt)
+
+end
+
+---@param button number
+---@diagnostic disable-next-line: unused-local
+function WindowHandler:onControllerButtonPress(button)
+
+end
+
+---@param button number
+---@diagnostic disable-next-line: unused-local
+function WindowHandler:onControllerButtonRepeat(button)
+
+end
+
 return WindowHandler

@@ -84,7 +84,7 @@ function M.makeInteractive(opts, layoutOrElement)
             tooltip = tooltip()
         end
         if tooltip then
-            I.UTKTooltips.setTooltip(tooltip, isAlive)
+            I.UTKTooltips.setTooltip(tooltip, { isAlive = isAlive })
         end
         return true
     end)

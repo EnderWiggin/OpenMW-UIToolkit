@@ -61,17 +61,15 @@ function ItemList:init(opts)
                 if onClicked then
                     local idx = self:getIndexByYPos(e.offset.y)
                     local item = self.state.items[idx]
-                    if item then ambient.playSound('menu click', { scale = false }) end
-                    self.state.lastHoveredPos = e.offset.y - self._scrollBar:getPosition()
+                    if item then
+                        ambient.playSound('menu click', { scale = false })
+                        onClicked(item, idx)
+                    end
                 end
+                self.state.lastHoveredPos = e.offset.y - self._scrollBar:getPosition()
             end),
             mouseRelease = async:callback(function(e)
-                if onClicked then
-                    local idx = self:getIndexByYPos(e.offset.y)
-                    local item = self.state.items[idx]
-                    if item then onClicked(item, idx) end
-                    self.state.lastHoveredPos = e.offset.y - self._scrollBar:getPosition()
-                end
+                self.state.lastHoveredPos = e.offset.y - self._scrollBar:getPosition()
             end),
             ---@param e openmw.ui.MouseEvent
             mouseMove = async:callback(function(e)
@@ -175,17 +173,27 @@ function ItemList:_getHolder(n, id, view)
     return element
 end
 
+---@param strict boolean? if true, range will be strict - only fully visible items are included
 ---@return integer, integer
-function ItemList:getVisibleItemRange()
+function ItemList:getVisibleItemRange(strict)
     local state = self.state
     local total = #state.items
     if total == 0 then return 1, 0 end
     local scroll = self._scrollBar:getPosition()
-    local from = math.max(math.floor(scroll / state.itemHeight) - 1, 1)
+
+    local roundFrom = strict and math.ceil or math.floor
+    local roundTo = strict and math.floor or math.ceil
+
+    local from = math.max(roundFrom(scroll / state.itemHeight), 1)
     if from > total then return 1, 0 end
-    local to = math.min(math.ceil((scroll + state.currentSize.y) / state.itemHeight) + 1, total)
+    local to = math.min(roundTo((scroll + state.currentSize.y) / state.itemHeight), total)
 
     return from, to
+end
+
+function ItemList:getVisibleItemCount()
+    local state = self.state
+    return math.floor(state.currentSize.y / state.itemHeight)
 end
 
 function ItemList:_updateScrollable()
@@ -252,7 +260,9 @@ function ItemList:updateHoveredItem()
 end
 
 ---@param idOrIndex string|integer|nil
-function ItemList:setHovered(idOrIndex)
+---@param fixedTipPos openmw.util.Vector2?
+---@param fixedTipAnchor openmw.util.Vector2?
+function ItemList:setHovered(idOrIndex, fixedTipPos, fixedTipAnchor)
     local state = self.state
     ---@type string?
     local id
@@ -278,12 +288,23 @@ function ItemList:setHovered(idOrIndex)
 
     if item then
         local tip = state.provider:getTooltip(item)
-        I.UTKTooltips.setTooltip(tip, function() return not self:isDestroyed() end)
+        I.UTKTooltips.setTooltip(tip, {
+            isAlive = function() return not self:isDestroyed() end,
+            fixedTipPos = fixedTipPos,
+            fixedTipAnchor = fixedTipAnchor,
+        })
     else
         I.UTKTooltips.setTooltip(nil)
     end
 
     state.hovered = idOrIndex
+end
+
+---@return UIToolkit.ListData.Base? item, integer? index
+function ItemList:getHovered()
+    local state = self.state
+    if not state.hovered then return nil, nil end
+    return state.items[state.hovered], state.hovered
 end
 
 ---@return number
@@ -304,6 +325,51 @@ end
 ---@param progress number
 function ItemList:setProgress(progress)
     self._scrollBar:setProgress(progress)
+end
+
+local buffer = 1 --TODO: move, rename
+---@param shift integer
+---@param fixedTipPos openmw.util.Vector2?
+---@param fixedTipAnchor openmw.util.Vector2?
+function ItemList:shiftHoveredItem(shift, fixedTipPos, fixedTipAnchor)
+    if not shift or shift == 0 then return end
+    local down = shift > 0
+    local state = self.state
+    local rows = state.items
+    local from, to = self:getVisibleItemRange(true)
+    local rIdx = state.hovered
+    local tIdx = down and from or to
+    if rIdx then
+        util.clamp(rIdx, from, to)
+        tIdx = rIdx + shift
+        if down then
+            if rIdx == #rows then
+                down = false
+                tIdx = 1
+            end
+            to = to - buffer
+        else
+            if rIdx == 1 then
+                down = true
+                tIdx = #rows
+            end
+            from = from + buffer
+        end
+    end
+    tIdx = util.clamp(tIdx, 1, #rows)
+
+    if tIdx < from or tIdx > to then
+        local tPos = tIdx + (down and 0 or from - to)
+        tPos = (tPos - 1) * state.itemHeight
+        local pos = self:getPosition()
+
+        self:setPosition(down
+            and math.max(pos, tPos)
+            or math.min(pos, tPos)
+        )
+    end
+    state.lastHoveredPos = nil
+    self:setHovered(tIdx, fixedTipPos, fixedTipAnchor)
 end
 
 ---@param id string
