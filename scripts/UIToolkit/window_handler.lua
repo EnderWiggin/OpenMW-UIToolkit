@@ -40,4 +40,9 @@ function WindowHandler:onControllerButtonRepeat(button)
 
 end
 
+---@return UIToolkit.Scrollable?
+function WindowHandler:getFocusedScrollable()
+    return nil
+end
+
 return WindowHandler

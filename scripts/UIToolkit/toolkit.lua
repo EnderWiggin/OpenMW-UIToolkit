@@ -181,9 +181,16 @@ local function onFrame()
     end
 
     local scrollable = getFocusedScrollable()
+    if not scrollable then
+        local window = Interface.WindowManager.getFocusedWindowHandler()
+        scrollable = window and window:getFocusedScrollable()
+    end
+
     if scrollable then
         local rightStick = input.getAxisValue(input.CONTROLLER_AXIS.RightY)
-        scrollable:onMouseScrolled(-20 * rightStick * dt)
+        if math.abs(rightStick) > 0.1 then
+            scrollable:onMouseScrolled(-20 * rightStick * dt)
+        end
     end
 
     Interface.WindowManager._onFrame(dt)
