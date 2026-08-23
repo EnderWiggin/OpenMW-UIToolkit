@@ -168,6 +168,54 @@ list:setItems(rows)
 ## Windows
 `I.UIToolkit.WindowManager` handles registering, opening and closing windows. Windows can be draggable, resizable. They store their position and size between opens.
 
+Register a window once, then open it by its ID. The window handler is called when the window opens and can populate it with any UI content:
+```lua
+local input = require 'openmw.input'
+local ui    = require 'openmw.ui'
+local util  = require 'openmw.util'
+local I     = require 'openmw.interfaces'
+
+local windowId = 'my-simple-window'
+
+local handler = {}
+
+function handler:onOpened(wnd)
+    wnd:setContent(ui.content {
+        {
+            template = I.MWUI.templates.textNormal,
+            props = { text = 'Hello from my window!' },
+        },
+    })
+end
+
+I.UIToolkit.WindowManager.register(windowId, {
+    title = 'My Window',
+    handler = handler,
+    size = util.vector2(300, 120),
+    position = util.vector2(300, 300),
+    draggable = true,
+})
+
+local function onKeyRelease(key)
+    if key.code ~= input.KEY.Backspace then return end
+
+    local windows = I.UIToolkit.WindowManager
+    if windows.isOpen(windowId) then
+        windows.close(windowId)
+    else
+        windows.open(windowId)
+    end
+end
+
+return {
+    engineHandlers = {
+        onKeyRelease = onKeyRelease,
+    },
+}
+```
+
+`I.UIToolkit.WindowManager.register` only defines the window. Call `I.UIToolkit.WindowManager.open(windowId)` to create it; `I.UIToolkit.WindowManager.close(windowId)` destroys it while preserving its position and size for the next open.
+
 
 # Tooltips
 Taken almost as-is from the [Dehardcode tooltips MR](https://gitlab.com/OpenMW/openmw/-/merge_requests/5336). Only some small tweaks to accommodate for the lack of newer API in 0.51. The idea is to allow modders to play with the dehardcode API before it is released and, hopefully, make transition to it easier when it happens.
