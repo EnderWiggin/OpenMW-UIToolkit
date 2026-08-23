@@ -250,8 +250,6 @@ function Components.itemList(opts) end
 ---@field baseColor openmw.util.Color?
 
 ---@class UIToolkit.Templates
----@field boxSolid openmw.ui.Template
----@field boxSolidThick openmw.ui.Template
 local Templates = {}
 
 ---@return openmw.ui.Template

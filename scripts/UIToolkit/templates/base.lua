@@ -149,12 +149,6 @@ function M.editBox()
     return GetCachedOrCalculate('editBox', editBox)
 end
 
---TODO: replace usage of these with new methods
-M.boxSolid = auxUi.deepLayoutCopy(I.MWUI.templates.boxSolid) --[[@as openmw.ui.Template]]
-M.boxSolidThick = auxUi.deepLayoutCopy(I.MWUI.templates.boxSolidThick) --[[@as openmw.ui.Template]]
-M.boxSolid.content[1].props.color = colors.BACKGROUND
-M.boxSolidThick.content[1].props.color = colors.BACKGROUND
-
 ---@param padX number
 ---@param padY number?
 ---@return openmw.ui.Template
