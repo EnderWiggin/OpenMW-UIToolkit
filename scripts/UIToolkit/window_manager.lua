@@ -77,6 +77,9 @@ function M.close(id)
     local wnd = data.wnd
     if not wnd then return end
 
+    local handler = data.handler
+    if handler then handler:onClosed() end
+
     ---@type UIToolkit.WindowSaveData
     local saved = {
         pinned = wnd:isPinned(),
@@ -87,8 +90,6 @@ function M.close(id)
     section:set(id, saved)
     data.wnd = nil
     I.UIToolkit.queueDestroy(wnd.element, true)
-    local handler = data.handler
-    if handler then handler:onClosed() end
     data.handler = nil
 end
 
