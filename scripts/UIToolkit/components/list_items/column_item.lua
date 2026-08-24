@@ -11,6 +11,10 @@ local Class = require('scripts.UIToolkit.class')
 local Component = require('scripts.UIToolkit.components.component')
 local ListItemBase = require('scripts.UIToolkit.components.list_items.base_item')
 
+---@class UIToolkit.ListItem.RowComponent : UIToolkit.Component
+---@field data UIToolkit.ListData.Column?
+local RowComponent = Class(Component)
+
 ---@class UIToolkit.ListItem.Column: UIToolkit.ListItem.Base<UIToolkit.ListData.Column>
 local Item = Class(ListItemBase)
 
@@ -48,27 +52,42 @@ function Item:makeComponent(data)
         userData = { active = active }
     }
     I.UIToolkit.Interactive.updateState(layout)
-    local component = Component:new()
+    local component = RowComponent:new() --[[@as UIToolkit.ListItem.RowComponent]]
+    component.data = data
     component:init(ui.create(layout))
     return component
 end
 
----@param data UIToolkit.ListData.Column
----@param column string|integer
-function Item:refreshColumn(data, column)
-    local cached = self:getCachedComponent(data.id)
+---@param idOrData string|UIToolkit.ListData.Column
+---@param ... string|integer
+function Item:refreshColumns(idOrData, ...)
+    local id, data
+    if type(idOrData) == 'string' then
+        id = idOrData
+    else
+        id = idOrData.id
+        data = idOrData
+    end
+    local columns = {}
+    local args = { ... }
+    for i = 1, select("#", ...) do
+        columns[args[i]] = true
+    end
+    local cached = self:getCachedComponent(id) --[[@as UIToolkit.ListItem.RowComponent]]
     if not cached or cached:isDestroyed() then return end
+    data = data or cached.data
+    assert(data)
     local content = cached.element.layout.content
     if not content then return end
     for i = 1, #content do
         local part = content[i] --[[@as openmw.ui.Element]]
-        if i == column or part.layout.name == column then
+        if columns[i] or columns[part.layout.name] then
             local cfg = self.columns[i]
             --TODO: add possibility to update instead of re-render?
             I.UIToolkit.queueDestroy(part, true)
             content[i] = cfg.render(data, cfg, self.rowHeight)
+            I.UIToolkit.Interactive.updateState(cached.element)
             I.UIToolkit.queueUpdate(cached.element)
-            return
         end
     end
 end

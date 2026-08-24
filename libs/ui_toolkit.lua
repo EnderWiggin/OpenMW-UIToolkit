@@ -184,7 +184,7 @@ function Components.itemList(opts) end
 ---@class UIToolkit.ListItem.Column: UIToolkit.ListItem.Base
 ---@field new fun(self:UIToolkit.ListItem.Column):UIToolkit.ListItem.Column
 ---@field init fun(self:UIToolkit.ListItem.Column, columns:UIToolkit.ListData.ColumnConfig[], rowHeight:number)
----@field refreshColumn fun(self:UIToolkit.ListItem.Column, data:UIToolkit.ListData.Column, column:string|integer)
+---@field refreshColumns fun(self:UIToolkit.ListItem.Column, idOrData:string|UIToolkit.ListData.Column, ...:string|integer)
 ---@field renderText UIToolkit.ListItem.Column.Renderer
 ---@field renderIcon UIToolkit.ListItem.Column.Renderer
 
