@@ -272,14 +272,14 @@ The `observer` field is optional, it is used to determine how many effects potio
 - [x] Add list item provider with columns
 - [ ] Add `Column Sorter` component that can display columns with sorting and provide events for List to use
 - [ ] Make `Component` able to subscribe to `onUpdate` event
-- [ ] Make `Component` able to subscribe to `elementUpdated` event
+- [x] Make `Component` able to subscribe to `elementUpdated` event
 - [ ] Make `Component` able to subscribe to `elementDestroyed` event
 - [ ] Option to make `Interactives` not react to hovers/clicks when disabled 
 - [ ] Add `Checkbox` component
 - [ ] Add `Dropbox` component
 - [ ] Add `Tabs`/`Radio group` style component?
 - [ ] Settings menu to customize templates
-- [x] Helper methods to create Tooltip objects for common types of custom tooltips (solved by making `setTooltip` accept simplified objects)
+- [x] Helper methods to create Tooltip objects for common types of custom tooltips (solved by making `setTooltip` accept simplified objects and new method `convertAnyTooltip`)
   - [x] Text line
   - [x] Text paragraph (with optional title)
 - [ ] Modal popups?

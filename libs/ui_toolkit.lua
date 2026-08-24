@@ -235,7 +235,7 @@ function Components.itemList(opts) end
 ---@field onOpened fun(self:UIToolkit.WindowHandler, wnd:UIToolkit.Window, data:any?)
 ---@field onClosed fun(self:UIToolkit.WindowHandler)
 ---@field onResized fun(self:UIToolkit.WindowHandler, innerSize:openmw.util.Vector2)
----@field onFrame fun(self:UIToolkit.WindowHandler) called each frame
+---@field onFrame fun(self:UIToolkit.WindowHandler, dt:number) called each frame
 ---@field onControllerButtonPress fun(self:UIToolkit.WindowHandler, button:number) called on focused window when controller button is pressed
 ---@field onControllerButtonRepeat fun(self:UIToolkit.WindowHandler, button:number) called on focused window when controller button is held and repeating buttons is on
 ---@field getFocusedScrollable fun(self:UIToolkit.WindowHandler):UIToolkit.Scrollable? this scrollable will be scrolled by Right Stick if window is focused and no other scrollable is in focus

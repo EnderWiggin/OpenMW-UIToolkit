@@ -128,6 +128,8 @@ end
 ---@param element openmw.ui.Element
 ---@param deep boolean?
 function Interface.queueUpdate(element, deep)
+    if not element then return end
+    assert(element.update)
     if deep == true then
         deepUpdateQueue[#deepUpdateQueue + 1] = element
     else
@@ -138,6 +140,8 @@ end
 ---@param element openmw.ui.Element
 ---@param deep boolean
 function Interface.queueDestroy(element, deep)
+    if not element then return end
+    assert(element.destroy)
     if deep == true then
         deepDestroyQueue[#deepDestroyQueue + 1] = element
     else

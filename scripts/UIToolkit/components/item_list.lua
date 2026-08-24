@@ -131,6 +131,12 @@ end
 
 function ItemList:beforeElementDestroy()
     self.state.provider:clear()
+    local n = table.maxn(self._holders)
+    for i = 1, n do
+        local holder = self._holders[i]
+        I.UIToolkit.queueDestroy(holder and holder.element, false)
+    end
+    self._holders = {}
 end
 
 ---@param delta number
