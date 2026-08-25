@@ -651,8 +651,6 @@ Tooltips.potionRecipe = function(tooltip)
         unknown = unknown,
         effects = record.effects,
         skipTarget = true,
-        skipMagnitude = true,
-        skipDuration = true,
         name =
             CONTENT.MagicEffects
     }
