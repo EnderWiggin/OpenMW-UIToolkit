@@ -48,12 +48,13 @@ end
 
 --- Sets active state of the component and queues update.
 ---@param value boolean?
+---@param deep boolean?
 ---@return UIToolkit.Component self
-function Component:setActive(value)
+function Component:setActive(value, deep)
     if self:isDestroyed() then return self end
 
     I.UIToolkit.Interactive.updateState(self.element, { active = value })
-    I.UIToolkit.queueUpdate(self.element)
+    I.UIToolkit.queueUpdate(self.element, deep == true)
 
     return self
 end
@@ -69,12 +70,13 @@ end
 
 --- Sets disabled state of the component and queues update.
 ---@param value boolean?
+---@param deep boolean?
 ---@return UIToolkit.Component self
-function Component:setDisabled(value)
+function Component:setDisabled(value, deep)
     if self:isDestroyed() then return self end
 
     I.UIToolkit.Interactive.updateState(self.element, { disabled = value })
-    I.UIToolkit.queueUpdate(self.element)
+    I.UIToolkit.queueUpdate(self.element, deep == true)
 
     return self
 end

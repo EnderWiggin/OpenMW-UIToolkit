@@ -92,9 +92,9 @@ function Components.itemList(opts) end
 ---@field isVisible fun(self:UIToolkit.Component):boolean|nil Returns whether component is visible or `nil` if destroyed.
 ---@field setVisible fun(self:UIToolkit.Component, value: boolean?):UIToolkit.Component Sets component's visibility and queues update, return self.
 ---@field isActive fun(self:UIToolkit.Component):boolean|nil Returns active flag. If component is destroyed - returns nil.
----@field setActive fun(self:UIToolkit.Component, value: boolean?):self:UIToolkit.Component Sets active state of the component and queues update, return self.
+---@field setActive fun(self:UIToolkit.Component, value: boolean?, deep: boolean?):self:UIToolkit.Component Sets active state of the component and queues update, return self.
 ---@field isDisabled fun(self:UIToolkit.Component):boolean|nil Returns disabled flag. If component is destroyed - returns nil.
----@field setDisabled fun(self:UIToolkit.Component, value: boolean?):self:UIToolkit.Component Sets disabled state of the component and queues update, return self.
+---@field setDisabled fun(self:UIToolkit.Component, value: boolean?, deep: boolean?):self:UIToolkit.Component Sets disabled state of the component and queues update, return self.
 ---@field updateProps fun(self:UIToolkit.Component, props: table):UIToolkit.Component update props, return self.
 
 ---@class UIToolkit.ButtonOpts : UIToolkit.InteractiveOpts
