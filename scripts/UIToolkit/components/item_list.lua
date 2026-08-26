@@ -161,12 +161,25 @@ function ItemList:_getHolder(n, id, view)
     local layout = element and element.layout
     if layout then
         holder.id = id
+        local old = layout.content and layout.content[1]
         local viewUserData = H.userData(view)
         -- In some cases view might have been re-parented to another holder
         -- check its stored index to see if that's the case
-        if viewUserData._index ~= n or layout.content[1] ~= view then
+        local viewIdx = viewUserData._index
+        if viewIdx ~= n or old ~= view then
+            if viewIdx and viewIdx ~= n then
+                --index is present and does not match current = remove this view from previous parent
+                local parent = self._holders[viewIdx]
+                parent = parent and parent.element
+                local tmp_layout = parent and parent.layout
+                if tmp_layout and tmp_layout.content then
+                    tmp_layout.content = nil
+                    I.UIToolkit.queueUpdate(parent, true)
+                end
+            end
+            if old then H.userData(old)._index = nil end
             viewUserData._index = n
-            layout.content[1] = view
+            layout.content = ui.content { view }
             I.UIToolkit.queueUpdate(holder.element, true)
         end
         return holder.element
