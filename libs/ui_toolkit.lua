@@ -83,6 +83,10 @@ function Components.scrollBar(opts) end
 ---@return UIToolkit.ItemList
 function Components.itemList(opts) end
 
+---@param opts UIToolkit.ColumnSorterOpts
+---@return UIToolkit.ColumnSorter
+function Components.columnSorter(opts) end
+
 ---@class UIToolkit.Component
 ---@field new fun():UIToolkit.Component
 ---@field init fun(self:UIToolkit.Component, element:openmw.ui.Element)
@@ -208,6 +212,19 @@ function Components.itemList(opts) end
 ---@field getVisibleItemCount fun(self:UIToolkit.ItemList):integer
 ---@field setHovered fun(self:UIToolkit.ItemList, idOrIndex:string|integer|nil, fixedTipPos:openmw.util.Vector2?, fixedTipAnchor:openmw.util.Vector2?)
 ---@field shiftHoveredItem fun(self:UIToolkit.ItemList, shift:integer, fixedTipPos:openmw.util.Vector2?, fixedTipAnchor:openmw.util.Vector2?)
+
+---@class UIToolkit.ColumnSorter.Column
+---@field id string?
+---@field name string?
+---@field width number?
+---@field auto number?
+---@field align? openmw.ui.ALIGNMENT
+---@field inactive boolean? if true - can't be clicked
+
+---@class UIToolkit.ColumnSorterOpts
+---@field columns UIToolkit.ColumnSorter.Column[]
+---@field default string?
+---@field onChanged fun(id: string, ascending: boolean)
 
 ---@class UIToolkit.WindowManager
 ---@field register fun(id: string, opts: UIToolkit.WindowOpts)
