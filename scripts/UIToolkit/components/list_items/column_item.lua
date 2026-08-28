@@ -16,6 +16,7 @@ local ListItemBase = require('scripts.UIToolkit.components.list_items.base_item'
 local RowComponent = Class(Component)
 
 ---@class UIToolkit.ListItem.Column: UIToolkit.ListItem.Base<UIToolkit.ListData.Column>
+---@field new fun(self:UIToolkit.ListItem.Column):UIToolkit.ListItem.Column
 local Item = Class(ListItemBase)
 
 ---@param columns UIToolkit.ListData.ColumnConfig[]

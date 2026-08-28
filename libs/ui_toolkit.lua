@@ -87,6 +87,10 @@ function Components.itemList(opts) end
 ---@return UIToolkit.ColumnSorter
 function Components.columnSorter(opts) end
 
+---@param opts UIToolkit.SortedListOpts
+---@return UIToolkit.SortedList
+function Components.sortedList(opts) end
+
 ---@class UIToolkit.Component
 ---@field new fun():UIToolkit.Component
 ---@field init fun(self:UIToolkit.Component, element:openmw.ui.Element)
@@ -225,6 +229,23 @@ function Components.columnSorter(opts) end
 ---@field columns UIToolkit.ColumnSorter.Column[]
 ---@field default string?
 ---@field onChanged fun(id: string, ascending: boolean)
+
+---@class UIToolkit.SortedList.Column
+---@field id string
+---@field name string?
+---@field width number?
+---@field auto number?
+---@field render UIToolkit.ListItem.Column.Renderer
+---@field arg any? additional info for renderer
+---@field align? openmw.ui.ALIGNMENT
+---@field sort? UIToolkit.ColumnComparator comparator function to use for sorting by this column
+
+---@class UIToolkit.SortedListOpts
+---@field size openmw.util.Vector2
+---@field defaultSort UIToolkit.ColumnComparator?
+---@field columns UIToolkit.SortedList.Column[]
+---@field rowHeight number? Defaults to 1.5 * (textNormal + 2)
+---@field onItemClicked fun(data:UIToolkit.ListData.Base, idx:integer)
 
 ---@class UIToolkit.WindowManager
 ---@field register fun(id: string, opts: UIToolkit.WindowOpts)
@@ -535,6 +556,7 @@ function Templates.buttonBoxBgr(bgrAlpha) end
 ---@field WeaponType string
 ---@field Weight string
 
+---@alias UIToolkit.ColumnComparator fun(a:UIToolkit.ListData.Column, b:UIToolkit.ListData.Column):number
 ---@alias UTKTooltips.PreCreateHandler fun(recipe:UTKTooltips.Recipe, tooltip:UTKTooltips.Tooltip)
 ---@alias UTKTooltips.PostCreateHandler fun(layout:openmw.ui.Layout, tooltip:UTKTooltips.Tooltip)
 ---@alias UTKTooltips.CurrentTipIsAlive fun():boolean

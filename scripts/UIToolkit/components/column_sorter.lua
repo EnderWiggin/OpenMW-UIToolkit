@@ -85,6 +85,10 @@ function ColumnSorter:toggleColumn(id, asc)
 
     self.activeColumn = id
     self.ascending = asc
+
+    if self.onChanged then
+        self.onChanged(id, asc)
+    end
 end
 
 ---@param id string?

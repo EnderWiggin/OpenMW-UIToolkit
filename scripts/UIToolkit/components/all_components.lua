@@ -5,6 +5,7 @@ local TextEdit = require('scripts.UIToolkit.components.text_edit')
 local ScrollBar = require('scripts.UIToolkit.components.scroll_bar')
 local ItemList = require('scripts.UIToolkit.components.item_list')
 local ColumnSorter = require('scripts.UIToolkit.components.column_sorter')
+local SortedList = require('scripts.UIToolkit.components.list_with_sorter_columns')
 
 local M = {}
 
@@ -40,6 +41,14 @@ function M.columnSorter(opts)
     local sorter = ColumnSorter:new()
     sorter:init(opts)
     return sorter
+end
+
+---@param opts UIToolkit.SortedListOpts
+---@return UIToolkit.SortedList
+function M.sortedList(opts)
+    local sorted = SortedList:new()
+    sorted:init(opts)
+    return sorted
 end
 
 ---@cast M UIToolkit.Components
