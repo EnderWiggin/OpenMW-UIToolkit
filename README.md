@@ -168,6 +168,8 @@ list:setItems(rows)
 ## Sorted List
 `sortedList(opts)` - creates an item list with a clickable header for sorting its columns. Set `sort = { numeric = true }` for numeric values, or provide a comparator function for custom sorting. Columns without `sort` are displayed but cannot be sorted. Clicking a sortable column toggles between ascending and descending order.
 
+`setSize` and `setItems` need to be called on this component and not on a list child of it. Other methods can be safely called on the child list.
+
 ### Example
 Create a list of items with sortable name, weight and value columns:
 ```lua
