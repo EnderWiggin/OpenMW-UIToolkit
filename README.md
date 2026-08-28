@@ -165,6 +165,42 @@ local list = I.UIToolkit.Components.itemList {
 list:setItems(rows)
 ```
 
+## Sorted List
+`sortedList(opts)` - creates an item list with a clickable header for sorting its columns. Set `sort = { numeric = true }` for numeric values, or provide a comparator function for custom sorting. Columns without `sort` are displayed but cannot be sorted. Clicking a sortable column toggles between ascending and descending order.
+
+### Example
+Create a list of items with sortable name, weight and value columns:
+```lua
+local ui         = require 'openmw.ui'
+local util       = require 'openmw.util'
+local I          = require 'openmw.interfaces'
+local ColumnItem = require 'scripts.UIToolkit.components.list_items.column_item'
+
+local textSize  = I.UIToolkit.getTheme().Sizes.textNormal
+local rowHeight = 1.5 * (textSize + 2)
+
+local list = I.UIToolkit.Components.sortedList {
+    size = util.vector2(300, 400),
+    columns = {
+        -- No `sort` makes this column display-only.
+        { id = 'icon',   name = nil,      render = ColumnItem.renderIcon, width = rowHeight + 5 },
+        { id = 'name',   name = 'Name',   render = ColumnItem.renderText, sort = {} },
+        { id = 'weight', name = 'Weight', render = ColumnItem.renderText, sort = { numeric = true }, align = ui.ALIGNMENT.End },
+        { id = 'value',  name = 'Value',  render = ColumnItem.renderText, sort = { numeric = true }, align = ui.ALIGNMENT.End },
+    },
+    onItemClicked = function(data, index)
+        print('Clicked on', index, data.id)
+    end,
+}
+
+list:setItems {
+    { id = 'iron-sword', icon = 'icons/w/tx_iron_longsword.dd', name = 'Iron Sword', weight = 12, value = 25 },
+    { id = 'healing-potion', icon = 'icons/m/tx_potion_bargain_01.dds', name = 'Potion', weight = 0.5, value = 20 },
+}
+```
+
+The header can also be controlled in code. For example, `list.header:toggleColumn('value', false)` selects the value column and sorts it in descending order. Use `defaultSort` when a secondary or initial ordering is needed; items with equal sort values are ordered by their `id`.
+
 ## Windows
 `I.UIToolkit.WindowManager` handles registering, opening and closing windows. Windows can be draggable, resizable. They store their position and size between opens.
 
