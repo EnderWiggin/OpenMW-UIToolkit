@@ -1,5 +1,5 @@
 PLAYER: scripts/UIToolkit/toolkit.lua
 PLAYER: scripts/UIToolkit/tooltips/player.lua
 
-#Uncomment to use demo - press Backspace to open/close demo window
+#Uncomment to use demo - press Scroll Lock to open/close demo window
 #PLAYER: scripts/UIToolkit-Demo/demo.lua

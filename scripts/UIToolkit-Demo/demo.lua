@@ -1,50 +1,54 @@
 ---@omw-context player
 
-local input      = require 'openmw.input'
-local types      = require 'openmw.types'
-local player     = require 'openmw.self'
-local ui         = require 'openmw.ui'
-local util       = require 'openmw.util'
+local input         = require 'openmw.input'
+local types         = require 'openmw.types'
+local player        = require 'openmw.self'
+local ui            = require 'openmw.ui'
+local util          = require 'openmw.util'
 
-local I          = require 'openmw.interfaces'
-local H          = require 'scripts.UIToolkit.helpers'
+local I             = require 'openmw.interfaces'
+local H             = require 'scripts.UIToolkit.helpers'
 
-local Class = require 'scripts.UIToolkit.class'
+local Class         = require 'scripts.UIToolkit.class'
 local WindowHandler = require 'scripts.UIToolkit.window_handler'
-local ColumnItem = require 'scripts.UIToolkit.components.list_items.column_item'
+local ColumnItem    = require 'scripts.UIToolkit.components.list_items.column_item'
 
-local v2         = util.vector2
-local WND_NAME   = 'uitoolkit-demo'
+local v2            = util.vector2
+local WND_NAME      = 'uitoolkit-demo'
+
+
+local textSize  = I.UIToolkit.getTheme().Sizes.textNormal
+local rowHeight = 1.5 * (textSize + 2)
+
+---@type UIToolkit.SortedList?
+local list
+---@type UIToolkit.SortedList.Column[]
+local columns   = {
+    { id = 'icon',   name = nil,    sort = { col = 'id' },     render = ColumnItem.renderIcon, width = rowHeight + 5,   arg = { sz = 1.5 * textSize } },
+    { id = 'name',   name = 'Name', sort = {},                 render = ColumnItem.renderText, },
+    { id = 'weight', name = 'Wgt.', sort = { numeric = true }, render = ColumnItem.renderText, width = 2 * rowHeight,   arg = { textAlignH = ui.ALIGNMENT.End }, align = ui.ALIGNMENT.End },
+    { id = 'value',  name = 'Val.', sort = { numeric = true }, render = ColumnItem.renderText, width = 2.7 * rowHeight, arg = { textAlignH = ui.ALIGNMENT.End }, align = ui.ALIGNMENT.End },
+    { id = 'V/W',    name = 'V/W',  sort = { numeric = true }, render = ColumnItem.renderText, width = 2.7 * rowHeight, arg = { textAlignH = ui.ALIGNMENT.End }, align = ui.ALIGNMENT.End },
+}
 
 ---@class Handler: UIToolkit.WindowHandler
-local Handler    = Class(WindowHandler)
-
-local textSize   = I.UIToolkit.getTheme().Sizes.textNormal
-local rowHeight  = 1.5 * (textSize + 2)
----@type UIToolkit.ItemList?
-local list
-local provider   = ColumnItem:new()
-provider:init({
-    { id = 'icon',   render = ColumnItem.renderIcon, width = rowHeight + 5,   arg = { sz = 1.5 * textSize } },
-    { id = 'name',   render = ColumnItem.renderText, },
-    { id = 'weight', render = ColumnItem.renderText, width = 1.5 * rowHeight, arg = { textAlignH = ui.ALIGNMENT.End } },
-    { id = 'value',  render = ColumnItem.renderText, width = 2 * rowHeight,   arg = { textAlignH = ui.ALIGNMENT.End } },
-    { id = 'V/W',    render = ColumnItem.renderText, width = 2 * rowHeight,   arg = { textAlignH = ui.ALIGNMENT.End } },
-}, rowHeight)
-
+local Handler   = Class(WindowHandler)
 
 ---@param wnd UIToolkit.Window
 function Handler:onOpened(wnd)
     I.UI.setMode(I.UI.MODE.Interface, { windows = {} })
-    list = I.UIToolkit.Components.itemList {
-        provider = provider,
+    list = I.UIToolkit.Components.sortedList {
         size = v2(200, 300),
         onItemClicked = function(data)
-            local cached = provider:getCachedComponent(data.id)
+            if not list then return end
+            local cached = list.provider:getCachedComponent(data.id)
             if not cached then return end
             cached:setActive(not cached:isActive())
-        end
+        end,
+        columns = columns,
     }
+    list.header:toggleColumn('icon')
+
     ---@type UIToolkit.ListData.Column[]
     local rows = {}
     local items = types.Actor.inventory(player):getAll()
@@ -62,7 +66,7 @@ function Handler:onOpened(wnd)
             end,
             weight = record.weight > 0 and record.weight or '-',
             value = record.value > 0 and record.value or '-',
-            ['V/W'] = record.value > 0 and record.weight > 0 and record.value / record.weight or '-',
+            ['V/W'] = record.value > 0 and record.weight > 0 and util.round(record.value / record.weight) or '-',
             tooltip = { object = item, observer = player }
         }
     end
@@ -92,13 +96,13 @@ I.UIToolkit.WindowManager.register(WND_NAME, {
     draggable = true,
     resizing = true,
     position = v2(300, 300),
-    minSize = v2(300, 300),
+    minSize = v2(350, 300),
 })
 
 
 ---@param key openmw.input.KeyboardEvent
 local function onKeyRelease(key)
-    if key.code ~= input.KEY.Backspace then return end
+    if key.code ~= input.KEY.ScrollLock then return end
 
     if I.UIToolkit.WindowManager.isOpen(WND_NAME) then
         I.UIToolkit.WindowManager.close(WND_NAME)
