@@ -238,11 +238,11 @@ function Components.sortedList(opts) end
 ---@field render UIToolkit.ListItem.Column.Renderer
 ---@field arg any? additional info for renderer
 ---@field align? openmw.ui.ALIGNMENT
----@field sort? UIToolkit.ColumnComparator comparator function to use for sorting by this column
+---@field sort? UIToolkit.ColumnComparator|UIToolkit.SimpleColumnComparatorConfig comparator function to use for sorting by this column
 
 ---@class UIToolkit.SortedListOpts
 ---@field size openmw.util.Vector2
----@field defaultSort UIToolkit.ColumnComparator?
+---@field defaultSort? UIToolkit.ColumnComparator|UIToolkit.SimpleColumnComparatorConfig
 ---@field columns UIToolkit.SortedList.Column[]
 ---@field rowHeight number? Defaults to 1.5 * (textNormal + 2)
 ---@field onItemClicked fun(data:UIToolkit.ListData.Base, idx:integer)
@@ -556,7 +556,8 @@ function Templates.buttonBoxBgr(bgrAlpha) end
 ---@field WeaponType string
 ---@field Weight string
 
----@alias UIToolkit.ColumnComparator fun(a:UIToolkit.ListData.Column, b:UIToolkit.ListData.Column):number
+---@alias UIToolkit.ColumnComparator fun(a:UIToolkit.ListData.Column, b:UIToolkit.ListData.Column, col: string?):number
+---@alias UIToolkit.SimpleColumnComparatorConfig {col:string?, numeric:boolean?}
 ---@alias UTKTooltips.PreCreateHandler fun(recipe:UTKTooltips.Recipe, tooltip:UTKTooltips.Tooltip)
 ---@alias UTKTooltips.PostCreateHandler fun(layout:openmw.ui.Layout, tooltip:UTKTooltips.Tooltip)
 ---@alias UTKTooltips.CurrentTipIsAlive fun():boolean

@@ -15,10 +15,40 @@ local ColumnItemProvider = require('scripts.UIToolkit.components.list_items.colu
 ---@field new fun(self:UIToolkit.SortedList):UIToolkit.SortedList
 local SortedList = Class(Component)
 
+---@param sort UIToolkit.ColumnComparator|UIToolkit.SimpleColumnComparatorConfig|nil
+---@return UIToolkit.ColumnComparator|nil
+local function convertSort(sort)
+    if not sort then return nil end
+    if type(sort) == 'function' then
+        return sort
+    end
+    if type(sort) == 'table' then
+        local _col = sort.col
+        local numeric = sort.numeric
+        return function(a, b, col)
+            col = _col or col
+            if not col then return 0 end
+            local vA = a[col]
+            local vB = b[col]
+            if type(vA) == 'function' then vA = vA() end
+            if type(vB) == 'function' then vB = vB() end
+
+            if numeric then
+                if type(vA) ~= 'number' then vA = tonumber(vA) or 0 end
+                if type(vB) ~= 'number' then vB = tonumber(vB) or 0 end
+            end
+
+            if vA == vB then return 0 end
+            return vA < vB and -1 or 1
+        end
+    end
+    return nil
+end
+
 ---@param opts UIToolkit.SortedListOpts
 function SortedList:init(opts)
     self.size = opts.size
-    self.defaultSort = opts.defaultSort
+    self.defaultSort = convertSort(opts.defaultSort)
     ---@type UIToolkit.ColumnComparator[]
     self.comparators = {}
 
@@ -52,7 +82,7 @@ function SortedList:init(opts)
             inactive = not cfg.sort,
         }
 
-        self.comparators[cfg.id] = cfg.sort
+        self.comparators[cfg.id] = convertSort(cfg.sort)
     end
 
     self.provider:init(providerColumns, rowHeight)
@@ -91,13 +121,13 @@ end
 function SortedList:sortItems(items)
     items = items or self.list:getItems() --[[@as UIToolkit.ListData.Column[] ]]
     local col, asc = self.header:getActiveColumn()
-    local comparator = col and self.comparators[col]
+    local comparator = col ~= nil and self.comparators[col]
     table.sort(items, function(a, b)
         local result = 0
 
-        if comparator then result = comparator(a, b) end
+        if comparator then result = comparator(a, b, col) end
 
-        if result == 0 and self.defaultSort then result = self.defaultSort(a, b) end
+        if result == 0 and self.defaultSort then result = self.defaultSort(a, b, col) end
 
         if result ~= 0 then
             if not asc then result = -result end
