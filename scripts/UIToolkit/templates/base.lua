@@ -270,9 +270,9 @@ local function _processBoxOpts(opts)
     local padding = opts and opts.padding or 0
     local bg = opts and opts.background
     if bg and type(bg) ~= 'number' then
-        if bg 'solid' then
+        if bg == 'solid' then
             bg = 1
-        elseif bg 'transparent' then
+        elseif bg == 'transparent' then
             ---@diagnostic disable-next-line: undefined-field
             bg = ui._getMenuTransparency and ui._getMenuTransparency() or 0.5
         else
@@ -384,6 +384,7 @@ local function box(opts)
                 resource = theme.Colors.whiteTexture,
                 color = theme.Colors.BACKGROUND,
                 alpha = background,
+                size = (padV + borderV) * 2,
                 relativeSize = v2(1, 1),
             },
         }
