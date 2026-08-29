@@ -92,7 +92,7 @@ function ItemList:init(opts)
         end,
         scrollStep = 2 * state.itemHeight,
         maxScroll = self:_getMaxScroll(),
-        length = size.y
+        length = size.y - 2 * (t.Sizes.border + t.Sizes.padding)
     }
     scroll:updateProps {
         anchor = v2(1, 0),
