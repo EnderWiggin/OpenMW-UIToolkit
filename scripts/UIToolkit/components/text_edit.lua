@@ -114,6 +114,7 @@ function TextEdit:init(opts)
         }
         I.UIToolkit.Interactive.updateState(btn, { disabled = true })
         content:add(I.UIToolkit.Interactive.makeInteractive({
+            interactiveDisabled = true,
             onClick = function()
                 local prev = self._value
                 self:setValue(self:getDefault())

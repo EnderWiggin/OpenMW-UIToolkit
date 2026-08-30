@@ -6,7 +6,6 @@ local async = require('openmw.async')
 local ambient = require('openmw.ambient')
 local I = require('openmw.interfaces')
 
-local v2 = util.vector2
 local H = require('scripts.UIToolkit.helpers')
 
 local M = {}
@@ -17,6 +16,7 @@ local M = {}
 function M.makeInteractive(opts, layoutOrElement)
     local toolkit = I.UIToolkit
     local ctx = toolkit.getCtx()
+    local nonInteractiveDisabled = not opts.interactiveDisabled
     ---@type openmw.ui.Element
     local element
     local isElement = type(layoutOrElement) == 'userdata'
@@ -36,9 +36,8 @@ function M.makeInteractive(opts, layoutOrElement)
     element.layout.events.mousePress = async:callback(function(e)
         --TODO: this is temporary, until 0.52, where `ui.mousePosition` would hopefully exist
         ctx.lastMousePos = e.position
-        if e.button ~= 1 then
-            return false
-        end
+        if e.button ~= 1 then return end
+        if nonInteractiveDisabled and element.layout.userData.disabled then return end
         if opts.onClick then
             if opts.canClick and not opts.canClick() then
                 return false
@@ -46,16 +45,13 @@ function M.makeInteractive(opts, layoutOrElement)
             ambient.playSound('menu click', { scale = false })
             M.updateState(element.layout, { pressed = true })
             toolkit.queueUpdate(element)
-            return true
         end
-        return false
     end)
     element.layout.events.mouseRelease = async:callback(function(e)
         --TODO: this is temporary, until 0.52, where `ui.mousePosition` would hopefully exist
         ctx.lastMousePos = e.position
-        if e.button ~= 1 then
-            return false
-        end
+        if e.button ~= 1 then return end
+        if nonInteractiveDisabled and element.layout.userData.disabled then return end
         if opts.onClick then
             if not element.layout.userData.pressed then
                 return false
@@ -69,13 +65,14 @@ function M.makeInteractive(opts, layoutOrElement)
     local isAlive = function() return element.layout ~= nil end
     element.layout.events.focusLoss = async:callback(function()
         I.UTKTooltips.setTooltip(nil)
+        if nonInteractiveDisabled and element.layout.userData.disabled then return end
         M.updateState(element, { hovering = false })
         toolkit.queueUpdate(element)
         ctx.lastMousePos = nil
         return true
     end)
     element.layout.events.focusGain = async:callback(function()
-        --ctx.focusedInteractiveDelayed = element
+        if nonInteractiveDisabled and element.layout.userData.disabled then return end
         M.updateState(element, { hovering = true })
         toolkit.queueUpdate(element)
 
@@ -86,7 +83,6 @@ function M.makeInteractive(opts, layoutOrElement)
         if tooltip then
             I.UTKTooltips.setTooltip(tooltip, { isAlive = isAlive })
         end
-        return true
     end)
     element.layout.events.mouseMove = async:callback(function(e, tgt)
         --TODO: this is temporary, until 0.52, where `ui.mousePosition` would hopefully exist

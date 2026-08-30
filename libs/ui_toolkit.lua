@@ -63,6 +63,7 @@ function Interactive.updateState(layoutOrElement, state) end
 ---@field onClick? fun() optional function to be called when element is clicked. Note: element won't change colors if there's no click callback set
 ---@field canClick? fun():boolean
 ---@field onMouseMove? fun(e, tgt, element)
+---@field interactiveDisabled? boolean default to `false`
 
 ---@class UIToolkit.Components
 local Components = {}
