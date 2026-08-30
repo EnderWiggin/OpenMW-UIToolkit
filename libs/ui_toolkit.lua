@@ -18,6 +18,7 @@
 ---@field Interactive UIToolkit.Interactive
 ---@field Components UIToolkit.Components
 ---@field WindowManager UIToolkit.WindowManager
+---@field Popups UIToolkit.Popups
 
 ---@class UIToolkit.Context
 ---@field lastMousePos openmw.util.Vector2? last mouse position detected by interactive elements. Needed until `ui.mousePosition()` is merged (0.52?)
@@ -293,6 +294,22 @@ function Components.sortedList(opts) end
 ---@field isPinned fun(self:UIToolkit.Window):boolean
 ---@field setPinnable fun(self:UIToolkit.Window, pinnable:boolean)
 ---@field setMinSize fun(self:UIToolkit.Window, minSz: openmw.util.Vector2)
+
+
+---@class UIToolkit.Popups
+---@field show fun(opts:UIToolkit.PopupOpts):fun()
+
+---@class UIToolkit.PopupOpts
+---@field title string?
+---@field body string
+---@field buttons UIToolkit.PopupButtonOpts[]
+
+---@class UIToolkit.PopupButtonOpts
+---@field text string text on the button
+---@field onClicked? fun() will be called when button is clicked
+---@field tooltip? UTKTooltips.AnyTooltip|UIToolkit.TooltipProvider tooltip or tooltip provider to show on a button
+---@field noClose? boolean if set to true popup won't be closed when this button is clicked. Defaults to false.
+
 
 ---@class UIToolkit.InteractiveColors
 ---@field pressColor openmw.util.Color?

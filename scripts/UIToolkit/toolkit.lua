@@ -23,6 +23,7 @@ local Interface = {
     ---@type UIToolkit.Components
     Components = require('scripts.UIToolkit.components.all_components'),
     WindowManager = require('scripts.UIToolkit.window_manager'),
+    Popups = require('scripts.UIToolkit.popups'),
 }
 
 function Interface.getCtx() return ctx end
