@@ -108,7 +108,8 @@ function Components.sortedList(opts) end
 
 ---@class UIToolkit.ButtonOpts : UIToolkit.InteractiveOpts
 ---@field name string? name to give to button layout
----@field thickness UIToolkit.Thickness? defaults to 'button'
+---@field style UIToolkit.BoxStyle? defaults to 'button'
+---@field thickness number?
 ---@field background UIToolkit.BoxBackground? defaults to 'solid'
 ---@field padding? openmw.util.Vector2|number defaults to v2(8, 0) for auto sized buttons
 
@@ -349,12 +350,13 @@ function Templates.box(opts) end
 ---@return openmw.ui.Layout
 function Templates.effectIcon(effectId, sz) end
 
----@param thickness UIToolkit.Thickness
+---@param style UIToolkit.BoxStyle
 ---@return number
-function Templates.getBorderSize(thickness) end
+function Templates.getBorderSize(style) end
 
 ---@class UIToolkit.Templates.BoxOpts
----@field thickness? UIToolkit.Thickness defaults to 'thin'
+---@field style? UIToolkit.BoxStyle defaults to 'thin'
+---@field thickness? number defaults to a value defined by style (see `Templates.getBorderSize(style)`)
 ---@field padding? number|openmw.util.Vector2 defaults to 0
 ---@field background? UIToolkit.BoxBackground
 
@@ -559,7 +561,7 @@ function Templates.getBorderSize(thickness) end
 ---@field WeaponType string
 ---@field Weight string
 
----@alias UIToolkit.Thickness 'thin' | 'thick' | 'button'
+---@alias UIToolkit.BoxStyle 'thin' | 'thick' | 'button'
 ---@alias UIToolkit.BackgroundOpacity 'solid'|'transparent'|number
 ---@alias UIToolkit.BoxBackground {opacity:UIToolkit.BackgroundOpacity, color:openmw.util.Color?}|UIToolkit.BackgroundOpacity
 ---@alias UIToolkit.ColumnComparator fun(a:UIToolkit.ListData.Column, b:UIToolkit.ListData.Column, col: string?):number

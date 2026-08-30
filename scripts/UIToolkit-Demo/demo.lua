@@ -139,9 +139,9 @@ function Handler:onOpened(wnd)
                         I.UIToolkit.Templates.intervalV(5),
                         I.UIToolkit.Components.textButton { text = 'Active' }:setActive(true).element,
                         I.UIToolkit.Templates.intervalV(5),
-                        I.UIToolkit.Components.textButton { text = 'Thin', thickness = 'thin' }.element,
+                        I.UIToolkit.Components.textButton { text = 'Thin', style = 'thin' }.element,
                         I.UIToolkit.Templates.intervalV(5),
-                        I.UIToolkit.Components.textButton { text = 'Thick', thickness = 'thick' }.element,
+                        I.UIToolkit.Components.textButton { text = 'Thick', style = 'thick' }.element,
                         I.UIToolkit.Templates.intervalV(5),
                         I.UIToolkit.Components.textButton { text = 'Colored', background = { opacity = 0.5, color = theme.Colors.FATIGUE } }.element,
                     }

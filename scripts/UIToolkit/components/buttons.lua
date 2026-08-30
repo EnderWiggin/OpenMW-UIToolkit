@@ -21,7 +21,7 @@ function TextButton:init(opts)
         props = { text = opts.text, },
         userData = { colorable = true },
     }
-    local thickness = opts.thickness or 'button'
+    local style = opts.style or 'button'
     local padding
     if type(opts.padding) == 'number' then
         padding = v2(1, 1) * opts.padding
@@ -29,7 +29,7 @@ function TextButton:init(opts)
         padding = opts.padding
     end
     if opts.width then
-        txt.props.size = v2(opts.width - 2 * T.getBorderSize(thickness), txt.template.props.textSize)
+        txt.props.size = v2(opts.width - 2 * T.getBorderSize(style), txt.template.props.textSize)
         txt.props.autoSize = false
         txt.props.textAlignH = ui.ALIGNMENT.Center
     else
@@ -37,7 +37,8 @@ function TextButton:init(opts)
     end
 
     local box = T.box {
-        thickness = thickness,
+        style = style,
+        thickness = opts.thickness,
         background = opts.background or 'solid',
         padding = padding,
     }

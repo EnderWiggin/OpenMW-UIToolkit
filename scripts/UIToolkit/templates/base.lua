@@ -209,13 +209,13 @@ local buttonBorderCornerPattern = 'textures/menu_button_frame_%s_corner.dds'
 
 local borderResources = {}
 
-for _, thickness in ipairs { 'thin', 'thick' } do
-    borderResources[thickness] = {}
+for _, style in ipairs { 'thin', 'thick' } do
+    borderResources[style] = {}
     for k in pairs(sideParts) do
-        borderResources[thickness][k] = ui.texture { path = borderSidePattern:format(thickness, k) }
+        borderResources[style][k] = ui.texture { path = borderSidePattern:format(style, k) }
     end
     for k in pairs(cornerParts) do
-        borderResources[thickness][k] = ui.texture { path = borderCornerPattern:format(thickness, k) }
+        borderResources[style][k] = ui.texture { path = borderCornerPattern:format(style, k) }
     end
 end
 
@@ -229,16 +229,16 @@ for k in pairs(cornerParts) do
     buttonBorderResources[k] = ui.texture { path = buttonBorderCornerPattern:format(k) }
 end
 
----@param thickness UIToolkit.Thickness
+---@param style UIToolkit.BoxStyle
 ---@return table<string,openmw.ui.Layout>
-local function _borderPieces(thickness)
+local function _borderPieces(style)
     local pieces = {}
     for k in pairs(sideParts) do
         local horizontal = k == 'top' or k == 'bottom'
         pieces[k] = {
             type = ui.TYPE.Image,
             props = {
-                resource = borderResources[thickness][k],
+                resource = borderResources[style][k],
                 tileH = horizontal,
                 tileV = not horizontal,
             },
@@ -248,29 +248,30 @@ local function _borderPieces(thickness)
         pieces[k] = {
             type = ui.TYPE.Image,
             props = {
-                resource = borderResources[thickness][k],
+                resource = borderResources[style][k],
             },
         }
     end
     return pieces
 end
 
----@param thickness UIToolkit.Thickness
+---@param style UIToolkit.BoxStyle
 ---@return table<string,openmw.ui.Layout>
-local function borderPieces(thickness)
-    return GetCachedOrCalculate('borderPieces', _borderPieces, thickness)
+local function borderPieces(style)
+    return GetCachedOrCalculate('borderPieces', _borderPieces, style)
 end
 
----@param thickness UIToolkit.Thickness
+---@param style UIToolkit.BoxStyle
 ---@return number
-function M.getBorderSize(thickness)
+function M.getBorderSize(style)
     local sizes = I.UIToolkit.getTheme().Sizes
-    return (not thickness or thickness == 'thin') and sizes.border or sizes.thickBorder
+    if not style then return 0 end
+    return style == 'thin' and sizes.border or sizes.thickBorder
 end
 
 ---@class UIToolkit.Templates._BoxOpts
----@field thickness UIToolkit.Thickness
----@field borderSize number
+---@field style UIToolkit.BoxStyle
+---@field thickness number
 ---@field padding openmw.util.Vector2
 ---@field background? {alpha: number, color:openmw.util.Color}
 
@@ -278,7 +279,7 @@ end
 ---@return UIToolkit.Templates._BoxOpts?
 local function _processBoxOpts(opts)
     local theme = I.UIToolkit.getTheme()
-    local thickness = opts and opts.thickness or 'thin'
+    local style = opts and opts.style or 'thin'
     local padding = opts and opts.padding or 0
     local bg = opts and opts.background
 
@@ -311,13 +312,18 @@ local function _processBoxOpts(opts)
         }
     end
 
+    local thickness = opts and opts.thickness
+    if type(thickness) ~= 'number' then
+        thickness = M.getBorderSize(style)
+    end
+
     if type(padding) == "number" then
         padding = v2(1, 1) * padding
     end
     ---@type UIToolkit.Templates._BoxOpts
     return {
+        style = style,
         thickness = thickness,
-        borderSize = thickness == 'thin' and theme.Sizes.border or theme.Sizes.thickBorder,
         padding = padding --[[@as openmw.util.Vector2]],
         background = background,
     }
@@ -329,11 +335,11 @@ end
 ---@return openmw.ui.Template
 local function border(opts)
     local theme = I.UIToolkit.getTheme()
-    local thickness = opts.thickness
+    local style = opts.style
     local background = opts.background
 
-    local borderSize = opts.borderSize
-    local borderV = v2(1, 1) * borderSize
+    local thickness = opts.thickness
+    local borderV = v2(1, 1) * thickness
     local padding = opts.padding
 
     local result = {
@@ -352,16 +358,16 @@ local function border(opts)
         }
     end
 
-    local pieces = borderPieces(thickness)
+    local pieces = borderPieces(style)
     for k, v in pairs(sideParts) do
         local horizontal = k == 'top' or k == 'bottom'
         local direction = horizontal and v2(1, 0) or v2(0, 1)
         result.content:add {
             template = pieces[k],
             props = {
-                position = (direction - v) * borderSize,
+                position = (direction - v) * thickness,
                 relativePosition = v,
-                size = (v2(1, 1) - direction * 3) * borderSize,
+                size = (v2(1, 1) - direction * 3) * thickness,
                 relativeSize = direction,
             }
         }
@@ -370,7 +376,7 @@ local function border(opts)
         result.content:add {
             template = pieces[k],
             props = {
-                position = -v * borderSize,
+                position = -v * thickness,
                 relativePosition = v,
                 size = borderV,
             },
@@ -402,10 +408,10 @@ end
 ---@return openmw.ui.Template
 local function box(opts)
     local theme = I.UIToolkit.getTheme()
-    local thickness = opts.thickness
+    local style = opts.style
     local background = opts.background
-    local borderSize = opts.borderSize
-    local borderV = v2(1, 1) * borderSize
+    local thickness = opts.thickness
+    local borderV = v2(1, 1) * thickness
     local padding = opts.padding
 
     local result = {
@@ -426,7 +432,7 @@ local function box(opts)
         }
     end
 
-    local pieces = borderPieces(thickness)
+    local pieces = borderPieces(style)
     for k, v in pairs(sideParts) do
         local horizontal = k == 'top' or k == 'bottom'
         local direction = horizontal and v2(1, 0) or v2(0, 1)
@@ -434,9 +440,9 @@ local function box(opts)
         result.content:add {
             template = pieces[k],
             props = {
-                position = (direction + v) * borderSize + v:emul(padding * (edge and 2 or -1)),
+                position = (direction + v) * thickness + v:emul(padding * (edge and 2 or -1)),
                 relativePosition = v,
-                size = (v2(1, 1) - direction) * borderSize + direction:emul(padding) * 2,
+                size = (v2(1, 1) - direction) * thickness + direction:emul(padding) * 2,
                 relativeSize = direction,
             }
         }
@@ -445,7 +451,7 @@ local function box(opts)
         result.content:add {
             template = pieces[k],
             props = {
-                position = v * borderSize + v:emul(padding) * 2,
+                position = v * thickness + v:emul(padding) * 2,
                 relativePosition = v,
                 size = borderV,
             },
