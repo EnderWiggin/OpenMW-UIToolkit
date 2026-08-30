@@ -49,7 +49,7 @@ modals:init(ui.create {
 })
 
 local function closePopup(element)
-    I.UIToolkit.queueDestroy(element, false)
+    I.UIToolkit.queueDestroy(element, true)
     H.removeFromArray(popups, element)
     if #popups == 0 then
         placeholder.content = nil
