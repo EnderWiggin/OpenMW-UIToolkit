@@ -23,12 +23,17 @@ function TextButton:init(opts)
     }
     local thickness = opts.thickness or 'button'
     local padding
+    if type(opts.padding) == 'number' then
+        padding = v2(1, 1) * opts.padding
+    else
+        padding = opts.padding
+    end
     if opts.width then
         txt.props.size = v2(opts.width - 2 * T.getBorderSize(thickness), txt.template.props.textSize)
         txt.props.autoSize = false
         txt.props.textAlignH = ui.ALIGNMENT.Center
     else
-        padding = v2(8, 0)
+        padding = padding or v2(8, 0)
     end
 
     local box = T.box {

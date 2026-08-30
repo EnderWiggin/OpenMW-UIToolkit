@@ -110,6 +110,7 @@ function Components.sortedList(opts) end
 ---@field name string? name to give to button layout
 ---@field thickness UIToolkit.Thickness? defaults to 'button'
 ---@field background UIToolkit.BoxBackground? defaults to 'solid'
+---@field padding? openmw.util.Vector2|number defaults to v2(8, 0) for auto sized buttons
 
 ---@class UIToolkit.TextButtonOpts : UIToolkit.ButtonOpts
 ---@field text string text on the button
