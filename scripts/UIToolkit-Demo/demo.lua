@@ -36,6 +36,7 @@ local Handler   = Class(WindowHandler)
 
 ---@param wnd UIToolkit.Window
 function Handler:onOpened(wnd)
+    local theme = I.UIToolkit.getTheme()
     I.UI.setMode(I.UI.MODE.Interface, { windows = {} })
     list = I.UIToolkit.Components.sortedList {
         size = v2(200, 300),
@@ -72,7 +73,81 @@ function Handler:onOpened(wnd)
     end
     list:setItems(rows)
     wnd:setContent(ui.content {
-        list.element
+        list.element,
+        {
+            template = I.UIToolkit.Templates.border {padding = 5},
+            props = {
+                size = v2(130, -10),
+                position = v2(-5, 5),
+                relativeSize = v2(0, 1),
+                anchor = v2(1, 0),
+                relativePosition = v2(1, 0),
+            },
+            content = ui.content {
+                {
+                    type = ui.TYPE.Flex,
+                    props = {},
+                    content = ui.content {
+                        {
+                            template = I.UIToolkit.Templates.text(),
+                            props = {text = "Examples:"},
+                        },
+                        I.UIToolkit.Templates.intervalV(15),
+                        {
+                            type = ui.TYPE.Flex,
+                            props = {
+                                horizontal = true,
+                            },
+                            content = ui.content {
+                                {
+                                    template = I.UIToolkit.Templates.box { padding = v2(10, 5), background = { color = theme.Colors.DAMAGED, opacity = 'transparent' } },
+                                    props = {},
+                                    content = ui.content {
+                                        {
+                                            type = ui.TYPE.Image,
+                                            props = {
+                                                resource = theme.Colors.whiteTexture,
+                                                color = theme.Colors.ACTIVE_LIGHT,
+                                                size = v2(10, 10),
+                                            },
+                                        }
+                                    },
+                                },
+                                I.UIToolkit.Templates.intervalH(5),
+                                {
+                                    template = I.UIToolkit.Templates.box { padding = 5, background = { color = theme.Colors.MAGICK, opacity = 'transparent' } },
+                                    props = {},
+                                    content = ui.content {
+                                        {
+                                            type = ui.TYPE.Image,
+                                            props = {
+                                                resource = theme.Colors.whiteTexture,
+                                                color = theme.Colors.DISABLED_LIGHT,
+                                                size = v2(10, 10),
+                                            },
+                                        }
+                                    },
+                                },
+                            },
+                        },
+                        I.UIToolkit.Templates.intervalV(5),
+                        I.UIToolkit.Components.textButton { text = 'Auto Sized' }.element,
+                        I.UIToolkit.Templates.intervalV(5),
+                        I.UIToolkit.Components.textButton { text = 'Width=110', width = 110 }.element,
+                        I.UIToolkit.Templates.intervalV(5),
+                        I.UIToolkit.Components.textButton { text = 'Disabled' }:setDisabled(true).element,
+                        I.UIToolkit.Templates.intervalV(5),
+                        I.UIToolkit.Components.textButton { text = 'Active' }:setActive(true).element,
+                        I.UIToolkit.Templates.intervalV(5),
+                        I.UIToolkit.Components.textButton { text = 'Thin', thickness = 'thin' }.element,
+                        I.UIToolkit.Templates.intervalV(5),
+                        I.UIToolkit.Components.textButton { text = 'Thick', thickness = 'thick' }.element,
+                        I.UIToolkit.Templates.intervalV(5),
+                        I.UIToolkit.Components.textButton { text = 'Colored', background = { opacity = 0.5, color = theme.Colors.FATIGUE } }.element,
+                    }
+                }
+            },
+        }
     })
 
     Handler:onResized(wnd:getInnerSize())
@@ -86,7 +161,7 @@ end
 ---@param inner openmw.util.Vector2
 function Handler:onResized(inner)
     if list then
-        list:setSize(inner)
+        list:setSize(inner - v2(140, 0))
     end
 end
 
@@ -96,7 +171,7 @@ I.UIToolkit.WindowManager.register(WND_NAME, {
     draggable = true,
     resizing = true,
     position = v2(300, 300),
-    minSize = v2(350, 300),
+    minSize = v2(500, 350),
 })
 
 
