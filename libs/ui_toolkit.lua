@@ -108,7 +108,7 @@ function Components.sortedList(opts) end
 ---@class UIToolkit.ButtonOpts : UIToolkit.InteractiveOpts
 ---@field name string? name to give to button layout
 ---@field thickness UIToolkit.Thickness? defaults to 'button'
----@field bgrAlpha number? Alpha for background. No background if nil
+---@field background UIToolkit.BoxBackground? defaults to 'solid'
 
 ---@class UIToolkit.TextButtonOpts : UIToolkit.ButtonOpts
 ---@field text string text on the button
@@ -354,7 +354,7 @@ function Templates.getBorderSize(thickness) end
 ---@class UIToolkit.Templates.BoxOpts
 ---@field thickness? UIToolkit.Thickness defaults to 'thin'
 ---@field padding? number|openmw.util.Vector2 defaults to 0
----@field background? {opacity:'solid'|'transparent'|number, color:openmw.util.Color?}|'solid'|'transparent'|number
+---@field background? UIToolkit.BoxBackground
 
 ---@class UIToolkit.Theme.Colors
 ---@field DEFAULT openmw.util.Color
@@ -558,6 +558,8 @@ function Templates.getBorderSize(thickness) end
 ---@field Weight string
 
 ---@alias UIToolkit.Thickness 'thin' | 'thick' | 'button'
+---@alias UIToolkit.BackgroundOpacity 'solid'|'transparent'|number
+---@alias UIToolkit.BoxBackground {opacity:UIToolkit.BackgroundOpacity, color:openmw.util.Color?}|UIToolkit.BackgroundOpacity
 ---@alias UIToolkit.ColumnComparator fun(a:UIToolkit.ListData.Column, b:UIToolkit.ListData.Column, col: string?):number
 ---@alias UIToolkit.SimpleColumnComparatorConfig {col:string?, numeric:boolean?}
 ---@alias UTKTooltips.PreCreateHandler fun(recipe:UTKTooltips.Recipe, tooltip:UTKTooltips.Tooltip)

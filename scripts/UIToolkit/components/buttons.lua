@@ -33,7 +33,7 @@ function TextButton:init(opts)
 
     local box = T.box {
         thickness = thickness,
-        background = { opacity = opts.bgrAlpha },
+        background = opts.background or 'solid',
         padding = padding,
     }
 
