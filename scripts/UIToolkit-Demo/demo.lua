@@ -135,7 +135,7 @@ function Handler:onOpened(wnd)
                             I.UIToolkit.Popups.show {
                                 title = 'THE POPUP',
                                 body =
-                                'This is a very cool popup. It has a long text on it. Very good, very long text. It probably takes up several lines on this popup, wow!',
+                                'This is a very cool popup. It has a long text on it. Very good, very long text.\nIt probably takes up several lines on this popup, wow!',
                                 buttons = {
                                     {
                                         text = 'New Popup',
@@ -143,9 +143,7 @@ function Handler:onOpened(wnd)
                                             I.UIToolkit.Popups.show {
                                                 title = 'Popup 2: The Reckoning',
                                                 body = 'This is a second popup!',
-                                                buttons = {
-                                                    { text = 'Close' },
-                                                }
+                                                buttons = { { text = 'Close' }, }
                                             }
                                         end,
                                     },
@@ -154,16 +152,13 @@ function Handler:onOpened(wnd)
                                         noClose = true,
                                         onClicked = function()
                                             I.UIToolkit.Popups.show {
-                                                title = 'Queued Popup',
                                                 body = 'Close to return to the previous one!',
-                                                buttons = {
-                                                    { text = 'OK' },
-                                                }
+                                                buttons = { { text = 'OK' }, }
                                             }
                                         end,
-                                        tooltip = {body = 'Will open new popup without closing this one.', width = 200}
+                                        tooltip = { body = 'Will open new popup without closing this one.', width = 200 }
                                     },
-                                    { text = 'Cancel',tooltip = 'Closes this popup' },
+                                    { text = 'Cancel', tooltip = 'Closes this popup' },
                                 }
                             }
                         end }.element,
