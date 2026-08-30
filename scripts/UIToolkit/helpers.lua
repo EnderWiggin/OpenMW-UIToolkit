@@ -8,7 +8,7 @@ local C = require('scripts.UIToolkit.constants')
 ---@class UIToolkit.Helpers
 local H = {}
 
-H.deepPrint = function(tbl, indent)
+H.toStringDeep = function(tbl, indent)
     if type(tbl) ~= 'table' then return tostring(tbl) end
     indent = indent or 0
     local toprint = string.rep(" ", indent) .. "{\n"
@@ -25,7 +25,7 @@ H.deepPrint = function(tbl, indent)
         elseif (type(v) == "string") then
             toprint = toprint .. "\"" .. v .. "\",\n"
         elseif (type(v) == "table") then
-            toprint = toprint .. H.deepPrint(v, indent + 2) .. ",\n"
+            toprint = toprint .. H.toStringDeep(v, indent + 2) .. ",\n"
         else
             toprint = toprint .. "\"" .. tostring(v) .. "\",\n"
         end

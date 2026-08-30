@@ -107,6 +107,7 @@ function Components.sortedList(opts) end
 
 ---@class UIToolkit.ButtonOpts : UIToolkit.InteractiveOpts
 ---@field name string? name to give to button layout
+---@field thickness UIToolkit.Thickness? defaults to 'button'
 ---@field bgrAlpha number? Alpha for background. No background if nil
 
 ---@class UIToolkit.TextButtonOpts : UIToolkit.ButtonOpts
@@ -346,14 +347,14 @@ function Templates.box(opts) end
 ---@return openmw.ui.Layout
 function Templates.effectIcon(effectId, sz) end
 
----@param bgrAlpha number
----@return openmw.ui.Template
-function Templates.buttonBoxBgr(bgrAlpha) end
+---@param thickness UIToolkit.Thickness
+---@return number
+function Templates.getBorderSize(thickness) end
 
 ---@class UIToolkit.Templates.BoxOpts
----@field thickness? 'thin' | 'thick' defaults to 'thin'
----@field padding? number defaults to 0
----@field background? 'solid' | 'transparent' | number no background if omitted.
+---@field thickness? UIToolkit.Thickness defaults to 'thin'
+---@field padding? number|openmw.util.Vector2 defaults to 0
+---@field background? {opacity:'solid'|'transparent'|number, color:openmw.util.Color?}|'solid'|'transparent'|number
 
 ---@class UIToolkit.Theme.Colors
 ---@field DEFAULT openmw.util.Color
@@ -556,6 +557,7 @@ function Templates.buttonBoxBgr(bgrAlpha) end
 ---@field WeaponType string
 ---@field Weight string
 
+---@alias UIToolkit.Thickness 'thin' | 'thick' | 'button'
 ---@alias UIToolkit.ColumnComparator fun(a:UIToolkit.ListData.Column, b:UIToolkit.ListData.Column, col: string?):number
 ---@alias UIToolkit.SimpleColumnComparatorConfig {col:string?, numeric:boolean?}
 ---@alias UTKTooltips.PreCreateHandler fun(recipe:UTKTooltips.Recipe, tooltip:UTKTooltips.Tooltip)

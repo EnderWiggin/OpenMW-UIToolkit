@@ -10,41 +10,38 @@ local Class = require('scripts.UIToolkit.class')
 local Component = require('scripts.UIToolkit.components.component')
 local M = {}
 
-local T = require('scripts.UIToolkit.templates.base')
-
 ---@class UIToolkit.TextButton : UIToolkit.Component
 local TextButton = Class(Component)
 
 ---@param opts UIToolkit.TextButtonOpts
 function TextButton:init(opts)
+    local T = I.UIToolkit.Templates
     local txt = {
         template = T.text(),
         props = { text = opts.text, },
         userData = { colorable = true },
     }
-
-    local content
+    local thickness = opts.thickness or 'button'
+    local padding
     if opts.width then
-        txt.props.anchor = v2(0.5, 0.5)
-        txt.props.relativePosition = v2(0.5, 0.5)
-        content = {
-            props = {
-                size = v2(opts.width, txt.template.props.textSize),
-            },
-            content = ui.content { txt, }
-        }
+        txt.props.size = v2(opts.width - 2 * T.getBorderSize(thickness), txt.template.props.textSize)
+        txt.props.autoSize = false
+        txt.props.textAlignH = ui.ALIGNMENT.Center
     else
-        content = {
-            template = T.padding(8, 0),
-            content = ui.content { txt, }
-        }
+        padding = v2(8, 0)
     end
+
+    local box = T.box {
+        thickness = thickness,
+        background = { opacity = opts.bgrAlpha },
+        padding = padding,
+    }
 
     local element = I.UIToolkit.Interactive.makeInteractive(opts, {
         name = opts.name or 'button',
-        template = T.buttonBoxBgr(opts.bgrAlpha),
+        template = box,
         props = {},
-        content = ui.content { content },
+        content = ui.content { txt },
         events = {},
         userData = {},
     })
