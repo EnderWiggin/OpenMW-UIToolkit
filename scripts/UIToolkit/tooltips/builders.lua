@@ -52,14 +52,16 @@ end
 ---@param text string
 ---@param name string?
 ---@param width number?
+---@param align openmw.ui.ALIGNMENT
 ---@return openmw.ui.Layout
-local function textParagraph(text, name, width)
+local function textParagraph(text, name, width, align)
     return {
         template = I.MWUI.templates.textParagraph,
         name = name,
         props = {
             text = text,
             size = V2(width or 400, 0),
+            textAlignH = align,
         }
     }
 end
@@ -443,9 +445,10 @@ function Builders.note(item)
     }
 end
 
+---@param item UTKTooltips.RecipeItem
 function Builders.paragraph(item)
     assert(item.text ~= nil)
-    return textParagraph(item.text, nil, item.width)
+    return textParagraph(item.text, nil, item.width, item.align)
 end
 
 function Builders.progressBar(item)

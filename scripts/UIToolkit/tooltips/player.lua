@@ -319,7 +319,14 @@ local function processAnyTooltip(tip)
     ---@type UTKTooltips.RecipeItem[]
     local items = {}
     if tip.title then items[#items + 1] = { type = 'header', text = tip.title } end
-    if tip.body then items[#items + 1] = { type = 'paragraph', text = tip.body, width = tip.width } end
+    if tip.body then
+        items[#items + 1] = {
+            type = 'paragraph',
+            text = tip.body,
+            width = tip.width,
+            align = ui.ALIGNMENT.Center
+        }
+    end
     if #items <= 0 then return nil end
     ---@type UTKTooltips.Tooltip
     return { recipe = { items = items, arrange = ui.ALIGNMENT.Center } }

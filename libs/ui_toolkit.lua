@@ -444,7 +444,7 @@ function Templates.getBorderSize(style) end
 -- Required/ignored fields depend on the recipe item type.
 ---@class UTKTooltips.RecipeItem
 ---@field type UTKTooltips.RecipeItemType? defines which builder is used to create the layout for this item. (default='default')
----@field align openmw.ui.ALIGNMENT? Re-aligns this item. Not used by any default builders.
+---@field align openmw.ui.ALIGNMENT? Re-aligns this item. Used by paragraph item to set horizontal text alignment.
 ---@field text string? (used in default, note, paragraph)
 ---@field value any? (used in default) Value used by the value type. Is passed through tostring() so can be any type.
 ---@field min number? (used in default, progressBar) Min used by the value type, ignored if max is not set.
