@@ -75,7 +75,7 @@ function Handler:onOpened(wnd)
     wnd:setContent(ui.content {
         list.element,
         {
-            template = I.UIToolkit.Templates.border {padding = 5},
+            template = I.UIToolkit.Templates.border { padding = 5 },
             props = {
                 size = v2(130, -10),
                 position = v2(-5, 5),
@@ -90,7 +90,7 @@ function Handler:onOpened(wnd)
                     content = ui.content {
                         {
                             template = I.UIToolkit.Templates.text(),
-                            props = {text = "Examples:"},
+                            props = { text = "Examples:" },
                         },
                         I.UIToolkit.Templates.intervalV(15),
                         {
@@ -131,7 +131,42 @@ function Handler:onOpened(wnd)
                             },
                         },
                         I.UIToolkit.Templates.intervalV(5),
-                        I.UIToolkit.Components.textButton { text = 'Auto Sized' }.element,
+                        I.UIToolkit.Components.textButton { text = 'Show Popup', onClick = function()
+                            I.UIToolkit.Popups.show {
+                                title = 'THE POPUP',
+                                body =
+                                'This is a very cool popup. It has a long text on it. Very good, very long text. It probably takes up several lines on this popup, wow!',
+                                buttons = {
+                                    {
+                                        text = 'New Popup',
+                                        onClicked = function()
+                                            I.UIToolkit.Popups.show {
+                                                title = 'Popup 2: The Reckoning',
+                                                body = 'This is a second popup!',
+                                                buttons = {
+                                                    { text = 'Close' },
+                                                }
+                                            }
+                                        end,
+                                    },
+                                    {
+                                        text = 'Queue Popup',
+                                        noClose = true,
+                                        onClicked = function()
+                                            I.UIToolkit.Popups.show {
+                                                title = 'Queued Popup',
+                                                body = 'Close to return to the previous one!',
+                                                buttons = {
+                                                    { text = 'OK' },
+                                                }
+                                            }
+                                        end,
+                                        tooltip = {body = 'Will open new popup without closing this one.', width = 200}
+                                    },
+                                    { text = 'Cancel',tooltip = 'Closes this popup' },
+                                }
+                            }
+                        end }.element,
                         I.UIToolkit.Templates.intervalV(5),
                         I.UIToolkit.Components.textButton { text = 'Width=110', width = 110 }.element,
                         I.UIToolkit.Templates.intervalV(5),
