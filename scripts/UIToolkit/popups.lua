@@ -1,5 +1,6 @@
 ---@omw-context player
 
+local core = require('openmw.core')
 local ui = require('openmw.ui')
 local util = require('openmw.util')
 local I = require('openmw.interfaces')
@@ -7,6 +8,7 @@ local I = require('openmw.interfaces')
 local H = require('scripts.UIToolkit.helpers')
 
 local v2 = util.vector2
+local hasGapAPI = core.API_REVISION >= 132
 
 local Component = require('scripts.UIToolkit.components.component')
 
@@ -21,6 +23,7 @@ end
 local popups = {}
 
 local placeholder = {
+    name = 'popup-holder',
     props = {
         relativeSize = v2(1, 1),
     },
@@ -29,6 +32,7 @@ local placeholder = {
 local modals = Component:new()
 
 modals:init(ui.create {
+    name = POPUP_LAYER,
     layer = POPUP_LAYER,
     props = {
         relativeSize = v2(1, 1),
@@ -36,6 +40,7 @@ modals:init(ui.create {
     },
     content = ui.content {
         {
+            name = 'modal-background',
             type = ui.TYPE.Image,
             props = {
                 relativeSize = v2(1, 1),
@@ -71,11 +76,11 @@ function M.show(opts)
     local buttons = {}
     for i = 1, #opts.buttons do
         local button = opts.buttons[i]
-        if i > 1 then
-            --TODO: use gap if API is new enough
+        if not hasGapAPI and i > 1 then
             buttons[#buttons + 1] = T.intervalH(GAP)
         end
         buttons[#buttons + 1] = I.UIToolkit.Components.textButton {
+            name = 'button-' .. i,
             text = button.text,
             style = 'button',
             tooltip = button.tooltip,
@@ -89,6 +94,7 @@ function M.show(opts)
 
     if opts.title then
         content[#content + 1] = {
+            name = 'popup-title',
             template = T.header(),
             props = {
                 text = opts.title,
@@ -98,10 +104,11 @@ function M.show(opts)
     end
 
     if opts.body then
-        if #content > 0 then
-            content[#content + 1] = T.intervalV(GAP) --TODO: use gap if API is new enough
+        if not hasGapAPI and #content > 0 then
+            content[#content + 1] = T.intervalV(GAP)
         end
         content[#content + 1] = {
+            name = 'popup-body',
             template = T.paragraph(),
             props = {
                 text = opts.body,
@@ -115,12 +122,14 @@ function M.show(opts)
     end
 
     if #buttons > 0 then
-        if #content > 0 then
-            content[#content + 1] = T.intervalV(GAP) --TODO: use gap if API is new enough
+        if not hasGapAPI and #content > 0 then
+            content[#content + 1] = T.intervalV(GAP)
         end
         content[#content + 1] = {
+            name = 'buttons-flex',
             type = ui.TYPE.Flex,
             props = {
+                gap = hasGapAPI and GAP or nil,
                 horizontal = true,
                 arrange = ui.ALIGNMENT.Center,
             },
@@ -133,14 +142,17 @@ function M.show(opts)
     end
 
     element = ui.create {
+        name = 'popup-box',
         template = I.UIToolkit.Templates.box { padding = 5, background = 'transparent', style = 'thick' },
         props = {
             anchor = v2(0.5, 0.5),
             relativePosition = v2(0.5, 0.5),
         },
         content = ui.content { {
+            name = 'content-flex',
             type = ui.TYPE.Flex,
             props = {
+                gap = hasGapAPI and GAP or nil,
                 align = ui.ALIGNMENT.Center,
                 arrange = ui.ALIGNMENT.Center,
             },
