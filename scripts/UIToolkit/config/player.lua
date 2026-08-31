@@ -1,13 +1,27 @@
 ---@omw-context player
 
---TODO: actually read from settings
+local async = require 'openmw.async'
+local storage = require 'openmw.storage'
+
+local D = require 'scripts.UIToolkit.config.defaults'
+
+---@class UIToolkit.Config.Player.Controller
+---@field b_RepeatingButtons boolean
+---@field n_RepeatingButtonsThreshold number
+---@field n_RepeatingButtonsStep number
 
 ---@class UIToolkit.Config.Player
-local config = {
-    controller = {
-        n_RepeatingButtonsThreshold = 0.5,
-        n_RepeatingButtonsStep = 0.125,
-    },
-}
+---@field controller UIToolkit.Config.Player.Controller
 
-return config
+local config = {}
+
+---@param section openmw.storage.StorageSection
+local function subscribe(section, name)
+    section:subscribe(async:callback(function() config[name] = section:asTable() end))
+    config[name] = section:asTable()
+end
+
+subscribe(storage.playerSection(D.Section.Controller), 'controller')
+
+
+return config --[[@as UIToolkit.Config.Player]]

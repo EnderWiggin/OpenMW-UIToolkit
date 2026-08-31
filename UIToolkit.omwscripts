@@ -1,3 +1,4 @@
+MENU: scripts/UIToolkit/settings/menu.lua
 PLAYER: scripts/UIToolkit/toolkit.lua
 PLAYER: scripts/UIToolkit/tooltips/player.lua
 

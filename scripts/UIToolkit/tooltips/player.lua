@@ -10,6 +10,7 @@ local self = require('openmw.self')
 local helpers = require('scripts.UIToolkit.tooltips.utils')
 local Tooltips = require('scripts.UIToolkit.tooltips.tooltips')
 local T = require('scripts.UIToolkit.templates.base')
+local D = require('scripts.UIToolkit.config.defaults')
 
 local tooltipElement = ui.create {
     type = ui.TYPE.Container,
@@ -353,7 +354,7 @@ return {
     },
     interfaceName = 'UTKTooltips',
     interface = {
-        version = 1,
+        version = D.Tooltips,
 
         currentTooltip = function() return currentTooltip end,
         setTooltip = setTooltip,

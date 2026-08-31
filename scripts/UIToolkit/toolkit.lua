@@ -4,6 +4,7 @@ local core = require('openmw.core')
 local input = require('openmw.input')
 local ui = require('openmw.ui')
 
+local D = require('scripts.UIToolkit.config.defaults')
 local cfgPlayer = require('scripts.UIToolkit.config.player')
 
 local Theme = require('scripts.UIToolkit.themes.theme')
@@ -17,7 +18,7 @@ local ctx = {
 
 ---@class openmw.interfaces.UIToolkit
 local Interface = {
-    version = 1,
+    version = D.API,
     ---@type UIToolkit.Templates
     Templates = require('scripts.UIToolkit.templates.base'),
     ---@type UIToolkit.Interactive
@@ -225,13 +226,15 @@ local function onFrame()
     end
 
     --process repeated controller buttons
-    for button, held in pairs(buttonPressDuration) do
-        held = held + dt
-        if held > cfgPlayer.controller.n_RepeatingButtonsThreshold then
-            held = held - cfgPlayer.controller.n_RepeatingButtonsStep
-            onControllerButtonRepeat(button)
+    if cfgPlayer.controller.b_RepeatingButtons then
+        for button, held in pairs(buttonPressDuration) do
+            held = held + dt
+            if held > cfgPlayer.controller.n_RepeatingButtonsThreshold then
+                held = held - cfgPlayer.controller.n_RepeatingButtonsStep
+                onControllerButtonRepeat(button)
+            end
+            buttonPressDuration[button] = held
         end
-        buttonPressDuration[button] = held
     end
     Interface.WindowManager._onFrame(dt)
 

@@ -1,0 +1,25 @@
+# -------------- Menu Settings --------------
+SettingPageName: UI Toolkit
+SettingPageDesc: |-
+  Version: {version}
+  API: {api}  Tooltips: {tooltips}
+
+# -------------- Controller Settings --------------
+ControllerSettingsName: Controller Settings
+ControllerSettingsDesc: |-
+  Configure UI Toolkit controller settings.
+
+SettingRepeatingButtons: Repeating Buttons
+SettingRepeatingButtonsDesc: Allows to repeat controller button input while held.
+
+SettingRepeatingButtonsThreshold: Repeat Threshold
+SettingRepeatingButtonsThresholdDesc: |-
+  How long (in seconds) to hold the button until repetition starts.
+  Should not be lower than {color_header}Repeat Interval{color_normal}.
+  Range is [{color_header}{min}{color_normal} - {color_header}{max}{color_normal}], default is {color_header}{default}{color_normal} seconds.
+
+SettingRepeatingButtonsStep: Repeat Interval
+SettingRepeatingButtonsStepDesc: |-
+  How often (in seconds) button actions repeat.
+  Should not be higher than {color_header}Repeat Threshold{color_normal}.
+  Range is [{color_header}{min}{color_normal} - {color_header}{max}{color_normal}], default is {color_header}{default}{color_normal} seconds.
