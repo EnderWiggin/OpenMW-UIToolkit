@@ -93,6 +93,26 @@ function Item:refreshColumns(idOrData, ...)
     end
 end
 
+---@param idOrData string|UIToolkit.ListData.Column
+function Item:refreshActiveState(idOrData)
+    local id, data
+    if type(idOrData) == 'string' then
+        id = idOrData
+    else
+        id = idOrData.id
+        data = idOrData
+    end
+    local cached = self:getCachedComponent(id) --[[@as UIToolkit.ListItem.RowComponent]]
+    if not cached or cached:isDestroyed() then return end
+    data = data or cached.data
+    assert(data)
+    local isActive = (data.isActive and data.isActive()) == true
+    if cached:isActive() == true ~= isActive then
+        cached:setActive(isActive)
+        I.UIToolkit.queueUpdate(cached.element, true)
+    end
+end
+
 ---@param data UIToolkit.ListData.Column
 ---@return UTKTooltips.AnyTooltip?
 function Item:getTooltip(data)

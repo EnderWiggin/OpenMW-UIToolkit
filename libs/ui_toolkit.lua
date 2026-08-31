@@ -198,6 +198,7 @@ function Components.sortedList(opts) end
 ---@field new fun(self:UIToolkit.ListItem.Column):UIToolkit.ListItem.Column
 ---@field init fun(self:UIToolkit.ListItem.Column, columns:UIToolkit.ListData.ColumnConfig[], rowHeight:number)
 ---@field refreshColumns fun(self:UIToolkit.ListItem.Column, idOrData:string|UIToolkit.ListData.Column, ...:string|integer)
+---@field refreshActiveState fun(self:UIToolkit.ListItem.Column, idOrData:string|UIToolkit.ListData.Column)
 ---@field renderText UIToolkit.ListItem.Column.Renderer
 ---@field renderIcon UIToolkit.ListItem.Column.Renderer
 
