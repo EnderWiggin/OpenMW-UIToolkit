@@ -6,7 +6,6 @@ local I = require('openmw.interfaces')
 local section = require('openmw.storage').playerSection('UIToolkit:WindowData')
 local H = require('scripts.UIToolkit.helpers')
 
-local cfgPlayer = require('scripts.UIToolkit.config.player')
 local Window = require('scripts.UIToolkit.components.window')
 
 
@@ -15,8 +14,6 @@ local M = {}
 
 ---@type table<string, {opts:UIToolkit.WindowOpts, wnd:UIToolkit.Window?, handler: UIToolkit.WindowHandler?}>
 local windows = {}
-
-local buttonPressDuration = {}
 
 ---@type string[]
 local windowFocusQueue = {}
@@ -119,44 +116,12 @@ function M._queueFocusedWindow(id)
 end
 
 function M._onFrame(dt)
-    --process repeated controller buttons
-    for button, held in pairs(buttonPressDuration) do
-        held = held + dt
-        if held > cfgPlayer.controller.n_RepeatingButtonsThreshold then
-            held = held - cfgPlayer.controller.n_RepeatingButtonsStep
-            M._onControllerButtonRepeat(button)
-        end
-        buttonPressDuration[button] = held
-    end
-
     --call onFrame for open windows
     for i = 1, #windowFocusQueue do
         local data = windows[windowFocusQueue[i]]
         local handler = data and data.handler
         if handler then handler:onFrame(dt) end
     end
-end
-
----@param button number
-function M._onControllerButtonPress(button)
-    buttonPressDuration[button] = 0
-
-
-    local focused = M.getFocusedWindowHandler()
-    if not focused then return end
-    focused:onControllerButtonPress(button)
-end
-
----@param button number
-function M._onControllerButtonRelease(button)
-    buttonPressDuration[button] = nil
-end
-
----@param button number
-function M._onControllerButtonRepeat(button)
-    local focused = M.getFocusedWindowHandler()
-    if not focused then return end
-    focused:onControllerButtonRepeat(button)
 end
 
 ---@param id string

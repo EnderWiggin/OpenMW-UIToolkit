@@ -299,6 +299,7 @@ function Components.sortedList(opts) end
 
 ---@class UIToolkit.Popups
 ---@field show fun(opts:UIToolkit.PopupOpts):fun()
+---@field hasActivePopup fun():boolean
 
 ---@class UIToolkit.PopupOpts
 ---@field title string?

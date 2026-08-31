@@ -181,4 +181,8 @@ function M.show(opts)
     return function() closePopup(element) end
 end
 
+function M.hasActivePopup()
+    return #popups > 0
+end
+
 return M

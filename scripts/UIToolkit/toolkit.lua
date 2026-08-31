@@ -4,6 +4,8 @@ local core = require('openmw.core')
 local input = require('openmw.input')
 local ui = require('openmw.ui')
 
+local cfgPlayer = require('scripts.UIToolkit.config.player')
+
 local Theme = require('scripts.UIToolkit.themes.theme')
 
 local theme = Theme:new()
@@ -182,6 +184,17 @@ local function getFocusedScrollable()
     end
     return scrollable
 end
+local buttonPressDuration = {}
+
+---@param button number
+local function onControllerButtonRepeat(button)
+    --TODO: send button event to popup
+    if Interface.Popups.hasActivePopup() then return end
+
+    local focused = Interface.WindowManager.getFocusedWindowHandler()
+    if not focused then return end
+    focused:onControllerButtonRepeat(button)
+end
 
 local function onFrame()
     local dt = core.getRealFrameDuration()
@@ -196,8 +209,12 @@ local function onFrame()
 
     local scrollable = getFocusedScrollable()
     if not scrollable then
-        local window = Interface.WindowManager.getFocusedWindowHandler()
-        scrollable = window and window:getFocusedScrollable()
+        if Interface.Popups.hasActivePopup() then
+            --TODO: check for focused scrollable in popup
+        else
+            local window = Interface.WindowManager.getFocusedWindowHandler()
+            scrollable = window and window:getFocusedScrollable()
+        end
     end
 
     if scrollable then
@@ -207,6 +224,15 @@ local function onFrame()
         end
     end
 
+    --process repeated controller buttons
+    for button, held in pairs(buttonPressDuration) do
+        held = held + dt
+        if held > cfgPlayer.controller.n_RepeatingButtonsThreshold then
+            held = held - cfgPlayer.controller.n_RepeatingButtonsStep
+            onControllerButtonRepeat(button)
+        end
+        buttonPressDuration[button] = held
+    end
     Interface.WindowManager._onFrame(dt)
 
     processUpdateAndDestroyQueues()
@@ -218,14 +244,21 @@ local function onMouseWheel(v)
     scrollable:onMouseScrolled(v)
 end
 
----@param id number
-local function onControllerButtonPress(id)
-    Interface.WindowManager._onControllerButtonPress(id)
+---@param button number
+local function onControllerButtonPress(button)
+    buttonPressDuration[button] = 0
+
+    --TODO: send button event to popup
+    if Interface.Popups.hasActivePopup() then return end
+
+    local focused = Interface.WindowManager.getFocusedWindowHandler()
+    if not focused then return end
+    focused:onControllerButtonPress(button)
 end
 
----@param id number
-local function onControllerButtonRelease(id)
-    Interface.WindowManager._onControllerButtonRelease(id)
+---@param button number
+local function onControllerButtonRelease(button)
+    buttonPressDuration[button] = nil
 end
 
 return {
