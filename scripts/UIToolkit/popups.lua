@@ -53,7 +53,13 @@ modals:init(ui.create {
     }
 })
 
+local function resetContext()
+    I.UIToolkit.getCtx().focusedScrollable = nil
+    I.UTKTooltips.setTooltip(nil)
+end
+
 local function closePopup(element)
+    resetContext()
     I.UIToolkit.queueDestroy(element, true)
     H.removeFromArray(popups, element)
     if #popups == 0 then
@@ -68,6 +74,7 @@ end
 ---@param opts UIToolkit.PopupOpts
 ---@return fun() close function that closes this popup
 function M.show(opts)
+    resetContext()
     local T = I.UIToolkit.Templates
     local GAP = 10
 
