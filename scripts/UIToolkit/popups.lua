@@ -103,22 +103,29 @@ function M.show(opts)
         }
     end
 
-    if opts.body then
+    local body = opts.body
+    if body then
         if not hasGapAPI and #content > 0 then
             content[#content + 1] = T.intervalV(GAP)
         end
-        content[#content + 1] = {
-            name = 'popup-body',
-            template = T.paragraph(),
-            props = {
-                text = opts.body,
-                relativeSize = v2(1, 0),
-                size = v2(300, 0),
-                textAlignH = ui.ALIGNMENT.Center,
-                textAlignV = ui.ALIGNMENT.Center,
-            },
-            external = { stretch = 1 }
-        }
+        if type(body) == 'string' then
+            content[#content + 1] = {
+                name = 'popup-body',
+                template = T.paragraph(),
+                props = {
+                    text = opts.body,
+                    relativeSize = v2(1, 0),
+                    size = v2(300, 0),
+                    textAlignH = ui.ALIGNMENT.Center,
+                    textAlignV = ui.ALIGNMENT.Center,
+                },
+                external = { stretch = 1 }
+            }
+        elseif body.element then --this is Component
+            content[#content + 1] = body.element
+        else                     --this is Element or Layout
+            content[#content + 1] = body
+        end
     end
 
     if #buttons > 0 then

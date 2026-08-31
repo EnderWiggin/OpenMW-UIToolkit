@@ -301,7 +301,7 @@ function Components.sortedList(opts) end
 
 ---@class UIToolkit.PopupOpts
 ---@field title string?
----@field body string
+---@field body string|openmw.ui.Layout|openmw.ui.Element|UIToolkit.Component
 ---@field buttons UIToolkit.PopupButtonOpts[]
 
 ---@class UIToolkit.PopupButtonOpts
