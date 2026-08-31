@@ -81,20 +81,22 @@ function M.show(opts)
     local element
 
     local buttons = {}
-    for i = 1, #opts.buttons do
-        local button = opts.buttons[i]
-        if not hasGapAPI and i > 1 then
-            buttons[#buttons + 1] = T.intervalH(GAP)
+    if opts.buttons then
+        for i = 1, #opts.buttons do
+            local button = opts.buttons[i]
+            if not hasGapAPI and i > 1 then
+                buttons[#buttons + 1] = T.intervalH(GAP)
+            end
+            buttons[#buttons + 1] = I.UIToolkit.Components.textButton {
+                name = 'button-' .. i,
+                text = button.text,
+                style = button.style or 'button',
+                tooltip = button.tooltip,
+                onClick = function()
+                    if button.onClicked then button.onClicked() end
+                    if not button.noClose then closePopup(element) end
+                end }.element
         end
-        buttons[#buttons + 1] = I.UIToolkit.Components.textButton {
-            name = 'button-' .. i,
-            text = button.text,
-            style = button.style or 'button',
-            tooltip = button.tooltip,
-            onClick = function()
-                if button.onClicked then button.onClicked() end
-                if not button.noClose then closePopup(element) end
-            end }.element
     end
 
     local content = {}
