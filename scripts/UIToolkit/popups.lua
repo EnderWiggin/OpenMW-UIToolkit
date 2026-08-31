@@ -58,6 +58,22 @@ local function resetContext()
     I.UTKTooltips.setTooltip(nil)
 end
 
+local MODE = 'Interface'
+local wasOn = false;
+
+local function checkUIMode(on, changed)
+    if on then
+        if changed then wasOn = I.UI.getMode() == MODE end
+        if I.UI.getMode() ~= MODE then
+            I.UI.addMode(MODE, { windows = {} })
+        end
+    else
+        if not wasOn then
+            I.UI.removeMode(MODE)
+        end
+    end
+end
+
 local function closePopup(element)
     resetContext()
     I.UIToolkit.queueDestroy(element, true)
@@ -65,15 +81,18 @@ local function closePopup(element)
     if #popups == 0 then
         placeholder.content = nil
         modals:setVisible(false)
+        checkUIMode(false)
     else
         placeholder.content = ui.content { popups[#popups] }
         modals:setVisible(true)
+        checkUIMode(true, false)
     end
 end
 
 ---@param opts UIToolkit.PopupOpts
 ---@return fun() close function that closes this popup
 function M.show(opts)
+    local hadPopups = M.hasActivePopup()
     resetContext()
     local T = I.UIToolkit.Templates
     local GAP = 10
@@ -180,6 +199,7 @@ function M.show(opts)
     placeholder.content = ui.content { element }
     modals:setVisible(true)
 
+    checkUIMode(true, not hadPopups)
     return function() closePopup(element) end
 end
 
