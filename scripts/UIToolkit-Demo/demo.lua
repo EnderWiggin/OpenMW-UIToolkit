@@ -1,10 +1,12 @@
 ---@omw-context player
 
+local core          = require 'openmw.core'
 local input         = require 'openmw.input'
 local types         = require 'openmw.types'
 local player        = require 'openmw.self'
 local ui            = require 'openmw.ui'
 local util          = require 'openmw.util'
+local auxUtil       = require 'openmw_aux.util'
 
 local I             = require 'openmw.interfaces'
 local H             = require 'scripts.UIToolkit.helpers'
@@ -31,8 +33,66 @@ local columns   = {
     { id = 'V/W',    name = 'V/W',  sort = { numeric = true }, render = ColumnItem.renderText, width = 2.7 * rowHeight, arg = { textAlignH = ui.ALIGNMENT.End }, align = ui.ALIGNMENT.End },
 }
 
+
+---@type UIToolkit.SortedList.Column[]
+local spellColumns = {
+    { id = 'icon',   name = nil,      sort = nil, render = ColumnItem.renderIcon, width = rowHeight + 5,                      arg = { sz = 1.5 * textSize } },
+    { id = 'name',   name = 'Name',   sort = {},  render = ColumnItem.renderText, auto = 2.5 },
+    { id = 'school', name = 'School', sort = {},  render = ColumnItem.renderText, arg = { textAlignH = ui.ALIGNMENT.Center }, align = ui.ALIGNMENT.Center },
+}
+
+local function makeSpellList()
+    local known = auxUtil.mapFilter(types.Actor.spells(player), function(spell)
+        return spell.type == core.magic.SPELL_TYPE.Spell
+    end)
+    local spells = {}
+    for i = 1, #known do
+        ---@type openmw.core.Spell
+        local spell = known[i]
+        local effect = spell.effects[1]
+        ---@type openmw.core.MagicEffect
+        local effectRecord = effect and core.magic.effects.records[effect.id]
+        spells[#spells + 1] = {
+            id = spell.id,
+            icon = effectRecord and effectRecord.icon,
+            name = spell.name,
+            school = effectRecord and effectRecord.school or '',
+            tooltip = { key = spell.id, type = I.UTKTooltips.TYPE.Spell, observer = player },
+            isActive = function()
+                local selected = types.Actor.getSelectedSpell(player)
+                return selected and selected.id == spell.id
+            end,
+        }
+    end
+    local spellList
+    spellList = I.UIToolkit.Components.sortedList {
+        size = v2(400, 300),
+        onItemClicked = function(data)
+            local selected = types.Actor.getSelectedSpell(player)
+            if selected then
+                local cached = spellList.provider:getCachedComponent(selected.id)
+                if cached then
+                    cached:setActive(false)
+                    I.UIToolkit.queueUpdate(cached.element, true)
+                end
+            end
+            types.Actor.setSelectedSpell(player, data.id)
+            local cached = spellList.provider:getCachedComponent(data.id)
+            if cached then
+                cached:setActive(true)
+                I.UIToolkit.queueUpdate(cached.element, true)
+            end
+        end,
+        columns = spellColumns,
+    }
+    spellList:setItems(spells)
+    spellList.header:toggleColumn('name')
+
+    return spellList
+end
+
 ---@class Handler: UIToolkit.WindowHandler
-local Handler   = Class(WindowHandler)
+local Handler = Class(WindowHandler)
 
 ---@param wnd UIToolkit.Window
 function Handler:onOpened(wnd)
@@ -138,12 +198,12 @@ function Handler:onOpened(wnd)
                                 'This is a very cool popup. It has a long text on it. Very good, very long text.\nIt probably takes up several lines on this popup, wow!',
                                 buttons = {
                                     {
-                                        text = 'New Popup',
+                                        text = 'Select Spell',
                                         onClicked = function()
                                             I.UIToolkit.Popups.show {
-                                                title = 'Popup 2: The Reckoning',
-                                                body = 'This is a second popup!',
-                                                buttons = { { text = 'Close' }, }
+                                                title = 'Select the spell',
+                                                body = makeSpellList(),
+                                                buttons = { { text = 'Close' } }
                                             }
                                         end,
                                     },
