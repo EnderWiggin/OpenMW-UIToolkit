@@ -304,6 +304,7 @@ function Components.sortedList(opts) end
 ---@class UIToolkit.PopupOpts
 ---@field title string?
 ---@field body string|openmw.ui.Layout|openmw.ui.Element|UIToolkit.Component
+---@field borderStyle UIToolkit.BoxStyle?
 ---@field buttons UIToolkit.PopupButtonOpts[]
 
 ---@class UIToolkit.PopupButtonOpts
@@ -311,6 +312,7 @@ function Components.sortedList(opts) end
 ---@field onClicked? fun() will be called when button is clicked
 ---@field tooltip? UTKTooltips.AnyTooltip|UIToolkit.TooltipProvider tooltip or tooltip provider to show on a button
 ---@field noClose? boolean if set to true popup won't be closed when this button is clicked. Defaults to false.
+---@field style UIToolkit.BoxStyle?
 
 
 ---@class UIToolkit.InteractiveColors

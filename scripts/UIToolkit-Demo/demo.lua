@@ -210,9 +210,11 @@ function Handler:onOpened(wnd)
                                     {
                                         text = 'Queue Popup',
                                         noClose = true,
+                                        style ='thin',
                                         onClicked = function()
                                             I.UIToolkit.Popups.show {
                                                 body = 'Close to return to the previous one!',
+                                                borderStyle ='thin',
                                                 buttons = { { text = 'OK' }, }
                                             }
                                         end,

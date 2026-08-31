@@ -89,7 +89,7 @@ function M.show(opts)
         buttons[#buttons + 1] = I.UIToolkit.Components.textButton {
             name = 'button-' .. i,
             text = button.text,
-            style = 'button',
+            style = button.style or 'button',
             tooltip = button.tooltip,
             onClick = function()
                 if button.onClicked then button.onClicked() end
@@ -157,7 +157,7 @@ function M.show(opts)
 
     element = ui.create {
         name = 'popup-box',
-        template = I.UIToolkit.Templates.box { padding = 5, background = 'transparent', style = 'thick' },
+        template = I.UIToolkit.Templates.box { padding = 5, background = 'transparent', style = opts.borderStyle or 'thick' },
         props = {
             anchor = v2(0.5, 0.5),
             relativePosition = v2(0.5, 0.5),
