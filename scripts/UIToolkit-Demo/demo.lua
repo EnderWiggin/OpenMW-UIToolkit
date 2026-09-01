@@ -18,6 +18,7 @@ local ColumnItem    = require 'scripts.UIToolkit.components.list_items.column_it
 
 local v2            = util.vector2
 local WND_NAME      = 'uitoolkit-demo'
+local BUTTON        = input.CONTROLLER_BUTTON
 
 
 local textSize  = I.UIToolkit.getTheme().Sizes.textNormal
@@ -66,30 +67,31 @@ local function makeSpellList()
         }
     end
     local spellList
-    spellList = I.UIToolkit.Components.sortedList {
-        size = v2(400, 300),
-        onItemClicked = function(data)
-            local selected = types.Actor.getSelectedSpell(player)
-            if selected then
-                local cached = spellList.provider:getCachedComponent(selected.id)
-                if cached then
-                    cached:setActive(false)
-                    I.UIToolkit.queueUpdate(cached.element, true)
-                end
-            end
-            types.Actor.setSelectedSpell(player, data.id)
-            local cached = spellList.provider:getCachedComponent(data.id)
+    local onClicked = function(data)
+        local selected = types.Actor.getSelectedSpell(player)
+        if selected then
+            local cached = spellList.provider:getCachedComponent(selected.id)
             if cached then
-                cached:setActive(true)
+                cached:setActive(false)
                 I.UIToolkit.queueUpdate(cached.element, true)
             end
-        end,
+        end
+        types.Actor.setSelectedSpell(player, data.id)
+        local cached = spellList.provider:getCachedComponent(data.id)
+        if cached then
+            cached:setActive(true)
+            I.UIToolkit.queueUpdate(cached.element, true)
+        end
+    end
+    spellList = I.UIToolkit.Components.sortedList {
+        size = v2(400, 300),
+        onItemClicked = onClicked,
         columns = spellColumns,
     }
     spellList:setItems(spells)
     spellList.header:toggleColumn('name')
 
-    return spellList
+    return spellList, onClicked
 end
 
 ---@class Handler: UIToolkit.WindowHandler
@@ -201,10 +203,29 @@ function Handler:onOpened(wnd)
                                     {
                                         text = 'Select Spell',
                                         onClicked = function()
+                                            local spellList, clicked = makeSpellList()
+                                            local function onButton(button)
+                                                if button == BUTTON.DPadDown then
+                                                    spellList.list:shiftHoveredItem(1)
+                                                elseif button == BUTTON.DPadUp then
+                                                    spellList.list:shiftHoveredItem(-1)
+                                                elseif button == BUTTON.A then
+                                                    local hovered = spellList.list:getHovered()
+                                                    if hovered then clicked(hovered) end
+                                                end
+                                            end
+
                                             I.UIToolkit.Popups.show {
                                                 title = 'Select the spell',
-                                                body = makeSpellList(),
-                                                buttons = { { text = 'Close' } }
+                                                body = spellList,
+                                                buttons = { { text = 'Close' } },
+                                                getFocusedScrollable = function() return spellList.list end,
+                                                onControllerButtonPress = onButton,
+                                                onControllerButtonRepeat = function(button)
+                                                    if button == BUTTON.DPadDown or button == BUTTON.DPadUp then
+                                                        onButton(button)
+                                                    end
+                                                end,
                                             }
                                         end,
                                     },
