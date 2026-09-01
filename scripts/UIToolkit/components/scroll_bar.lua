@@ -6,12 +6,17 @@ local ambient = require('openmw.ambient')
 local async = require('openmw.async')
 local I = require('openmw.interfaces')
 
+local cfgPlayer = require('scripts.UIToolkit.config.player')
 local v2 = util.vector2
 local Class = require('scripts.UIToolkit.class')
 local Component = require('scripts.UIToolkit.components.component')
 
 local function getDefaultWidth()
-    return 16 --TODO: add option to scale this with text size?
+    local sz = 14
+    if cfgPlayer.interface.b_ScaleScrollbarWidthWithText then
+        sz = util.round(sz * I.UIToolkit.getTheme().Sizes.textNormal / 16)
+    end
+    return sz
 end
 
 local BTN_UP_TEX = ui.texture { path = 'textures/omw_menu_scroll_up.dds' }
@@ -67,7 +72,7 @@ function ScrollBar:init(opts)
     local bsz = 2 * T.getBorderSize('thin')
     local handleProps = {
         resource = self.horizontal and SCROLL_TEX_H or SCROLL_TEX_V,
-        size = self.horizontal and v2(handleSz, width - bsz) or v2(width - bsz, handleSz),
+        size = self.horizontal and v2(handleSz, width - bsz - 1) or v2(width - bsz - 1, handleSz),
         tileV = true,
         propagateEvents = true,
     }
@@ -269,7 +274,7 @@ function ScrollBar:setMaxScroll(maxScroll, preserveProgress)
         local bsz = 2 * I.UIToolkit.Templates.getBorderSize('thin')
         local width = self.width
         local handleSz = self:calcHandleSize()
-        self._handleProps.size = self.horizontal and v2(handleSz, width - bsz) or v2(width - bsz, handleSz)
+        self._handleProps.size = self.horizontal and v2(handleSz, width - bsz - 1) or v2(width - bsz - 1, handleSz)
     end
 
     if preserveProgress then

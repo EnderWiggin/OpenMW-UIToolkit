@@ -17,6 +17,11 @@ ConfigNumberSeparators_None: None
 ConfigNumberSeparators_Comma: Comma
 ConfigNumberSeparators_Space: Space
 
+SettingScaleScrollbarWidthWithTextName: Scale scrollbar width with text size
+SettingScaleScrollbarWidthWithTextDesc: |-
+  Scrollbar width will be proportionally scaled as text size increases or decreases.
+  Useful if you don't want to increase UI scaling but need bigger text and scrollbar to see better. Or smaller to better fit the screen.
+
 # -------------- Controller Settings --------------
 ControllerSettingsName: Controller Settings
 ControllerSettingsDesc: |-

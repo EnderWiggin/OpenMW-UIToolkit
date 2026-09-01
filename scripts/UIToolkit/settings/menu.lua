@@ -33,6 +33,13 @@ I.Settings.registerGroup {
                 items = { D.Separators.None, D.Separators.Space, D.Separators.Comma },
             }
         },
+        {
+            key = 'b_ScaleScrollbarWidthWithText',
+            renderer = 'checkbox',
+            name = 'SettingScaleScrollbarWidthWithTextName',
+            description = 'SettingScaleScrollbarWidthWithTextDesc',
+            default = false,
+        },
     },
 }
 
