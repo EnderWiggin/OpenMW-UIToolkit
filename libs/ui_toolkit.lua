@@ -155,6 +155,7 @@ function Components.sortedList(opts) end
 ---@field scrollStep number
 ---@field maxScroll number
 ---@field length number
+---@field width number?
 ---@field handleSize number? if set, handle will be this size, if not - it will auto-calculate
 ---@field onScroll fun(position:number, progress:number)
 

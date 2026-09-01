@@ -10,7 +10,9 @@ local v2 = util.vector2
 local Class = require('scripts.UIToolkit.class')
 local Component = require('scripts.UIToolkit.components.component')
 
-local WIDTH = 14
+local function getDefaultWidth()
+    return 16 --TODO: add option to scale this with text size?
+end
 
 local BTN_UP_TEX = ui.texture { path = 'textures/omw_menu_scroll_up.dds' }
 local BTN_DOWN_TEX = ui.texture { path = 'textures/omw_menu_scroll_down.dds' }
@@ -23,11 +25,12 @@ local SCROLL_TEX_H = ui.texture { path = 'textures/omw_menu_scroll_center_h.dds'
 ---@param bar UIToolkit.ScrollBar
 ---@return openmw.util.Vector2
 local function calcScrollBarSize(bar)
+    local width = bar.width
     local padding = I.UIToolkit.getTheme().Sizes.padding
     if bar.horizontal then
-        return v2(bar.length - ((WIDTH + padding) * 2), WIDTH)
+        return v2(bar.length - ((width + padding) * 2), width)
     end
-    return v2(WIDTH, bar.length - ((WIDTH + padding) * 2))
+    return v2(width, bar.length - ((width + padding) * 2))
 end
 
 ---@class UIToolkit.ScrollBar : UIToolkit.Component
@@ -37,6 +40,8 @@ local ScrollBar = Class(Component)
 ---@param opts UIToolkit.ScrollBarOpts
 function ScrollBar:init(opts)
     local T = I.UIToolkit.Templates
+    local width = opts.width or getDefaultWidth()
+    self.width = width
     self.horizontal = opts.horizontal == true
     self.scrollStep = opts.scrollStep
     self.length = opts.length
@@ -62,7 +67,7 @@ function ScrollBar:init(opts)
     local bsz = 2 * T.getBorderSize('thin')
     local handleProps = {
         resource = self.horizontal and SCROLL_TEX_H or SCROLL_TEX_V,
-        size = self.horizontal and v2(handleSz, WIDTH - bsz) or v2(WIDTH - bsz, handleSz),
+        size = self.horizontal and v2(handleSz, width - bsz) or v2(width - bsz, handleSz),
         tileV = true,
         propagateEvents = true,
     }
@@ -82,7 +87,7 @@ function ScrollBar:init(opts)
         local padding = I.UIToolkit.getTheme().Sizes.padding
         local progress = this:getProgress()
         local hsz = self.horizontal and handleProps.size.x or handleProps.size.y
-        local handlePos = (this.length - ((WIDTH + padding) * 2) - hsz - bsz) * progress
+        local handlePos = (this.length - ((width + padding) * 2) - hsz - bsz) * progress
         handleProps.position = self.horizontal and v2(handlePos, 0) or v2(0, handlePos)
 
         I.UIToolkit.queueUpdate(barWrapper)
@@ -92,7 +97,7 @@ function ScrollBar:init(opts)
     local upButton = {
         template = T.border(),
         props = {
-            size = v2(WIDTH, WIDTH),
+            size = v2(width, width),
         },
         content = ui.content {
             {
@@ -115,7 +120,7 @@ function ScrollBar:init(opts)
     local downButton = {
         template = T.border(),
         props = {
-            size = v2(WIDTH, WIDTH),
+            size = v2(width, width),
         },
         content = ui.content {
             {
@@ -236,9 +241,9 @@ function ScrollBar:scroll(steps)
 end
 
 function ScrollBar:calcHandleSize()
+    local width = self.width
     return self.handleSize
-        or math.max((self.length / (self.maxScroll + self.length)) * (self.length - (WIDTH * 2)),
-            WIDTH)
+        or math.max((self.length / (self.maxScroll + self.length)) * (self.length - (width * 2)), width)
 end
 
 ---@return openmw.util.Vector2
@@ -262,8 +267,9 @@ function ScrollBar:setMaxScroll(maxScroll, preserveProgress)
     self.maxScroll = math.max(0, maxScroll)
     if not self.handleSize then
         local bsz = 2 * I.UIToolkit.Templates.getBorderSize('thin')
+        local width = self.width
         local handleSz = self:calcHandleSize()
-        self._handleProps.size = self.horizontal and v2(handleSz, WIDTH - bsz) or v2(WIDTH - bsz, handleSz)
+        self._handleProps.size = self.horizontal and v2(handleSz, width - bsz) or v2(width - bsz, handleSz)
     end
 
     if preserveProgress then
