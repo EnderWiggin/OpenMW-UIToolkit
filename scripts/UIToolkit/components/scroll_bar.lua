@@ -10,8 +10,6 @@ local v2 = util.vector2
 local Class = require('scripts.UIToolkit.class')
 local Component = require('scripts.UIToolkit.components.component')
 
-local T = require('scripts.UIToolkit.templates.base')
-
 local WIDTH = 14
 
 local BTN_UP_TEX = ui.texture { path = 'textures/omw_menu_scroll_up.dds' }
@@ -38,6 +36,7 @@ local ScrollBar = Class(Component)
 
 ---@param opts UIToolkit.ScrollBarOpts
 function ScrollBar:init(opts)
+    local T = I.UIToolkit.Templates
     self.horizontal = opts.horizontal == true
     self.scrollStep = opts.scrollStep
     self.length = opts.length
@@ -60,9 +59,10 @@ function ScrollBar:init(opts)
     end
 
     local handleSz = self:calcHandleSize()
+    local bsz = 2 * T.getBorderSize('thin')
     local handleProps = {
         resource = self.horizontal and SCROLL_TEX_H or SCROLL_TEX_V,
-        size = self.horizontal and v2(handleSz, WIDTH - 4) or v2(WIDTH - 4, handleSz),
+        size = self.horizontal and v2(handleSz, WIDTH - bsz) or v2(WIDTH - bsz, handleSz),
         tileV = true,
         propagateEvents = true,
     }
@@ -82,7 +82,7 @@ function ScrollBar:init(opts)
         local padding = I.UIToolkit.getTheme().Sizes.padding
         local progress = this:getProgress()
         local hsz = self.horizontal and handleProps.size.x or handleProps.size.y
-        local handlePos = (this.length - ((WIDTH + padding) * 2) - hsz - 4) * progress
+        local handlePos = (this.length - ((WIDTH + padding) * 2) - hsz - bsz) * progress
         handleProps.position = self.horizontal and v2(handlePos, 0) or v2(0, handlePos)
 
         I.UIToolkit.queueUpdate(barWrapper)
@@ -90,7 +90,7 @@ function ScrollBar:init(opts)
     end
 
     local upButton = {
-        template = I.MWUI.templates.borders,
+        template = T.border(),
         props = {
             size = v2(WIDTH, WIDTH),
         },
@@ -99,7 +99,7 @@ function ScrollBar:init(opts)
                 type = ui.TYPE.Image,
                 props = {
                     resource = self.horizontal and BTN_LEFT_TEX or BTN_UP_TEX,
-                    size = v2(WIDTH - 4, WIDTH - 4),
+                    relativeSize = v2(1, 1),
                 }
             }
         },
@@ -113,7 +113,7 @@ function ScrollBar:init(opts)
     }
 
     local downButton = {
-        template = I.MWUI.templates.borders,
+        template = T.border(),
         props = {
             size = v2(WIDTH, WIDTH),
         },
@@ -122,7 +122,7 @@ function ScrollBar:init(opts)
                 type = ui.TYPE.Image,
                 props = {
                     resource = self.horizontal and BTN_RIGHT_TEX or BTN_DOWN_TEX,
-                    size = v2(WIDTH - 4, WIDTH - 4),
+                    relativeSize = v2(1, 1),
                 }
             }
         },
@@ -138,7 +138,7 @@ function ScrollBar:init(opts)
         size = calcScrollBarSize(self),
     }
     local scrollBar = {
-        template = I.MWUI.templates.borders,
+        template = T.border(),
         name = 'scrollBar',
         props = self._scrollProps,
         content = ui.content {
@@ -191,8 +191,9 @@ function ScrollBar:init(opts)
             end),
         }
     }
-    local padding = I.UIToolkit.getTheme().Sizes.padding
-
+    local gap = I.UIToolkit.getTheme().Sizes.padding
+    --TODO: when 0.52 releases replace intervals with `gap` property
+    local padding = self.horizontal and T.intervalH or T.intervalV
     barWrapper = ui.create {
         type = ui.TYPE.Flex,
         name = 'scrollBarWrapper',
@@ -203,9 +204,9 @@ function ScrollBar:init(opts)
         --but don't forget to reposition them on size change
         content = ui.content {
             upButton,
-            T.intervalV(padding),
+            padding(gap),
             scrollBar,
-            T.intervalV(padding),
+            padding(gap),
             downButton,
         }
     }
@@ -260,8 +261,9 @@ function ScrollBar:setMaxScroll(maxScroll, preserveProgress)
     local progress = self:getProgress()
     self.maxScroll = math.max(0, maxScroll)
     if not self.handleSize then
+        local bsz = 2 * I.UIToolkit.Templates.getBorderSize('thin')
         local handleSz = self:calcHandleSize()
-        self._handleProps.size = self.horizontal and v2(handleSz, WIDTH - 4) or v2(WIDTH - 4, handleSz)
+        self._handleProps.size = self.horizontal and v2(handleSz, WIDTH - bsz) or v2(WIDTH - bsz, handleSz)
     end
 
     if preserveProgress then
