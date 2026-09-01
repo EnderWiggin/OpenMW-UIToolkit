@@ -6,9 +6,10 @@ local util = require('openmw.util')
 local I = require('openmw.interfaces')
 
 local H = require('scripts.UIToolkit.helpers')
+local C = require('scripts.UIToolkit.constants')
 
 local v2 = util.vector2
-local hasGapAPI = core.API_REVISION >= 132
+local hasGapAPI = C.API.GAP
 
 local Component = require('scripts.UIToolkit.components.component')
 
