@@ -64,8 +64,8 @@ local wasOn = false;
 
 local function checkUIMode(on, changed)
     if on then
-        if changed then wasOn = I.UI.getMode() == MODE end
-        if I.UI.getMode() ~= MODE then
+        if changed then wasOn = I.UI.getMode() ~= nil end
+        if I.UI.getMode() == nil then
             I.UI.addMode(MODE, { windows = {} })
         end
     else
