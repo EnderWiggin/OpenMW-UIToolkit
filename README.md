@@ -3,6 +3,97 @@ Library to make creating LUA UI for OpenMW easier. Contains basic templates, int
 
 `libs/ui-toolkit.lua` - meta file for the [Cod3x](https://www.nexusmods.com/morrowind/mods/59122) LLS plugin. You can copy it to your projects that use Cod3x to get code completion for the public API of the UI Toolkit.
 
+# Templates
+`I.UIToolkit.Templates` contains templates and layout helpers for building UI. The examples below assume these imports:
+```lua
+local ui = require 'openmw.ui'
+local util = require 'openmw.util'
+local v2 = util.vector2
+local I  = require 'openmw.interfaces'
+local T  = I.UIToolkit.Templates
+```
+
+## Text templates
+Text templates can be applied to an element with `template` and customized with `props`:
+```lua
+ui.create { template = T.text(),      props = { text = 'Normal text' } }
+ui.create { template = T.header(),    props = { text = 'Header' } }
+ui.create { template = T.paragraph(), props = { text = 'A multiline paragraph.' } }
+ui.create { template = T.editLine(),  props = { text = 'Single-line input' } }
+ui.create { template = T.editBox(),   props = { text = 'Multiline input' } }
+```
+
+## Spacing templates
+`padding(padX, padY)` adds padding around its content. If `padY` is omitted, the same value is used for both axes:
+```lua
+ui.create {
+    template = T.padding(8, 4),
+    content = ui.content {
+        { template = T.text(), props = { text = 'Padded text' } },
+    },
+}
+```
+
+`intervalH(size)` and `intervalV(size)` create horizontal and vertical gaps. They are usually inserted directly into content:
+```lua
+ui.content {
+    { template = T.text(), props = { text = 'Above' } },
+    T.intervalV(10),
+    { template = T.text(), props = { text = 'Below' } },
+}
+
+ui.content {
+    { template = T.text(), props = { text = 'Left' } },
+    T.intervalH(10),
+    { template = T.text(), props = { text = 'Right' } },
+}
+```
+
+## Content wrappers
+`border(opts)` draws a border around content. It has its own size and dictates the available area to its children. 
+```lua
+ui.create {
+    template = T.border { style = 'thin', padding = 5 },
+    props = { size = v2(300, 100) },
+    content = ui.content {
+        {
+            template = T.paragraph(),
+            props = {
+                text = 'This multiline text fills the available area of the border.',
+                relativeSize = v2(1, 1),
+            },
+        },
+    },
+}
+```
+`box(opts)` has no size of its own and is sized to wrap around its children. Both accept an optional `style`: it defaults to `'thin'` and can be `'thin'`, `'thick'`, or `'button'`. They also accept optional `padding`, `thickness`, and `background` settings:
+```lua
+ui.create {
+    template = T.box { style = 'thick', padding = 5, background = 'transparent' },
+    content = ui.content {
+        { template = T.header(), props = { text = 'Box content' } },
+    },
+}
+```
+Use `getBorderSize(style)` when code needs the pixel thickness of a themed border:
+```lua
+local thinBorderSize = T.getBorderSize('thin')
+local thickBorderSize = T.getBorderSize('thick')
+```
+
+## Misc stuff
+`effectIcon(effectId, size)` creates an effect icon layout, while `effectIconTexture(effectId)` returns just its texture resource:
+```lua
+local icon = T.effectIcon('firedamage', 32)
+ui.create { content = ui.content { icon } }
+
+local iconTexture = T.effectIconTexture('firedamage')
+ui.create {
+    type = ui.TYPE.Image,
+    props = { resource = iconTexture, size = v2(32, 32) },
+}
+```
+
 # Interactivity
 `I.UIToolkit.Interactive` can make any Element or Layout "interactive" – react to mouse hovers, clicks, have tooltips. And has methods to just apply interactive state style changes to a Layout/Element. Supports `hovering`, `disabled`, `pressed` and `active` states, with separate coloring for each.
 
