@@ -34,6 +34,26 @@ H.toStringDeep = function(tbl, indent)
     return toprint
 end
 
+H.uiDeepPrint = function(layoutOrElement, lvl)
+    lvl = lvl or 0
+    local isElement = type(layoutOrElement) == 'userdata'
+    local layout = isElement and layoutOrElement.layout or layoutOrElement
+    if layout.name then
+        print(string.rep('-', lvl), layoutOrElement, layout.name)
+    end
+    if layout.props then
+        print(string.rep(' ', lvl), 'Props:', H.toStringDeep(layout.props))
+    end
+    if layout.userData then
+        print(string.rep(' ', lvl), 'UserData:', H.toStringDeep(layout.userData))
+    end
+    if layout.content then
+        for _, child in pairs(layout.content) do
+            H.uiDeepPrint(child, lvl + 1)
+        end
+    end
+end
+
 local function deepCopy(value, seen)
     if type(value) ~= 'table' then return value end
     local okColor = pcall(function() return value:asHex() end)
