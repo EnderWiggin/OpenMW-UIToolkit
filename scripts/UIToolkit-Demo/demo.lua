@@ -10,6 +10,7 @@ local auxUtil       = require 'openmw_aux.util'
 
 local I             = require 'openmw.interfaces'
 local H             = require 'scripts.UIToolkit.helpers'
+local tipUtils      = require 'scripts.UIToolkit.tooltips.utils'
 
 local Class         = require 'scripts.UIToolkit.class'
 local WindowHandler = require 'scripts.UIToolkit.window_handler'
@@ -56,7 +57,7 @@ local function makeSpellList()
             id = spell.id,
             icon = effectRecord and effectRecord.icon,
             name = spell.name,
-            school = effectRecord and effectRecord.school or '',
+            school = core.stats.Skill.record(tipUtils.getSpellEffectiveSchool(spell, player)).name,
             tooltip = { key = spell.id, type = I.UTKTooltips.TYPE.Spell, observer = player },
             isActive = function()
                 local selected = types.Actor.getSelectedSpell(player)
@@ -210,11 +211,11 @@ function Handler:onOpened(wnd)
                                     {
                                         text = 'Queue Popup',
                                         noClose = true,
-                                        style ='thin',
+                                        style = 'thin',
                                         onClicked = function()
                                             I.UIToolkit.Popups.show {
                                                 body = 'Close to return to the previous one!',
-                                                borderStyle ='thin',
+                                                borderStyle = 'thin',
                                                 buttons = { { text = 'OK' }, }
                                             }
                                         end,
