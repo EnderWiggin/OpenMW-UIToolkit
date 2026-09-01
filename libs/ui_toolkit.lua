@@ -162,9 +162,9 @@ function Components.sortedList(opts) end
 ---@field new fun():UIToolkit.ScrollBar
 ---@field init fun(self:UIToolkit.ScrollBar, opts:UIToolkit.ScrollBarOpts)
 ---@field getPosition fun(self:UIToolkit.ScrollBar):number actual position of the scroll
----@field setPosition fun(self:UIToolkit.ScrollBar, position:number) set scroll position
+---@field setPosition fun(self:UIToolkit.ScrollBar, position:number, silent:boolean?) set scroll position. If `silent` is true - onScrolled will not be called.
 ---@field getProgress fun(self:UIToolkit.ScrollBar):number [0-1] progress of the scroll
----@field setProgress fun(self:UIToolkit.ScrollBar, progress:number) set [0-1] progress of the scroll
+---@field setProgress fun(self:UIToolkit.ScrollBar, progress:number, silent:boolean?) set [0-1] progress of the scroll. If `silent` is true - onScrolled will not be called.
 ---@field scroll fun(self:UIToolkit.ScrollBar, steps:number) scroll the bar by steps
 ---@field getSize fun(self:UIToolkit.ScrollBar):openmw.util.Vector2
 ---@field setLength fun(self:UIToolkit.ScrollBar, length:number) set scroll length

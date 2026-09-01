@@ -73,8 +73,9 @@ function ScrollBar:init(opts)
 
     ---@param this UIToolkit.ScrollBar
     ---@param position number
-    function self.setPosition(this, position)
-        position = util.clamp(position, 0, self.maxScroll)
+    ---@param silent boolean?
+    function self.setPosition(this, position, silent)
+        position = util.round(util.clamp(position, 0, self.maxScroll))
         if position == self.position then return end
 
         self.position = position
@@ -85,7 +86,7 @@ function ScrollBar:init(opts)
         handleProps.position = self.horizontal and v2(handlePos, 0) or v2(0, handlePos)
 
         I.UIToolkit.queueUpdate(barWrapper)
-        this.onScroll(this.position, progress)
+        if not silent then this.onScroll(this.position, progress) end
     end
 
     local upButton = {
@@ -223,8 +224,9 @@ function ScrollBar:getProgress()
 end
 
 ---@param progress number
-function ScrollBar:setProgress(progress)
-    self:setPosition(progress * self.maxScroll)
+---@param silent boolean?
+function ScrollBar:setProgress(progress, silent)
+    self:setPosition(progress * self.maxScroll, silent)
 end
 
 ---@param steps number
