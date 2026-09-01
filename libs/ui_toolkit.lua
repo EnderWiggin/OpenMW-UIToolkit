@@ -274,10 +274,11 @@ function Components.sortedList(opts) end
 ---@field pinned boolean
 ---@field position openmw.util.Vector2
 ---@field size openmw.util.Vector2
+---@field custom table?
 
 ---@class UIToolkit.WindowHandler
----@field onOpened fun(self:UIToolkit.WindowHandler, wnd:UIToolkit.Window, data:any?)
----@field onClosed fun(self:UIToolkit.WindowHandler)
+---@field onOpened fun(self:UIToolkit.WindowHandler, wnd:UIToolkit.Window, data:any?, saved:table?)
+---@field onClosed fun(self:UIToolkit.WindowHandler):table? Should return custom data to be saved. This data would be passed as `saved` to `onOpened`
 ---@field onResized fun(self:UIToolkit.WindowHandler, innerSize:openmw.util.Vector2)
 ---@field onFrame fun(self:UIToolkit.WindowHandler, dt:number) called each frame
 ---@field onControllerButtonPress fun(self:UIToolkit.WindowHandler, button:number) called on focused window when controller button is pressed

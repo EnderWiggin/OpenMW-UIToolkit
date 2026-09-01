@@ -7,11 +7,13 @@ local WindowHandler = Class()
 
 ---@param wnd UIToolkit.Window
 ---@param data any?
+---@param saved table? Table that was returned from `onClosed`
 ---@diagnostic disable-next-line: unused-local
-function WindowHandler:onOpened(wnd, data)
+function WindowHandler:onOpened(wnd, data, saved)
 
 end
 
+---@return table? saved data to store. Will be passed to `onOpened`
 function WindowHandler:onClosed()
 
 end

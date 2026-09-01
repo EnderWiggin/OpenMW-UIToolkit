@@ -58,8 +58,7 @@ function M.open(id, data)
     } or nil)
     windows[id].wnd = wnd
     if handler then
-        --TODO: load custom window state
-        handler:onOpened(wnd, data)
+        handler:onOpened(wnd, data, saved and saved.custom or nil)
     end
     M._queueFocusedWindow(id)
     return wnd
@@ -82,15 +81,16 @@ function M.close(id)
     if not wnd then return end
 
     local handler = data.handler
-    if handler then handler:onClosed() end
+    local custom
+    if handler then custom = handler:onClosed() end
 
     ---@type UIToolkit.WindowSaveData
     local saved = {
         pinned = wnd:isPinned(),
         position = toRelative(wnd:getPosition()),
         size = toRelative(wnd:getSize()),
+        custom = custom,
     }
-    --TODO: save custom window state
     section:set(id, saved)
     data.wnd = nil
     I.UIToolkit.queueDestroy(wnd.element, true)
