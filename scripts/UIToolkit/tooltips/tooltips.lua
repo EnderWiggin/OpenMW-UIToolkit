@@ -1088,16 +1088,22 @@ Tooltips.specializationRecipe = function(tooltip)
     }
 end
 
+---@param tooltip UTKTooltips.Tooltip
+---@return UTKTooltips.Recipe?
 Tooltips.spellRecipe = function(tooltip)
     if not tooltip.key then return end
     local spell = core.magic.spells.records[tooltip.key]
     if not spell then return end
 
-    -- TODO: Accurately compute school
     local mgef = spell.effects[1].effect
     if not mgef then return end
-    local school = core.stats.Skill.record(mgef.school or 'alteration')
-    local schoolText = l10n('School') .. ': ' .. school.name
+    local school
+    if not tooltip.observer then
+        school = core.stats.Skill.record(mgef.school)
+    else
+        school = core.stats.Skill.record(helpers.getSpellEffectiveSchool(spell, tooltip.observer))
+    end
+    local schoolText = l10n('School') .. ': ' .. (school and school.name or '')
 
     return {
         type = Tooltips.TYPE.Spell,

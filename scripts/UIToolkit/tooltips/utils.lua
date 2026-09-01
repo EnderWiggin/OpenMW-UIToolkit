@@ -197,4 +197,33 @@ function Utils.objectTooltipViewportCoords(object)
     end
 end
 
+---@param spellRecord openmw.core.Spell
+---@param actor openmw.Object
+function Utils.getSpellEffectiveSchool(spellRecord, actor)
+    local y = math.huge
+    local effectiveSchool
+    for i = 1, #spellRecord.effects do
+        local effect = spellRecord.effects[i]
+        local baseEffect = effect.effect
+        local x = baseEffect.hasDuration and effect.duration or 1
+        if not baseEffect.isAppliedOnce then
+            x = math.max(x, 1)
+        end
+        x = x * 0.1 * baseEffect.baseCost
+        x = x * 0.5 * (effect.magnitudeMin + effect.magnitudeMax)
+        x = x + 0.05 * baseEffect.baseCost * effect.area
+        if effect.range == core.magic.RANGE.Target then
+            x = x * 1.5
+        end
+        x = x * core.getGMST('fEffectCostMult')
+
+        local s = 2 * actor.type.stats.skills[baseEffect.school](actor).modified
+        if (s - x) < y then
+            y = s - x
+            effectiveSchool = baseEffect.school
+        end
+    end
+    return effectiveSchool
+end
+
 return Utils
