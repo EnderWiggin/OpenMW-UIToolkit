@@ -131,6 +131,28 @@ end
 
 ---@param element openmw.ui.Element
 ---@param deep boolean?
+function Interface.update(element, deep)
+    if not element then return end
+    assert(element.destroy)
+    tryUpdate(element)
+    if deep == true then
+        deepElementCallback(element.layout, tryUpdate)
+    end
+end
+
+---@param element openmw.ui.Element
+---@param deep boolean?
+function Interface.destroy(element, deep)
+    if not element then return end
+    assert(element.destroy)
+    tryDestroy(element)
+    if deep == true then
+        deepElementCallback(element.layout, tryDestroy)
+    end
+end
+
+---@param element openmw.ui.Element
+---@param deep boolean?
 function Interface.queueUpdate(element, deep)
     if not element then return end
     assert(element.update)
@@ -142,7 +164,7 @@ function Interface.queueUpdate(element, deep)
 end
 
 ---@param element openmw.ui.Element
----@param deep boolean
+---@param deep boolean?
 function Interface.queueDestroy(element, deep)
     if not element then return end
     assert(element.destroy)
