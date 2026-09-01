@@ -1,6 +1,5 @@
 ---@omw-context player
 
-local core = require('openmw.core')
 local ui = require('openmw.ui')
 local util = require('openmw.util')
 local I = require('openmw.interfaces')
@@ -20,7 +19,7 @@ if not ui.layers.indexOf(POPUP_LAYER) then
     ui.layers.insertAfter('Windows', POPUP_LAYER, { interactive = true })
 end
 
----@type openmw.ui.Element[]
+---@type UIToolkit.Popups.Entry[]
 local popups = {}
 
 local placeholder = {
@@ -75,16 +74,19 @@ local function checkUIMode(on, changed)
     end
 end
 
-local function closePopup(element)
+---@param entry UIToolkit.Popups.Entry
+local function closePopup(entry)
+    if not entry.element then return end
     resetContext()
-    I.UIToolkit.queueDestroy(element, true)
-    H.removeFromArray(popups, element)
+    I.UIToolkit.queueDestroy(entry.element, true)
+    H.removeFromArray(popups, entry)
+    entry.element = nil
     if #popups == 0 then
         placeholder.content = nil
         modals:setVisible(false)
         checkUIMode(false)
     else
-        placeholder.content = ui.content { popups[#popups] }
+        placeholder.content = ui.content { popups[#popups].element }
         modals:setVisible(true)
         checkUIMode(true, false)
     end
@@ -99,6 +101,7 @@ function M.show(opts)
     local GAP = 10
 
     local element
+    local entry = { handler = opts }
 
     local buttons = {}
     if opts.buttons then
@@ -114,7 +117,7 @@ function M.show(opts)
                 tooltip = button.tooltip,
                 onClick = function()
                     if button.onClicked then button.onClicked() end
-                    if not button.noClose then closePopup(element) end
+                    if not button.noClose then closePopup(entry) end
                 end }.element
         end
     end
@@ -196,16 +199,24 @@ function M.show(opts)
             content = ui.content(content),
         } },
     }
-    popups[#popups + 1] = element
+    entry.element = element
+    entry.close = function() closePopup(entry) end
+
+    popups[#popups + 1] = entry
+
     placeholder.content = ui.content { element }
     modals:setVisible(true)
 
     checkUIMode(true, not hadPopups)
-    return function() closePopup(element) end
+    return entry.close
 end
 
 function M.hasActivePopup()
     return #popups > 0
+end
+
+function M.getActivePopup()
+    return #popups > 0 and popups[#popups] or nil
 end
 
 return M

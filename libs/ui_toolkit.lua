@@ -301,8 +301,9 @@ function Components.sortedList(opts) end
 ---@class UIToolkit.Popups
 ---@field show fun(opts:UIToolkit.PopupOpts):fun()
 ---@field hasActivePopup fun():boolean
+---@field getActivePopup fun():UIToolkit.Popups.Entry?
 
----@class UIToolkit.PopupOpts
+---@class UIToolkit.PopupOpts : UIToolkit.Popups.Handler
 ---@field title string?
 ---@field body string|openmw.ui.Layout|openmw.ui.Element|UIToolkit.Component
 ---@field borderStyle UIToolkit.BoxStyle?
@@ -315,6 +316,15 @@ function Components.sortedList(opts) end
 ---@field noClose? boolean if set to true popup won't be closed when this button is clicked. Defaults to false.
 ---@field style UIToolkit.BoxStyle?
 
+---@class UIToolkit.Popups.Handler
+---@field onControllerButtonPress? fun(button:number) called on focused window when controller button is pressed
+---@field onControllerButtonRepeat? fun(button:number) called on focused window when controller button is held and repeating buttons is on
+---@field getFocusedScrollable? fun():UIToolkit.Scrollable? this scrollable will be scrolled by Right Stick if window is focused and no other scrollable is in focus
+
+---@class UIToolkit.Popups.Entry
+---@field handler UIToolkit.Popups.Handler
+---@field element openmw.ui.Element
+---@field close fun() closes popup
 
 ---@class UIToolkit.InteractiveColors
 ---@field pressColor openmw.util.Color?

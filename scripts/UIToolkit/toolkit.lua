@@ -189,8 +189,12 @@ local buttonPressDuration = {}
 
 ---@param button number
 local function onControllerButtonRepeat(button)
-    --TODO: send button event to popup
-    if Interface.Popups.hasActivePopup() then return end
+    local popup = Interface.Popups.getActivePopup()
+    if popup then
+        local callback = popup.handler.onControllerButtonRepeat
+        if callback then callback(button) end
+        return
+    end
 
     local focused = Interface.WindowManager.getFocusedWindowHandler()
     if not focused then return end
@@ -210,8 +214,10 @@ local function onFrame()
 
     local scrollable = getFocusedScrollable()
     if not scrollable then
-        if Interface.Popups.hasActivePopup() then
-            --TODO: check for focused scrollable in popup
+        local popup = Interface.Popups.getActivePopup()
+        if popup then
+            local method = popup.handler.getFocusedScrollable
+            if method then scrollable = method() end
         else
             local window = Interface.WindowManager.getFocusedWindowHandler()
             scrollable = window and window:getFocusedScrollable()
@@ -251,8 +257,12 @@ end
 local function onControllerButtonPress(button)
     buttonPressDuration[button] = 0
 
-    --TODO: send button event to popup
-    if Interface.Popups.hasActivePopup() then return end
+    local popup = Interface.Popups.getActivePopup()
+    if popup then
+        local callback = popup.handler.onControllerButtonPress
+        if callback then callback(button) end
+        return
+    end
 
     local focused = Interface.WindowManager.getFocusedWindowHandler()
     if not focused then return end
