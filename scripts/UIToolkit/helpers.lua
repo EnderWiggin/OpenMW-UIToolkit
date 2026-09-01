@@ -171,8 +171,7 @@ end
 ---@return openmw.ui.Layout?
 local function getContentLayoutByName(content, name)
     local ok, tmp = pcall(function() return content[name] end)
-    if ok then
-        if not tmp then return nil end
+    if ok and tmp then
         return H.toLayout(tmp)
     end
 
