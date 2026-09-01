@@ -254,6 +254,60 @@ return {
 
 `I.UIToolkit.WindowManager.register` only defines the window. Call `I.UIToolkit.WindowManager.open(windowId)` to create it; `I.UIToolkit.WindowManager.close(windowId)` destroys it while preserving its position and size for the next open.
 
+## Popups
+`I.UIToolkit.Popups.show` displays a modal popup. Its `body` can be a plain string, a UI element or layout, or a UIToolkit component. The function returns a function that closes the popup.
+
+Show a popup with a simple text body:
+```lua
+local I = require 'openmw.interfaces'
+
+local closePopup = I.UIToolkit.Popups.show {
+    title = 'Welcome',
+    body = 'Hello from a popup!',
+    buttons = {
+        { text = 'Close' },
+    },
+}
+
+-- The popup can also be closed from code:
+-- closePopup()
+```
+
+For more control, pass a custom element or component as the body:
+```lua
+local ui = require 'openmw.ui'
+local I  = require 'openmw.interfaces'
+
+local customBody = ui.create {
+    type = ui.TYPE.Flex,
+    props = {
+        horizontal = false,
+        gap = 5,
+        align = ui.ALIGNMENT.Center,
+    },
+    content = ui.content {
+        {
+            template = I.MWUI.templates.textNormal,
+            props = { text = 'Choose an action:' },
+        },
+        I.UIToolkit.Components.textButton {
+            text = 'Do something',
+            onClick = function()
+                print('Action selected')
+            end,
+        }.element,
+    },
+}
+
+I.UIToolkit.Popups.show {
+    title = 'Custom popup',
+    body = customBody,
+    buttons = {
+        { text = 'Close' },
+    },
+}
+```
+
 
 # Tooltips
 Taken almost as-is from the [Dehardcode tooltips MR](https://gitlab.com/OpenMW/openmw/-/merge_requests/5336). Only some small tweaks to accommodate for the lack of newer API in 0.51. The idea is to allow modders to play with the dehardcode API before it is released and, hopefully, make transition to it easier when it happens.
