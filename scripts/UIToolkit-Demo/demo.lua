@@ -135,12 +135,47 @@ function Handler:onOpened(wnd)
         }
     end
     list:setItems(rows)
+
+    -- slider+text combo that allows entering value in range [1 - 100]
+    local slider
+    local edit
+
+    slider = I.UIToolkit.Components.scrollBar {
+        horizontal = true,
+        length = 250,
+        handleSize = 20,
+        scrollStep = 2,
+        maxScroll = 198, -- we have 100 values (1-100), position goes from 0 to maxScroll, so it must be scrollStep*(range-1) for our case
+        onScroll = function(position)
+            local value = math.floor(position / 2) + 1
+            edit:setValue(value)
+        end,
+    }
+
+    edit = I.UIToolkit.Components.textEdit {
+        default = 1,
+        width = 55,
+        textAlignH = ui.ALIGNMENT.Center,
+        validate = function(text)
+            local number = tonumber(text)
+            if not number then
+                return false, nil
+            else
+                return true, util.clamp(number, 1, 100)
+            end
+        end,
+        onValueChanged = function(value)
+            local pos = 2 * (value - 1)
+            slider:setPosition(pos, true)
+        end
+    }
+
     wnd:setContent(ui.content {
         list.element,
         {
             template = I.UIToolkit.Templates.border { padding = 5 },
             props = {
-                size = v2(130, -10),
+                size = v2(330, -10),
                 position = v2(-5, 5),
                 relativeSize = v2(0, 1),
                 anchor = v2(1, 0),
@@ -249,15 +284,44 @@ function Handler:onOpened(wnd)
                         I.UIToolkit.Templates.intervalV(5),
                         I.UIToolkit.Components.textButton { text = 'Width=110', width = 110 }.element,
                         I.UIToolkit.Templates.intervalV(5),
-                        I.UIToolkit.Components.textButton { text = 'Disabled' }:setDisabled(true).element,
+                        {
+                            type = ui.TYPE.Flex,
+                            props = { horizontal = true },
+                            content = ui.content {
+                                I.UIToolkit.Components.textButton { text = 'Disabled' }:setDisabled(true).element,
+                                I.UIToolkit.Templates.intervalH(5),
+                                I.UIToolkit.Components.textButton { text = 'Active' }:setActive(true).element,
+                            },
+                        },
                         I.UIToolkit.Templates.intervalV(5),
-                        I.UIToolkit.Components.textButton { text = 'Active' }:setActive(true).element,
+                        {
+                            type = ui.TYPE.Flex,
+                            props = { horizontal = true },
+                            content = ui.content {
+                                I.UIToolkit.Components.textButton { text = 'Thin', style = 'thin' }.element,
+                                I.UIToolkit.Templates.intervalH(5),
+                                I.UIToolkit.Components.textButton { text = 'Thick', style = 'thick' }.element,
+                                I.UIToolkit.Templates.intervalH(5),
+                                I.UIToolkit.Components.textButton { text = 'Colored', background = { opacity = 0.5, color = theme.Colors.FATIGUE } }.element,
+                            },
+                        },
                         I.UIToolkit.Templates.intervalV(5),
-                        I.UIToolkit.Components.textButton { text = 'Thin', style = 'thin' }.element,
-                        I.UIToolkit.Templates.intervalV(5),
-                        I.UIToolkit.Components.textButton { text = 'Thick', style = 'thick' }.element,
-                        I.UIToolkit.Templates.intervalV(5),
-                        I.UIToolkit.Components.textButton { text = 'Colored', background = { opacity = 0.5, color = theme.Colors.FATIGUE } }.element,
+                        {
+                            template = I.UIToolkit.Templates.paragraph(),
+                            props = {
+                                text = "slider+text combo that allows entering value in range [1 - 100]:",
+                                size = v2(300, 0),
+                            },
+                        },
+                        {
+                            type = ui.TYPE.Flex,
+                            props = { horizontal = true, arrange = ui.ALIGNMENT.Center },
+                            content = ui.content {
+                                slider.element,
+                                I.UIToolkit.Templates.intervalH(5),
+                                edit.element,
+                            },
+                        },
                     }
                 }
             },
@@ -275,7 +339,7 @@ end
 ---@param inner openmw.util.Vector2
 function Handler:onResized(inner)
     if list then
-        list:setSize(inner - v2(140, 0))
+        list:setSize(inner - v2(340, 0))
     end
 end
 
@@ -285,7 +349,7 @@ I.UIToolkit.WindowManager.register(WND_NAME, {
     draggable = true,
     resizing = true,
     position = v2(300, 300),
-    minSize = v2(500, 350),
+    minSize = v2(800, 450),
 })
 
 
