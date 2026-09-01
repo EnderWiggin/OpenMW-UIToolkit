@@ -1,9 +1,15 @@
 ---@omw-context all
 local context = require('scripts.UIToolkit.scriptContext')
-local storage = require('openmw.storage')
 local util = require('openmw.util')
 
-local C = require('scripts.UIToolkit.constants')
+local D = require('scripts.UIToolkit.config.defaults')
+
+local cfgPlayer
+if context.get() == context.Types.Player then
+    ---@omw-context-begin player
+    cfgPlayer = require 'scripts.UIToolkit.config.player'
+    ---@omw-context-end player
+end
 
 ---@class UIToolkit.Helpers
 local H = {}
@@ -120,12 +126,12 @@ H.roundToPlaces = function(num, places)
 end
 
 H.addSeparators = function(number)
-    local mode = C.SEPARATOR_OPTS.Space --TODO: add settings
+    local mode = cfgPlayer and cfgPlayer.interface.s_NumberSeparators or D.Separators.Space
     local separator
 
-    if mode == C.SEPARATOR_OPTS.Comma then
+    if mode == D.Separators.Comma then
         separator = ','
-    elseif mode == C.SEPARATOR_OPTS.Space then
+    elseif mode == D.Separators.Space then
         separator = ' '
     end
     if separator == nil then return tostring(number) end

@@ -13,6 +13,7 @@ local M = {
     API = 1,
     Tooltips = 1,
     Section = {
+        Interface = section 'Interface',
         Controller = section 'Controller',
     },
 
@@ -27,6 +28,12 @@ local M = {
         min = 0.05,
         max = 0.5,
     },
+
+    Separators = {
+        None = 'ConfigNumberSeparators_None',
+        Comma = 'ConfigNumberSeparators_Comma',
+        Space = 'ConfigNumberSeparators_Space',
+    }
 }
 
 return M

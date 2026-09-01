@@ -14,6 +14,29 @@ I.Settings.registerPage {
 }
 
 I.Settings.registerGroup {
+    key = D.Section.Interface,
+    page = D.PageKey,
+    l10n = D.L10N,
+    name = 'InterfaceSettingsName',
+    description = 'InterfaceSettingsDesc',
+    order = 2,
+    permanentStorage = true,
+    settings = {
+        {
+            key = 's_NumberSeparators',
+            renderer = 'select',
+            name = 'SettingNumberSeparatorsName',
+            description = l10n('SettingNumberSeparatorsDesc', H.TextColorParams),
+            default = D.Separators.Space,
+            argument = {
+                l10n = D.L10N,
+                items = { D.Separators.None, D.Separators.Space, D.Separators.Comma },
+            }
+        },
+    },
+}
+
+I.Settings.registerGroup {
     key = D.Section.Controller,
     page = D.PageKey,
     l10n = D.L10N,
