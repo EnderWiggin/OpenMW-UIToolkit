@@ -204,6 +204,25 @@ I.UIToolkit.Components.textEdit {
 ## Scroll Bar
 `scrollBar(opts)` - creates a scrollbar. Can be horizontal or vertical. Has callback for position change.
 
+### Example
+Create a horizontal scrollbar with a small, fixed-size handle that reports value in range \[1 - 100]:
+```lua
+local I = require 'openmw.interfaces'
+
+slider = I.UIToolkit.Components.scrollBar {
+        horizontal = true,
+        length = 250,
+        handleSize = 20,
+        scrollStep = 2,
+        maxScroll = 198,
+        onScroll = function(position)
+            local value = math.floor(position / 2) + 1
+            print('Value:', value)
+        end,
+    }
+```
+The scrollbar uses a `maxScroll` of 198 because we have 100 values \[1 - 100] and position goes from 0 to `maxScroll`, so it must be equal to `scrollStep * (range - 1)` for each step to map exactly onto value.
+
 ## Item List
 `itemList(opts)` - creates a list of items. Uses item provider to get Components representing items. Items can have tooltips.
 
