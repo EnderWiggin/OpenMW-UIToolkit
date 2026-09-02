@@ -63,7 +63,7 @@ function Interactive.updateState(layoutOrElement, state) end
 
 ---@class UIToolkit.InteractiveOpts
 ---@field tooltip? UTKTooltips.AnyTooltip|UIToolkit.TooltipProvider|nil optional tooltip or tooltip provider function
----@field onClick? fun() optional function to be called when element is clicked. Note: element won't change colors if there's no click callback set
+---@field onClick? fun(e:openmw.ui.MouseEvent) optional function to be called when element is clicked.
 ---@field canClick? fun():boolean
 ---@field onMouseMove? fun(e, tgt, element)
 ---@field interactiveDisabled? boolean default to `false`

@@ -58,7 +58,7 @@ function M.makeInteractive(opts, layoutOrElement)
             end
             M.updateState(element.layout, { pressed = false })
             toolkit.queueUpdate(element)
-            return opts.onClick()
+            return opts.onClick(e)
         end
         return false
     end)
