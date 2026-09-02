@@ -441,6 +441,13 @@ function Templates.getBorderSize(style) end
 ---@field standardGap number
 ---@field padding number
 
+--- Setting Renderers
+---@class UIToolkit.SettingRenderer.Dropbox
+---@field l10n string?
+---@field items UIToolkit.SettingRenderer.DropboxItem[]
+
+---@alias UIToolkit.SettingRenderer.DropboxItem string|{id:string, text:string?}
+
 ---@class UTKTooltips.ExtraParams
 ---@field isAlive UTKTooltips.CurrentTipIsAlive?
 ---@field fixedTipPos openmw.util.Vector2?

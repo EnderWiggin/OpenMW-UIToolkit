@@ -25,9 +25,9 @@ local Interface = {
     Interactive = require('scripts.UIToolkit.templates.interactive'),
     ---@type UIToolkit.Components
     Components = require('scripts.UIToolkit.components.all_components'),
+    Layers = require('scripts.UIToolkit.layers'),
     WindowManager = require('scripts.UIToolkit.window_manager'),
     Popups = require('scripts.UIToolkit.popups'),
-    Layers = require('scripts.UIToolkit.layers'),
 }
 
 function Interface.getCtx() return ctx end

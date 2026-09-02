@@ -325,15 +325,17 @@ function ItemList:setHovered(idOrIndex, fixedTipPos, fixedTipAnchor)
     end
     setItemHoveredStatus(state.provider, id, true)
 
-    if item then
-        local tip = state.provider:getTooltip(item)
-        I.UTKTooltips.setTooltip(tip, {
-            isAlive = function() return not self:isDestroyed() end,
-            fixedTipPos = fixedTipPos,
-            fixedTipAnchor = fixedTipAnchor,
-        })
-    else
-        I.UTKTooltips.setTooltip(nil)
+    if I.UTKTooltips then
+        if item then
+            local tip = state.provider:getTooltip(item)
+            I.UTKTooltips.setTooltip(tip, {
+                isAlive = function() return not self:isDestroyed() end,
+                fixedTipPos = fixedTipPos,
+                fixedTipAnchor = fixedTipAnchor,
+            })
+        else
+            I.UTKTooltips.setTooltip(nil)
+        end
     end
 
     state.hovered = idOrIndex

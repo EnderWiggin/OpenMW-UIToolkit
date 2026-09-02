@@ -64,7 +64,7 @@ function M.makeInteractive(opts, layoutOrElement)
     end)
     local isAlive = function() return element.layout ~= nil end
     element.layout.events.focusLoss = async:callback(function()
-        I.UTKTooltips.setTooltip(nil)
+        if I.UTKTooltips then I.UTKTooltips.setTooltip(nil) end
         if nonInteractiveDisabled and element.layout.userData.disabled then return end
         M.updateState(element, { hovering = false })
         toolkit.queueUpdate(element)
@@ -76,12 +76,14 @@ function M.makeInteractive(opts, layoutOrElement)
         M.updateState(element, { hovering = true })
         toolkit.queueUpdate(element)
 
-        local tooltip = opts.tooltip
-        if type(tooltip) == "function" then
-            tooltip = tooltip()
-        end
-        if tooltip then
-            I.UTKTooltips.setTooltip(tooltip, { isAlive = isAlive })
+        if I.UTKTooltips then
+            local tooltip = opts.tooltip
+            if type(tooltip) == "function" then
+                tooltip = tooltip()
+            end
+            if tooltip then
+                I.UTKTooltips.setTooltip(tooltip, { isAlive = isAlive })
+            end
         end
     end)
     element.layout.events.mouseMove = async:callback(function(e, tgt)

@@ -24,7 +24,7 @@ I.Settings.registerGroup {
     settings = {
         {
             key = 's_NumberSeparators',
-            renderer = 'select',
+            renderer = 'UIToolkit/Dropbox',
             name = 'SettingNumberSeparatorsName',
             description = l10n('SettingNumberSeparatorsDesc', H.TextColorParams),
             default = D.Separators.Space,

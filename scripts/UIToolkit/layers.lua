@@ -12,12 +12,14 @@ local Component = require('scripts.UIToolkit.components.component')
 ---@class UIToolkit.Layers
 local M = {}
 
-if not ui.layers.indexOf(C.Layers.Popup) then
+local pidx = ui.layers.indexOf(C.Layers.Popup)
+print('---', 'LAYER', 'popup', pidx)
+if not pidx then
     ui.layers.insertAfter('Windows', C.Layers.Popup, { interactive = true })
 end
 
 if not ui.layers.indexOf(C.Layers.Dropbox) then
-    ui.layers.insertAfter(C.Layers.Popup, C.Layers.Dropbox, { interactive = true })
+    ui.layers.insertAfter('Settings', C.Layers.Dropbox, { interactive = true })
 end
 
 ---@type openmw.ui.Element?
