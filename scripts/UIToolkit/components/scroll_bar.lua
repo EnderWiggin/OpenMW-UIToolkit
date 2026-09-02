@@ -19,6 +19,8 @@ local function getDefaultWidth()
     return sz
 end
 
+local SLIM_OFFSET = 2
+
 local BTN_UP_TEX = ui.texture { path = 'textures/omw_menu_scroll_up.dds' }
 local BTN_DOWN_TEX = ui.texture { path = 'textures/omw_menu_scroll_down.dds' }
 local SCROLL_TEX_V = ui.texture { path = 'textures/omw_menu_scroll_center_v.dds' }
@@ -46,6 +48,7 @@ local ScrollBar = Class(Component)
 function ScrollBar:init(opts)
     local T = I.UIToolkit.Templates
     local width = opts.width or getDefaultWidth()
+    self.slim = opts.slim == true
     self.width = width
     self.horizontal = opts.horizontal == true
     self.scrollStep = opts.scrollStep
@@ -69,7 +72,7 @@ function ScrollBar:init(opts)
     end
 
     local handleSz = self:calcHandleSize()
-    local bsz = 2 * T.getBorderSize('thin')
+    local bsz = not self.slim and 2 * T.getBorderSize('thin') or 2 * SLIM_OFFSET
     local handleProps = {
         resource = self.horizontal and SCROLL_TEX_H or SCROLL_TEX_V,
         size = self.horizontal and v2(handleSz, width - bsz - 1) or v2(width - bsz - 1, handleSz),
@@ -89,66 +92,97 @@ function ScrollBar:init(opts)
         if position == self.position then return end
 
         self.position = position
-        local padding = I.UIToolkit.getTheme().Sizes.padding
+        local padding = not self.slim and I.UIToolkit.getTheme().Sizes.padding or 0
         local progress = this:getProgress()
         local hsz = self.horizontal and handleProps.size.x or handleProps.size.y
         local handlePos = (this.length - ((width + padding) * 2) - hsz - bsz) * progress
-        handleProps.position = self.horizontal and v2(handlePos, 0) or v2(0, handlePos)
+        local offset = self.slim and SLIM_OFFSET or 0
+        handleProps.position = self.horizontal and v2(handlePos, offset) or v2(offset, handlePos)
 
         I.UIToolkit.queueUpdate(barWrapper)
         if not silent then this.onScroll(this.position, progress) end
     end
 
-    local upButton = {
-        template = T.border(),
-        props = {
-            size = v2(width, width),
-        },
-        content = ui.content {
-            {
-                type = ui.TYPE.Image,
-                props = {
-                    resource = self.horizontal and BTN_LEFT_TEX or BTN_UP_TEX,
-                    relativeSize = v2(1, 1),
-                }
+    local upButton = self.slim
+        and {
+            type = ui.TYPE.Image,
+            props = {
+                resource = self.horizontal and BTN_LEFT_TEX or BTN_UP_TEX,
+                size = v2(width, width),
+            },
+            events = {
+                mousePress = async:callback(function(e)
+                    if e.button ~= 1 then return end
+                    ambient.playSound('menu click', { scale = false })
+                    self:scroll(-1)
+                end),
             }
-        },
-        events = {
-            mousePress = async:callback(function(e)
-                if e.button ~= 1 then return end
-                ambient.playSound('menu click', { scale = false })
-                self:scroll(-1)
-            end),
         }
-    }
+        or {
+            template = T.border(),
+            props = {
+                size = v2(width, width),
+            },
+            content = ui.content {
+                {
+                    type = ui.TYPE.Image,
+                    props = {
+                        resource = self.horizontal and BTN_LEFT_TEX or BTN_UP_TEX,
+                        relativeSize = v2(1, 1),
+                    }
+                }
+            },
+            events = {
+                mousePress = async:callback(function(e)
+                    if e.button ~= 1 then return end
+                    ambient.playSound('menu click', { scale = false })
+                    self:scroll(-1)
+                end),
+            }
+        }
 
-    local downButton = {
-        template = T.border(),
-        props = {
-            size = v2(width, width),
-        },
-        content = ui.content {
-            {
-                type = ui.TYPE.Image,
-                props = {
-                    resource = self.horizontal and BTN_RIGHT_TEX or BTN_DOWN_TEX,
-                    relativeSize = v2(1, 1),
-                }
+    local downButton = self.slim
+        and {
+            type = ui.TYPE.Image,
+            props = {
+                resource = self.horizontal and BTN_RIGHT_TEX or BTN_DOWN_TEX,
+                size = v2(width, width),
+            },
+            events = {
+                mousePress = async:callback(function(e)
+                    if e.button ~= 1 then return end
+                    ambient.playSound('menu click', { scale = false })
+                    self:scroll(1)
+                end),
             }
-        },
-        events = {
-            mousePress = async:callback(function(e)
-                if e.button ~= 1 then return end
-                ambient.playSound('menu click', { scale = false })
-                self:scroll(1)
-            end),
         }
-    }
+        or {
+            template = T.border(),
+            props = {
+                size = v2(width, width),
+            },
+            content = ui.content {
+                {
+                    type = ui.TYPE.Image,
+                    props = {
+                        resource = self.horizontal and BTN_RIGHT_TEX or BTN_DOWN_TEX,
+                        relativeSize = v2(1, 1),
+                    }
+                }
+            },
+            events = {
+                mousePress = async:callback(function(e)
+                    if e.button ~= 1 then return end
+                    ambient.playSound('menu click', { scale = false })
+                    self:scroll(1)
+                end),
+            }
+        }
     self._scrollProps = {
         size = calcScrollBarSize(self),
     }
     local scrollBar = {
-        template = T.border(),
+        template = not self.slim and T.border() or nil,
         name = 'scrollBar',
         props = self._scrollProps,
         content = ui.content {
@@ -221,6 +255,8 @@ function ScrollBar:init(opts)
         }
     }
 
+    self.position = -1
+    self:setPosition(self.position, true)
     Component.init(self, barWrapper)
 end
 
@@ -271,10 +307,10 @@ function ScrollBar:setMaxScroll(maxScroll, preserveProgress)
     local progress = self:getProgress()
     self.maxScroll = math.max(0, maxScroll)
     if not self.handleSize then
-        local bsz = 2 * I.UIToolkit.Templates.getBorderSize('thin')
+        local bsz = not self.slim and 2 * I.UIToolkit.Templates.getBorderSize('thin') + 1 or 2 * SLIM_OFFSET
         local width = self.width
         local handleSz = self:calcHandleSize()
-        self._handleProps.size = self.horizontal and v2(handleSz, width - bsz - 1) or v2(width - bsz - 1, handleSz)
+        self._handleProps.size = self.horizontal and v2(handleSz, width - bsz) or v2(width - bsz, handleSz)
     end
 
     if preserveProgress then
