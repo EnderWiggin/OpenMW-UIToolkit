@@ -18,8 +18,12 @@ local Dropbox = Class(Component)
 function Dropbox:init(opts)
     local T = I.UIToolkit.Templates
     local theme = I.UIToolkit.getTheme()
+    local pad = theme.Sizes.padding
+    local border = T.getBorderSize('thin')
+    local outer = 2 * (pad + border)
+
     self.width = opts.width or 150
-    local height = theme.Sizes.textNormal + 2 * (theme.Sizes.padding + T.getBorderSize('thin'))
+    local height = theme.Sizes.textNormal + outer
 
     self.provider = TextProvider:new()
     ---@type UIToolkit.ListData.Text[]
@@ -35,7 +39,7 @@ function Dropbox:init(opts)
     local listHeight = (opts.maxVisibleItems or #self.items) * self.provider:getItemHeight()
     local list = I.UIToolkit.Components.itemList {
         provider = self.provider,
-        size = v2(self.width - 8, listHeight), --TODO: get rid of magic 8
+        size = v2(self.width - outer, listHeight),
         noBorder = true,
         onItemClicked = function(data, idx)
             ambient.playSound('menu click', { scale = false })
@@ -55,12 +59,12 @@ function Dropbox:init(opts)
         template = I.UIToolkit.Templates.border { padding = 2, background = 'solid' },
         props = {
             position = v2(0, 0),
-            size = v2(self.width, listHeight + height + 6), --TODO: get rid of magic 6
+            size = v2(self.width, listHeight + height + 2 * pad + border),
         },
         content = ui.content {
             {
                 props = {
-                    size = v2(self.width - 8, height - 8), --TODO: get rid of magic 8
+                    size = v2(self.width - outer, height - outer),
                 },
                 content = ui.content {
                     {
@@ -82,7 +86,7 @@ function Dropbox:init(opts)
             {
                 template = I.MWUI.templates.horizontalLine,
                 props = {
-                    position = v2(0, height - 6), --TODO: get rid of magic 6
+                    position = v2(0, height - 2 * pad - border),
                 },
             },
             list.element,
@@ -117,7 +121,6 @@ function Dropbox:init(opts)
 end
 
 function Dropbox:beforeElementDestroy()
-    --TODO: clean up
     self:closePopup()
     I.UIToolkit.queueDestroy(self.popup)
 end
