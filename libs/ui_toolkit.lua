@@ -226,6 +226,7 @@ function Components.sortedList(opts) end
 ---@field provider T
 ---@field onItemClicked fun(data:T, idx:integer)
 ---@field scrollWidth number?
+---@field slimScroll boolean? scrollbar will have no borders around arrows or handle
 ---@field noBorder boolean?
 
 ---@class UIToolkit.ItemList : UIToolkit.Component

@@ -92,6 +92,7 @@ function ItemList:init(opts)
             self:_updateScrollable()
         end,
         width = opts.scrollWidth,
+        slim = opts.slimScroll,
         scrollStep = 2 * state.itemHeight,
         maxScroll = self:_getMaxScroll(),
         length = self:_getScrollLength()
