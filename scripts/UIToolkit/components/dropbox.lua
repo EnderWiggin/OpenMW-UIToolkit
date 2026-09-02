@@ -125,7 +125,7 @@ end
 
 function Dropbox:beforeElementDestroy()
     self:closePopup()
-    I.UIToolkit.queueDestroy(self.popup)
+    I.UIToolkit.queueDestroy(self.popup, true)
 end
 
 ---@param item UIToolkit.ListData.Text

@@ -91,6 +91,9 @@ function SortedList:init(opts)
         size = self:getListSize(),
         provider = self.provider,
         onItemClicked = opts.onItemClicked,
+        scrollWidth = opts.scrollWidth,
+        slimScroll = opts.slimScroll,
+        noBorder = opts.noBorder,
     }
 
     self.header = I.UIToolkit.Components.columnSorter {

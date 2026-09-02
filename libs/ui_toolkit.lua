@@ -224,7 +224,7 @@ function Components.sortedList(opts) end
 ---@class UIToolkit.ItemListOpts<T>
 ---@field size openmw.util.Vector2
 ---@field provider T
----@field onItemClicked fun(data:T, idx:integer)
+---@field onItemClicked? fun(data:T, idx:integer)
 ---@field scrollWidth number?
 ---@field slimScroll boolean? scrollbar will have no borders around arrows or handle
 ---@field noBorder boolean?
@@ -272,7 +272,10 @@ function Components.sortedList(opts) end
 ---@field defaultSort? UIToolkit.ColumnComparator|UIToolkit.SimpleColumnComparatorConfig
 ---@field columns UIToolkit.SortedList.Column[]
 ---@field rowHeight number? Defaults to 1.5 * (textNormal + 2)
----@field onItemClicked fun(data:UIToolkit.ListData.Base, idx:integer)
+---@field onItemClicked? fun(data:UIToolkit.ListData.Base, idx:integer)
+---@field scrollWidth number?
+---@field slimScroll boolean? scrollbar will have no borders around arrows or handle
+---@field noBorder boolean?
 
 ---@class UIToolkit.WindowManager
 ---@field register fun(id: string, opts: UIToolkit.WindowOpts)
