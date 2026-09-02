@@ -525,6 +525,43 @@ I.UIToolkit.Popups.show {
 }
 ```
 
+# Custom Settings Renderers
+
+## Dropbox renderer: `'UIToolkit/Dropbox'`
+Equivalent to `'select'` built-in renderer, but displays a dropdown instead of a text with left/right arrows. And items can have separate display text from id if desired. Can use the same config as `'select'` renderer without changes.
+
+The setting's `argument` table accepts these options:
+
+- `l10n` - optional localization domain used to translate item text.
+- `items` - required list of choices. Each item can be a string, or a table with an `id` and optional `text`. The `id` is stored as the setting value; `text` is displayed in the dropdown. If `text` is absent `id` will be used instead.
+
+If the current setting value is not present in `items`, the renderer selects the first item and stores its id.
+
+### Example
+Register a setting with three selectable display modes:
+```lua
+I.Settings.registerGroup {
+    key = 'Interface',
+    page = 'MyPage',
+    name = 'InterfaceSettings',
+    settings = {
+        {
+            key = 's_DisplayMode',
+            renderer = 'UIToolkit/Dropbox',
+            name = 'DisplayModeName',
+            description = 'DisplayModeDescription',
+            default = 'compact',
+            argument = {
+                items = {
+                    { id = 'compact', text = 'Compact' },
+                    { id = 'standard', text = 'Standard' },
+                    { id = 'wide', text = 'Wide' },
+                },
+            },
+        },
+    },
+}
+```
 
 # Tooltips
 Taken almost as-is from the [Dehardcode tooltips MR](https://gitlab.com/OpenMW/openmw/-/merge_requests/5336). Only some small tweaks to accommodate for the lack of newer API in 0.51. The idea is to allow modders to play with the dehardcode API before it is released and, hopefully, make transition to it easier when it happens.
