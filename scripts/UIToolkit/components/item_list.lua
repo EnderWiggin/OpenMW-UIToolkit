@@ -42,6 +42,7 @@ function ItemList:init(opts)
         lastHoveredPos = nil,
     }
     self.state = state
+    self.noBorder = opts.noBorder
     ---@type openmw.ui.Element[]
     self._pool = {}
     ---@type table<integer, {id:string, element:openmw.ui.Element}>
@@ -92,7 +93,7 @@ function ItemList:init(opts)
         end,
         scrollStep = 2 * state.itemHeight,
         maxScroll = self:_getMaxScroll(),
-        length = size.y - 2 * (t.Sizes.border + t.Sizes.padding)
+        length = self:_getScrollLength()
     }
     scroll:updateProps {
         anchor = v2(1, 0),
@@ -109,7 +110,7 @@ function ItemList:init(opts)
 
     ---@type openmw.ui.Layout
     local layout = {
-        template = I.UIToolkit.Templates.border { padding = t.Sizes.padding },
+        template = not self.noBorder and I.UIToolkit.Templates.border { padding = t.Sizes.padding } or nil,
         props = {
             size = size,
         },
@@ -147,6 +148,9 @@ end
 
 function ItemList:getContentWidth()
     local s = I.UIToolkit.getTheme().Sizes
+    if self.noBorder then
+        return math.floor(math.max(0, self.state.currentSize.x - self._scrollBar:getSize().x))
+    end
     return math.floor(math.max(0, self.state.currentSize.x - self._scrollBar:getSize().x - 3 * s.padding - 2 * s.border))
 end
 
@@ -270,7 +274,18 @@ end
 function ItemList:_getMaxScroll()
     local t = I.UIToolkit.getTheme()
     local state = self.state
-    return #state.items * state.itemHeight - state.currentSize.y + 2 * t.Sizes.padding;
+    local maxScroll = #state.items * state.itemHeight - state.currentSize.y
+    if not self.noBorder then
+        maxScroll = maxScroll + 2 * t.Sizes.padding
+    end
+    return maxScroll
+end
+
+function ItemList:_getScrollLength()
+    local s = I.UIToolkit.getTheme().Sizes
+    local state = self.state
+    if self.noBorder then return state.currentSize.y end
+    return state.currentSize.y - 2 * (s.border + s.padding)
 end
 
 ---@param y number
@@ -410,14 +425,13 @@ end
 
 ---@param size openmw.util.Vector2
 function ItemList:setSize(size)
-    local s = I.UIToolkit.getTheme().Sizes
     local state = self.state
     size = v2(util.round(size.x), util.round(size.y))
     if size == state.currentSize then return end
     state.currentSize = size
     local width = self:getContentWidth()
     local scroll = self._scrollBar
-    scroll:setLength(size.y - 2 * (s.border + s.padding))
+    scroll:setLength(self:_getScrollLength())
     scroll:setMaxScroll(self:_getMaxScroll())
     I.UIToolkit.queueUpdate(scroll.element)
 
