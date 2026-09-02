@@ -170,6 +170,25 @@ function Handler:onOpened(wnd)
         end
     }
 
+    local skills = {}
+    for id, record in pairs(core.stats.Skill.records) do
+        skills[#skills + 1] = {
+            id = id,
+            text = record.name,
+            tooltip = { key = id, type = I.UTKTooltips.TYPE.Skill },
+        }
+    end
+    table.sort(skills, function(a, b) return a.text < b.text end)
+
+    local dropbox = I.UIToolkit.Components.dropbox {
+        width = 150,
+        items = skills,
+        maxVisibleItems = 10,
+        onItemSelected = function(item, idx)
+            print('Selected: ', item.text)
+        end
+    }
+
     wnd:setContent(ui.content {
         list.element,
         {
@@ -269,8 +288,37 @@ function Handler:onOpened(wnd)
                                         noClose = true,
                                         style = 'thin',
                                         onClicked = function()
+                                            local attrs = {}
+                                            for id, record in pairs(core.stats.Attribute.records) do
+                                                attrs[#attrs + 1] = {
+                                                    id = id,
+                                                    text = record.name,
+                                                    tooltip = { key = id, type = I.UTKTooltips.TYPE.Attribute },
+                                                }
+                                            end
+
                                             I.UIToolkit.Popups.show {
-                                                body = 'Close to return to the previous one!',
+                                                body = {
+                                                    type = ui.TYPE.Flex,
+                                                    props = {},
+                                                    content = ui.content {
+                                                        {
+                                                            template = I.UIToolkit.Templates.paragraph(),
+                                                            props = {
+                                                                size = v2(300, 0),
+                                                                text = 'Press OK to close this popup an return to the previous one!\nOr select attribute for some fun:',
+                                                            },
+                                                        },
+                                                        I.UIToolkit.Templates.intervalV(5),
+                                                        I.UIToolkit.Components.dropbox {
+                                                            width = 150,
+                                                            items = attrs,
+                                                            onItemSelected = function(item, idx)
+                                                                print('Attribute:', item.text)
+                                                            end
+                                                        }.element
+                                                    },
+                                                },
                                                 borderStyle = 'thin',
                                                 buttons = { { text = 'OK' }, }
                                             }
@@ -322,6 +370,8 @@ function Handler:onOpened(wnd)
                                 edit.element,
                             },
                         },
+                        I.UIToolkit.Templates.intervalV(5),
+                        dropbox.element,
                     }
                 }
             },
