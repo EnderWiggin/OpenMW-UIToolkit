@@ -165,6 +165,21 @@ component:isDestroyed()
 ## Text Button
 `textButton(opts)` - creates a text button. Can have tooltip, onClick callback. Can be fixed-width.
 
+Options:
+
+- `text` - text displayed on the button.
+- `width` - optional fixed width. If omitted, the button sizes itself to its text.
+- `name` - optional name assigned to the button layout.
+- `style` - optional box style. Defaults to `button`.
+- `thickness` - optional border thickness.
+- `background` - optional box background. Defaults to `solid`.
+- `padding` - optional padding as a number or `Vector2`. Defaults to `v2(8, 0)` for auto-sized buttons.
+- `tooltip` - optional tooltip or tooltip provider.
+- `onClick` - optional callback called when the button is clicked.
+- `canClick` - optional function that determines whether the button can be clicked.
+- `onMouseMove` - optional callback called when the mouse moves over the button.
+- `interactiveDisabled` - optional flag that allows interactivity while disabled. Defaults to `false`.
+
 ### Example
 create a button with text `Hello`, tooltip `World!` and that prints `Hello World!` when clicked:
 ```lua
@@ -175,6 +190,20 @@ end}
 
 ## Text Edit
 `textEdit(opts)` - creates a text edit. With optional placeholder text, clear button, value validation and on change callback.
+
+Options:
+
+- `default` - optional initial value, or a function returning the initial value.
+- `textSize` - optional text size.
+- `textAlignH` - optional horizontal text alignment.
+- `textColorNormal` - optional color for entered text. Defaults to `DEFAULT_LIGHT`.
+- `textColorPlaceholder` - optional color for placeholder text. Defaults to `DISABLED`.
+- `placeholder` - optional text, or a function returning text, shown when the edit is unfocused and empty.
+- `validate` - optional function that validates the entered text and returns `boolean, value`.
+- `onValueChanged` - optional callback called when the entered value changes.
+- `width` - optional fixed width. Defaults to `200`.
+- `showClearButton` - optional flag that displays a clear button.
+- `onClearClicked` - optional callback called when the clear button is clicked.
 
 ### Examples
 Create text edit with placeholder text, clear button and callback that prints the value when changed:
@@ -229,6 +258,16 @@ I.UIToolkit.Components.dropbox {
 ## Scroll Bar
 `scrollBar(opts)` - creates a scrollbar. Can be horizontal or vertical. Has callback for position change.
 
+Options:
+
+- `horizontal` - optional flag that makes the scrollbar horizontal instead of vertical.
+- `scrollStep` - distance moved for one scroll step.
+- `maxScroll` - maximum scroll position.
+- `length` - length of the scrollbar track.
+- `width` - optional scrollbar width.
+- `handleSize` - optional fixed handle size. If omitted, the handle size is calculated automatically.
+- `onScroll` - callback called with the current position and progress from `0` to `1`.
+
 ### Example
 Create a horizontal scrollbar with a small, fixed-size handle that reports value in range \[1 - 100]:
 ```lua
@@ -250,6 +289,14 @@ The scrollbar uses a `maxScroll` of 198 because we have 100 values \[1 - 100] an
 
 ## Item List
 `itemList(opts)` - creates a list of items. Uses item provider to get Components representing items. Items can have tooltips.
+
+Options:
+
+- `size` - size of the list as a `Vector2`.
+- `provider` - list item provider that creates a component for each item and supplies its item height.
+- `onItemClicked` - callback called with the clicked item and its index.
+- `scrollWidth` - optional width of the scrollbar.
+- `noBorder` - optional flag that removes the list border.
 
 ### Example
 Create a list of items in player's inventory with icon, name, weight, value and value-per-weight columns:
@@ -300,10 +347,43 @@ local list = I.UIToolkit.Components.itemList {
 list:setItems(rows)
 ```
 
+## Column Sorter
+`columnSorter(opts)` - creates a clickable header for selecting a sort column and direction.
+
+Options:
+
+- `columns` - columns displayed in the header. Each column can specify `id`, `name`, `width`, `auto`, `align`, and `inactive`.
+- `default` - optional ID of the initially selected column.
+- `onChanged` - callback called with the selected column ID and an `ascending` boolean.
+
+### Example
+Create a header that reports the selected sort column:
+```lua
+local sorter = I.UIToolkit.Components.columnSorter {
+    columns = {
+        { id = 'name',   name = 'Name' },
+        { id = 'value',  name = 'Value', align = ui.ALIGNMENT.End },
+        { id = 'weight', name = 'Weight', inactive = true },
+    },
+    default = 'name',
+    onChanged = function(id, ascending)
+        print('Sort:', id, ascending and 'ascending' or 'descending')
+    end,
+}
+```
+
 ## Sorted List
 `sortedList(opts)` - creates an item list with a clickable header for sorting its columns. Set `sort = { numeric = true }` for numeric values, or provide a comparator function for custom sorting. Columns without `sort` are displayed but cannot be sorted. Clicking a sortable column toggles between ascending and descending order.
 
 `setSize` and `setItems` need to be called on this component and not on a list child of it. Other methods can be safely called on the child list.
+
+Options:
+
+- `size` - size of the list as a `Vector2`.
+- `columns` - column definitions. Each column requires an `id` and a `render` function; it can also specify `name`, `width`, `auto`, `align`, `arg`, and `sort`. Omit `sort` to make a column display-only.
+- `defaultSort` - optional comparator or simple comparator configuration used for the initial or secondary ordering.
+- `rowHeight` - optional row height. Defaults to `1.5 * (textNormal + 2)`.
+- `onItemClicked` - callback called with the clicked item and its index.
 
 ### Example
 Create a list of items with sortable name, weight and value columns:
