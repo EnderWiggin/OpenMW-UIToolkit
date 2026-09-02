@@ -13,11 +13,6 @@ local hasGapAPI = C.API.GAP
 local Component = require('scripts.UIToolkit.components.component')
 
 local M = {}
-local POPUP_LAYER = 'UIToolkit:Popups'
-
-if not ui.layers.indexOf(POPUP_LAYER) then
-    ui.layers.insertAfter('Windows', POPUP_LAYER, { interactive = true })
-end
 
 ---@type UIToolkit.Popups.Entry[]
 local popups = {}
@@ -32,8 +27,8 @@ local placeholder = {
 local modals = Component:new()
 
 modals:init(ui.create {
-    name = POPUP_LAYER,
-    layer = POPUP_LAYER,
+    name = C.Layers.Popup,
+    layer = C.Layers.Popup,
     props = {
         relativeSize = v2(1, 1),
         visible = false,

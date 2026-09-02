@@ -27,6 +27,7 @@ local Interface = {
     Components = require('scripts.UIToolkit.components.all_components'),
     WindowManager = require('scripts.UIToolkit.window_manager'),
     Popups = require('scripts.UIToolkit.popups'),
+    Layers = require('scripts.UIToolkit.layers'),
 }
 
 function Interface.getCtx() return ctx end
@@ -296,6 +297,10 @@ local function onControllerButtonRelease(button)
     buttonPressDuration[button] = nil
 end
 
+local function onUIModeChanged(data)
+    Interface.Layers.onUIModeChanged(data)
+end
+
 return {
     interfaceName = 'UIToolkit',
     interface = Interface,
@@ -304,5 +309,8 @@ return {
         onMouseWheel = onMouseWheel,
         onControllerButtonPress = onControllerButtonPress,
         onControllerButtonRelease = onControllerButtonRelease
+    },
+    eventHandlers = {
+        UiModeChanged = onUIModeChanged,
     },
 }

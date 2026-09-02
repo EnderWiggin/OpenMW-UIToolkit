@@ -79,6 +79,10 @@ function Components.textButton(opts) end
 ---@return UIToolkit.TextEdit
 function Components.textEdit(opts) end
 
+---@param opts UIToolkit.DropboxOpts
+---@return UIToolkit.Dropbox
+function Components.dropbox(opts) end
+
 ---@param opts UIToolkit.ScrollBarOpts
 ---@return UIToolkit.ScrollBar
 function Components.scrollBar(opts) end
@@ -149,6 +153,16 @@ function Components.sortedList(opts) end
 ---@field getPlaceholder fun(self:UIToolkit.TextEdit):T Returns value of the placeholder.
 ---@field setWidth fun(self:UIToolkit.TextEdit, width:number):UIToolkit.TextEdit
 ---@field isEmpty fun(self:UIToolkit.TextEdit):boolean
+
+---@class UIToolkit.DropboxOpts
+---@field items UIToolkit.ListData.Text[]
+---@field onItemSelected? fun(item:UIToolkit.ListData.Text, idx: integer)
+---@field width number? defaults to 150
+---@field maxVisibleItems integer? defaults to all
+
+---@class UIToolkit.Dropbox : UIToolkit.Component
+---@field getSelectedItem fun(self:UIToolkit.Dropbox):UIToolkit.ListData.Text
+---@field selectItem fun(self:UIToolkit.Dropbox, item:UIToolkit.ListData.Text)
 
 ---@class UIToolkit.ScrollBarOpts
 ---@field horizontal boolean?

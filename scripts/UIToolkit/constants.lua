@@ -13,4 +13,9 @@ C.API = {
     PADDING = core.API_REVISION >= 143,
 }
 
+C.Layers = {
+    Popup = 'UIToolkit:Popups',
+    Dropbox = 'UIToolkit:Dropbox',
+}
+
 return C

@@ -6,6 +6,7 @@ local ScrollBar = require('scripts.UIToolkit.components.scroll_bar')
 local ItemList = require('scripts.UIToolkit.components.item_list')
 local ColumnSorter = require('scripts.UIToolkit.components.column_sorter')
 local SortedList = require('scripts.UIToolkit.components.list_with_sorter_columns')
+local Dropbox = require('scripts.UIToolkit.components.dropbox')
 
 local M = {}
 
@@ -17,6 +18,14 @@ M.textEdit = function(opts)
     local edit = TextEdit:new()
     edit:init(opts)
     return edit
+end
+
+---@param opts UIToolkit.DropboxOpts
+---@return UIToolkit.Dropbox
+function M.dropbox(opts)
+    local dropbox = Dropbox:new()
+    dropbox:init(opts)
+    return dropbox
 end
 
 ---@param opts UIToolkit.ScrollBarOpts

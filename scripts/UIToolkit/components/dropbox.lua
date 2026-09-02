@@ -1,0 +1,148 @@
+---@omw-context player
+
+local ui = require('openmw.ui')
+local util = require('openmw.util')
+local ambient = require('openmw.ambient')
+local I = require('openmw.interfaces')
+
+local v2 = util.vector2
+local Class = require('scripts.UIToolkit.class')
+local Component = require('scripts.UIToolkit.components.component')
+local TextProvider = require('scripts.UIToolkit.components.list_items.text_item')
+
+---@class UIToolkit.Dropbox : UIToolkit.Component
+---@field new fun(self:UIToolkit.Dropbox):UIToolkit.Dropbox
+local Dropbox = Class(Component)
+
+---@param opts UIToolkit.DropboxOpts
+function Dropbox:init(opts)
+    local T = I.UIToolkit.Templates
+    local theme = I.UIToolkit.getTheme()
+    self.width = opts.width or 150
+    local height = theme.Sizes.textNormal + 2 * (theme.Sizes.padding + T.getBorderSize('thin'))
+
+    self.provider = TextProvider:new()
+    ---@type UIToolkit.ListData.Text[]
+    self.items = opts.items
+    self.selected = self.items[1]
+    self._textProps = {
+        text = self.selected.text,
+        autoSize = false,
+        textAlignV = ui.ALIGNMENT.Center,
+        relativeSize = v2(1, 1),
+    }
+
+    local listHeight = (opts.maxVisibleItems or #self.items) * self.provider:getItemHeight()
+    local list = I.UIToolkit.Components.itemList {
+        provider = self.provider,
+        size = v2(self.width - 8, listHeight), --TODO: get rid of magic 8
+        noBorder = true,
+        onItemClicked = function(data, idx)
+            ambient.playSound('menu click', { scale = false })
+            self:selectItem(data)
+            self:closePopup()
+            if opts.onItemSelected then
+                opts.onItemSelected(data, idx)
+            end
+        end
+    }
+    list:setItems(self.items)
+    list:updateProps {
+        anchor = v2(0.5, 1),
+        relativePosition = v2(0.5, 1),
+    }
+    self.popup = ui.create {
+        template = I.UIToolkit.Templates.border { padding = 2, background = 'solid' },
+        props = {
+            position = v2(0, 0),
+            size = v2(self.width, listHeight + height + 6), --TODO: get rid of magic 6
+        },
+        content = ui.content {
+            {
+                props = {
+                    size = v2(self.width - 8, height - 8), --TODO: get rid of magic 8
+                },
+                content = ui.content {
+                    {
+                        template = T.header(),
+                        props = self._textProps,
+                    },
+                    {
+                        type = ui.TYPE.Image,
+                        props = {
+                            resource = I.UIToolkit.texture 'textures/omw_menu_scroll_left.dds',
+                            size = v2(16, 16), --TODO: size with text?
+                            anchor = v2(1, 0.5),
+                            relativePosition = v2(1, 0.5),
+                            alpha = 0.65,
+                        },
+                    }
+                },
+            },
+            {
+                template = I.MWUI.templates.horizontalLine,
+                props = {
+                    position = v2(0, height - 6), --TODO: get rid of magic 6
+                },
+            },
+            list.element,
+        }
+    }
+
+    local element = I.UIToolkit.Interactive.makeInteractive({
+        onClick = function(e) self:_onClicked(e) end,
+    }, {
+        template = T.border { padding = theme.Sizes.padding },
+        props = {
+            size = v2(self.width, height),
+        },
+        content = ui.content {
+            {
+                template = T.text(),
+                props = self._textProps,
+                userData = { colorable = true },
+            },
+            {
+                type = ui.TYPE.Image,
+                props = {
+                    resource = I.UIToolkit.texture 'textures/omw_menu_scroll_down.dds',
+                    size = v2(16, 16), --TODO: size with text?
+                    anchor = v2(1, 0.5),
+                    relativePosition = v2(1, 0.5),
+                },
+            }
+        },
+    })
+    Component.init(self, element)
+end
+
+function Dropbox:beforeElementDestroy()
+    --TODO: clean up
+    self:closePopup()
+    I.UIToolkit.queueDestroy(self.popup)
+end
+
+---@param item UIToolkit.ListData.Text
+function Dropbox:selectItem(item)
+    self.selected = item
+    self._textProps.text = item.text
+    I.UIToolkit.queueUpdate(self.element)
+end
+
+---@return UIToolkit.ListData.Text
+function Dropbox:getSelectedItem()
+    return self.selected
+end
+
+---@param e openmw.ui.MouseEvent
+function Dropbox:_onClicked(e)
+    self.popup.layout.props.position = e.position - e.offset
+    I.UIToolkit.queueUpdate(self.popup)
+    I.UIToolkit.Layers.addDropbox(self.popup)
+end
+
+function Dropbox:closePopup()
+    I.UIToolkit.Layers.closeDropbox()
+end
+
+return Dropbox
