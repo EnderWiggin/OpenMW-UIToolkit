@@ -503,6 +503,7 @@ function Templates.getBorderSize(style) end
 --- Table defining a single recipe item, to form one entry in the final tooltip
 -- Required/ignored fields depend on the recipe item type.
 ---@class UTKTooltips.RecipeItem
+---@field name string? content name
 ---@field type UTKTooltips.RecipeItemType? defines which builder is used to create the layout for this item. (default='default')
 ---@field align openmw.ui.ALIGNMENT? Re-aligns this item. Used by paragraph item to set horizontal text alignment.
 ---@field text string? (used in default, note, paragraph)
@@ -541,6 +542,7 @@ function Templates.getBorderSize(style) end
 --- Table of possible base tooltip types
 ---@class UTKTooltips.TooltipTypes
 ---@field Activator UTKTooltips.TooltipType @{openmw.types#Activator} tooltip. Requires either a key or an object. Note that most activators have empty names, and consequentially do not show a tooltip by default.
+---@field ActiveSpell UTKTooltips.TooltipType Active spell tooltip - either from item or spell/ability/disease. Key must be the ID of a active spell, and observer must be set to a valid actor.
 ---@field ActiveSpellEffect UTKTooltips.TooltipType Active spell effect tooltip. Key must be the record ID of a magic effect, and observer must be set to a valid actor.
 ---@field Apparatus UTKTooltips.TooltipType @{openmw.types#Apparatus} tooltip. Requires either a key or an object
 ---@field Armor UTKTooltips.TooltipType @{openmw.types#Armor} tooltip. Requires either a key or an object
