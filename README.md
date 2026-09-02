@@ -201,6 +201,31 @@ I.UIToolkit.Components.textEdit {
 }
 ```
 
+## Dropbox
+`dropbox(opts)` - creates a dropdown that lets the user select one item from a list.
+
+Options:
+
+- `items` - array of items to display. Each item must have a unique `id` and a `text` field, can also have optional `tooltip`.
+- `onItemSelected` - optional callback to be called with the selected item and its index.
+- `width` - width of the dropdown. Defaults to `150` if omitted.
+- `maxVisibleItems` - optional maximum number of items shown in the dropdown list. Defaults to all items.
+
+### Example
+Create a dropdown of difficulty levels and print the selected value:
+```lua
+I.UIToolkit.Components.dropbox {
+    items = {
+        { id = 'easy',   text = 'Easy' },
+        { id = 'normal', text = 'Normal' },
+        { id = 'hard',   text = 'Hard' },
+    },
+    onItemSelected = function(item, index)
+        print('Difficulty:', item.text, 'Index:', index)
+    end,
+}
+```
+
 ## Scroll Bar
 `scrollBar(opts)` - creates a scrollbar. Can be horizontal or vertical. Has callback for position change.
 
