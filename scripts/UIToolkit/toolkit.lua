@@ -297,8 +297,8 @@ local function onControllerButtonRelease(button)
     buttonPressDuration[button] = nil
 end
 
-local function onUIModeChanged(data)
-    Interface.Layers.onUIModeChanged(data)
+local function onUIModeChanged()
+    Interface.Layers.closeDropbox()
 end
 
 return {

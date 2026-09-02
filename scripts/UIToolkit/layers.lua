@@ -12,9 +12,7 @@ local Component = require('scripts.UIToolkit.components.component')
 ---@class UIToolkit.Layers
 local M = {}
 
-local pidx = ui.layers.indexOf(C.Layers.Popup)
-print('---', 'LAYER', 'popup', pidx)
-if not pidx then
+if not ui.layers.indexOf(C.Layers.Popup) then
     ui.layers.insertAfter('Windows', C.Layers.Popup, { interactive = true })
 end
 
@@ -63,10 +61,6 @@ function M.addDropbox(box)
         dropBoxHolder.content = ui.content { box }
         dropBoxLayer:setVisible(true)
     end
-end
-
-function M.onUIModeChanged(_)
-    M.closeDropbox()
 end
 
 return M
