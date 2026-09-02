@@ -35,12 +35,14 @@ function Dropbox:init(opts)
         textAlignV = ui.ALIGNMENT.Center,
         relativeSize = v2(1, 1),
     }
-
-    local listHeight = (opts.maxVisibleItems or #self.items) * self.provider:getItemHeight()
+    local visibleItems = opts.maxVisibleItems or #self.items
+    visibleItems = math.min(visibleItems, #self.items)
+    local listHeight = visibleItems * self.provider:getItemHeight()
     local list = I.UIToolkit.Components.itemList {
         provider = self.provider,
         size = v2(self.width - outer, listHeight),
         noBorder = true,
+        scrollWidth = 12,
         onItemClicked = function(data, idx)
             ambient.playSound('menu click', { scale = false })
             self:selectItem(data)
