@@ -224,6 +224,7 @@ function Components.sortedList(opts) end
 ---@field size openmw.util.Vector2
 ---@field provider T
 ---@field onItemClicked fun(data:T, idx:integer)
+---@field scrollWidth number?
 ---@field noBorder boolean?
 
 ---@class UIToolkit.ItemList : UIToolkit.Component

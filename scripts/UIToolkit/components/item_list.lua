@@ -91,6 +91,7 @@ function ItemList:init(opts)
             scrollable.layout.props.position = v2(0, -position)
             self:_updateScrollable()
         end,
+        width = opts.scrollWidth,
         scrollStep = 2 * state.itemHeight,
         maxScroll = self:_getMaxScroll(),
         length = self:_getScrollLength()
