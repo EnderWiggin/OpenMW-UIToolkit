@@ -10,13 +10,13 @@ return function(parent, init)
         setmetatable(c, { __index = parent })
         c.new = function(self)
             local o = setmetatable(parent:new(), self or c)
-            if init then init(self) end
+            if init then init(o) end
             return o
         end
     else
         c.new = function(self)
             local o = setmetatable({}, self or c)
-            if init then init(self) end
+            if init then init(o) end
             return o
         end
     end
