@@ -265,6 +265,7 @@ Options:
 - `maxScroll` - maximum scroll position.
 - `length` - length of the scrollbar track.
 - `width` - optional scrollbar width.
+- `slim` - optional flag that removes borders around the scrollbar arrows and handle.
 - `handleSize` - optional fixed handle size. If omitted, the handle size is calculated automatically.
 - `onScroll` - callback called with the current position and progress from `0` to `1`.
 
@@ -296,6 +297,7 @@ Options:
 - `provider` - list item provider that creates a component for each item and supplies its item height.
 - `onItemClicked` - callback called with the clicked item and its index.
 - `scrollWidth` - optional width of the scrollbar.
+- `slimScroll` - optional flag that removes borders around the list's scrollbar arrows and handle.
 - `noBorder` - optional flag that removes the list border.
 
 ### Example
