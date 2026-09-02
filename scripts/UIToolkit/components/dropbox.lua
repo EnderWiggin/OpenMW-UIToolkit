@@ -42,7 +42,8 @@ function Dropbox:init(opts)
         provider = self.provider,
         size = v2(self.width - outer, listHeight),
         noBorder = true,
-        scrollWidth = 12,
+        scrollWidth = 10,
+        slimScroll = true,
         onItemClicked = function(data, idx)
             ambient.playSound('menu click', { scale = false })
             self:selectItem(data)
