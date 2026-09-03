@@ -344,6 +344,7 @@ function Components.sortedList(opts) end
 ---@field onControllerButtonPress? fun(button:number) called on focused window when controller button is pressed
 ---@field onControllerButtonRepeat? fun(button:number) called on focused window when controller button is held and repeating buttons is on
 ---@field getFocusedScrollable? fun():UIToolkit.Scrollable? this scrollable will be scrolled by Right Stick if window is focused and no other scrollable is in focus
+---@field onClosed? fun()
 
 ---@class UIToolkit.Popups.Entry
 ---@field handler UIToolkit.Popups.Handler

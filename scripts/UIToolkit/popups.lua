@@ -76,6 +76,8 @@ local function closePopup(entry)
     I.UIToolkit.queueDestroy(entry.element, true)
     H.removeFromArray(popups, entry)
     entry.element = nil
+    local onClosed = entry.handler and entry.handler.onClosed
+    if onClosed then onClosed() end
     if #popups == 0 then
         placeholder.content = nil
         modals:setVisible(false)
