@@ -75,7 +75,6 @@ Tooltips.TYPE =
 {
     Activator = 'Activator',
     ActiveSpellEffect = 'ActiveSpellEffect',
-    ActiveSpell = 'ActiveSpell',
     Apparatus = 'Apparatus',
     Armor = 'Armor',
     Attribute = 'Attribute',
@@ -343,7 +342,8 @@ local function enchantment(items, record, object, noCharge)
             type = 'magicEffects',
             effects = enchant.effects,
             skipTarget = noTarget,
-            skipDuration = noDuration,
+            skipDuration =
+                noDuration,
             name = CONTENT.MagicEffects
         }
 
@@ -811,51 +811,6 @@ Tooltips.activeEffectRecipe = function(tooltip)
     }
 end
 
-Tooltips.activeSpellRecipe = function(tooltip)
-    if not tooltip.observer or not Actor.objectIsInstance(tooltip.observer) then
-        -- Only actors can have active effects
-        return
-    end
-
-    local activeSpells = Actor.activeSpells(tooltip.observer)
-    ---@type openmw.core.ActiveSpell
-    local spell
-    for id, tmp in pairs(activeSpells) do
-        if id == tooltip.key then
-            spell = tmp
-            break
-        end
-    end
-
-    --couldn't find active spell by key
-    if not spell then return end
-
-    if spell.fromEquipment or spell.item then
-        local type = Tooltips.objectType[spell.item.type]
-        if not type then return end
-        return Tooltips.recipes[type]({ object = spell.item })
-    end
-
-    local recipe = Tooltips.spellRecipe({ key = spell.id })
-
-    if not recipe then return end
-
-    -- not permanent effect - no need to modify, just return
-    if spell.temporary then return recipe end
-
-    --hide duration and target if spell is permanent
-    for i = 1, #recipe.items do
-        local item = recipe.items[i]
-        if item.name == CONTENT.MagicEffects then
-            item.skipDuration = true
-            item.skipTarget = true
-            break;
-        end
-    end
-
-    return recipe
-end
-
 Tooltips.attributeRecipe = function(tooltip)
     if not tooltip.key then return end
     local attribute = core.stats.Attribute.records[tooltip.key]
@@ -1176,28 +1131,6 @@ Tooltips.statRecipe = function(tooltip)
     }
 end
 
-Tooltips.objectType = {
-    [types.Activator] = Tooltips.TYPE.Activator,
-    [types.Apparatus] = Tooltips.TYPE.Apparatus,
-    [types.Armor] = Tooltips.TYPE.Armor,
-    [types.Book] = Tooltips.TYPE.Book,
-    [types.Clothing] = Tooltips.TYPE.Clothing,
-    [types.Container] = Tooltips.TYPE.Container,
-    [types.Creature] = Tooltips.TYPE.Creature,
-    [types.Door] = Tooltips.TYPE.Door,
-    [types.Ingredient] = Tooltips.TYPE.Ingredient,
-    [types.Light] = Tooltips.TYPE.Light,
-    [types.Lockpick] = Tooltips.TYPE.Lockpick,
-    [types.Miscellaneous] = Tooltips.TYPE.Miscellaneous,
-    [types.NPC] = Tooltips.TYPE.NPC,
-    [types.Player] = Tooltips.TYPE.Player,
-    [types.Potion] = Tooltips.TYPE.Potion,
-    [types.Probe] = Tooltips.TYPE.Probe,
-    [types.Repair] = Tooltips.TYPE.Repair,
-    [types.Static] = Tooltips.TYPE.Static,
-    [types.Weapon] = Tooltips.TYPE.Weapon,
-}
-
 Tooltips.recipes = {
     [Tooltips.TYPE.Activator] = Tooltips.activatorRecipe,
     [Tooltips.TYPE.Apparatus] = Tooltips.apparatusRecipe,
@@ -1218,7 +1151,6 @@ Tooltips.recipes = {
     [Tooltips.TYPE.Repair] = Tooltips.repairRecipe,
     [Tooltips.TYPE.Static] = Tooltips.staticRecipe,
     [Tooltips.TYPE.Weapon] = Tooltips.weaponRecipe,
-    [Tooltips.TYPE.ActiveSpell] = Tooltips.activeSpellRecipe,
     [Tooltips.TYPE.ActiveSpellEffect] = Tooltips.activeEffectRecipe,
     [Tooltips.TYPE.Attribute] = Tooltips.attributeRecipe,
     [Tooltips.TYPE.BirthSign] = Tooltips.birthSignRecipe,

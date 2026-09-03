@@ -106,17 +106,39 @@ local function isAllowedToUse(obj, actor)
     return obj.recordId ~= 'stolen_goods'
 end
 
+local objectType = {
+    [types.Activator] = Tooltips.TYPE.Activator,
+    [types.Apparatus] = Tooltips.TYPE.Apparatus,
+    [types.Armor] = Tooltips.TYPE.Armor,
+    [types.Book] = Tooltips.TYPE.Book,
+    [types.Clothing] = Tooltips.TYPE.Clothing,
+    [types.Container] = Tooltips.TYPE.Container,
+    [types.Creature] = Tooltips.TYPE.Creature,
+    [types.Door] = Tooltips.TYPE.Door,
+    [types.Ingredient] = Tooltips.TYPE.Ingredient,
+    [types.Light] = Tooltips.TYPE.Light,
+    [types.Lockpick] = Tooltips.TYPE.Lockpick,
+    [types.Miscellaneous] = Tooltips.TYPE.Miscellaneous,
+    [types.NPC] = Tooltips.TYPE.NPC,
+    [types.Player] = Tooltips.TYPE.Player,
+    [types.Potion] = Tooltips.TYPE.Potion,
+    [types.Probe] = Tooltips.TYPE.Probe,
+    [types.Repair] = Tooltips.TYPE.Repair,
+    [types.Static] = Tooltips.TYPE.Static,
+    [types.Weapon] = Tooltips.TYPE.Weapon,
+}
+
 local function autoType(tooltip)
     if not tooltip then return end
     if tooltip.object then
-        local t = Tooltips.objectType[tooltip.object.type]
+        local t = objectType[tooltip.object.type]
         if t then
             tooltip.type = t
             return true
         end
     end
     if tooltip.key then
-        for k, v in pairs(Tooltips.objectType) do
+        for k, v in pairs(objectType) do
             if k.records[tooltip.key] then
                 tooltip.type = v
                 return true
