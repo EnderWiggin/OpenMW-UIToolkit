@@ -386,6 +386,9 @@ Options:
 - `defaultSort` - optional comparator or simple comparator configuration used for the initial or secondary ordering.
 - `rowHeight` - optional row height. Defaults to `1.5 * (textNormal + 2)`.
 - `onItemClicked` - callback called with the clicked item and its index.
+- `scrollWidth` - optional width of the scrollbar.
+- `slimScroll` - optional flag that removes borders around the list's scrollbar arrows and handle.
+- `noBorder` - optional flag that removes the list border.
 
 ### Example
 Create a list of items with sortable name, weight and value columns:
