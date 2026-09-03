@@ -406,11 +406,11 @@ Tooltips.apparatusRecipe = function(tooltip)
     items[#items + 1] = header(record, tooltip.object)
     items[#items + 1] = {
         text = l10n('Quality'),
-        value = Tooltips.formatOneDecimal(record.quality),
+        value = helpers.formatOneDecimal(record.quality),
         name = CONTENT
             .Quality
     }
-    items[#items + 1] = { text = l10n('Weight'), value = Tooltips.formatOneDecimal(record.weight), name = CONTENT.Weight }
+    items[#items + 1] = { text = l10n('Weight'), value = helpers.formatOneDecimal(record.weight), name = CONTENT.Weight }
     items[#items + 1] = { text = l10n('Value'), value = math.floor(record.value), name = CONTENT.Value }
     return {
         name = 'Apparatus',
@@ -439,7 +439,7 @@ Tooltips.armorRecipe = function(tooltip)
     }
     items[#items + 1] = {
         text = l10n('Weight'),
-        value = Tooltips.formatOneDecimal(record.weight) ..
+        value = helpers.formatOneDecimal(record.weight) ..
             ' (' .. weightClass .. ')',
         name = CONTENT.Weight
     }
@@ -457,7 +457,7 @@ Tooltips.bookRecipe = function(tooltip)
     if not record then return end
     local items = {}
     items[#items + 1] = header(record, tooltip.object)
-    items[#items + 1] = { text = l10n('Weight'), value = Tooltips.formatOneDecimal(record.weight), name = CONTENT.Weight }
+    items[#items + 1] = { text = l10n('Weight'), value = helpers.formatOneDecimal(record.weight), name = CONTENT.Weight }
     items[#items + 1] = { text = l10n('Value'), value = math.floor(record.value), name = CONTENT.Value }
     enchantment(items, record, tooltip.object, true)
     return {
@@ -472,7 +472,7 @@ Tooltips.clothingRecipe = function(tooltip)
     if not record then return end
     local items = {}
     items[#items + 1] = header(record, tooltip.object)
-    items[#items + 1] = { text = l10n('Weight'), value = Tooltips.formatOneDecimal(record.weight), name = CONTENT.Weight }
+    items[#items + 1] = { text = l10n('Weight'), value = helpers.formatOneDecimal(record.weight), name = CONTENT.Weight }
     items[#items + 1] = { text = l10n('Value'), value = math.floor(record.value), name = CONTENT.Value }
     enchantment(items, record, tooltip.object)
     return {
@@ -549,7 +549,7 @@ Tooltips.ingredientRecipe = function(tooltip)
         unknown = helpers.unknownEffects(record.effects, math.floor(skill / gmsts.fWortChanceValue))
     end
     items[#items + 1] = header(record, tooltip.object)
-    items[#items + 1] = { text = l10n('Weight'), value = Tooltips.formatOneDecimal(record.weight), name = CONTENT.Weight }
+    items[#items + 1] = { text = l10n('Weight'), value = helpers.formatOneDecimal(record.weight), name = CONTENT.Weight }
     items[#items + 1] = { text = l10n('Value'), value = math.floor(record.value), name = CONTENT.Value }
     items[#items + 1] = {
         type = 'magicEffects',
@@ -577,7 +577,7 @@ Tooltips.miscellaneousRecipe = function(tooltip)
     end
     local items = {}
     items[#items + 1] = header(record, tooltip.object)
-    items[#items + 1] = { text = l10n('Weight'), value = Tooltips.formatOneDecimal(record.weight), name = CONTENT.Weight }
+    items[#items + 1] = { text = l10n('Weight'), value = helpers.formatOneDecimal(record.weight), name = CONTENT.Weight }
     items[#items + 1] = { text = l10n('Value'), value = math.floor(value), name = CONTENT.Value }
     return {
         name = 'Miscellaneous',
@@ -604,7 +604,7 @@ Tooltips.lightRecipe = function(tooltip)
     if record.name == '' then return end
     local items = {}
     items[#items + 1] = header(record, tooltip.object)
-    items[#items + 1] = { text = l10n('Weight'), value = Tooltips.formatOneDecimal(record.weight), name = CONTENT.Weight }
+    items[#items + 1] = { text = l10n('Weight'), value = helpers.formatOneDecimal(record.weight), name = CONTENT.Weight }
     items[#items + 1] = { text = l10n('Value'), value = math.floor(record.value), name = CONTENT.Value }
     return {
         name = 'Light',
@@ -620,7 +620,7 @@ Tooltips.lockpickRecipe = function(tooltip)
     local items = {}
     items[#items + 1] = header(record, tooltip.object)
     items[#items + 1] = { text = l10n('Uses'), value = tostring(uses), name = CONTENT.Condition }
-    items[#items + 1] = { text = l10n('Weight'), value = Tooltips.formatOneDecimal(record.weight), name = CONTENT.Weight }
+    items[#items + 1] = { text = l10n('Weight'), value = helpers.formatOneDecimal(record.weight), name = CONTENT.Weight }
     items[#items + 1] = { text = l10n('Value'), value = math.floor(record.value), name = CONTENT.Value }
     return {
         name = 'Lockpick',
@@ -644,7 +644,7 @@ Tooltips.potionRecipe = function(tooltip)
         unknown = helpers.unknownEffects(record.effects, 2 * multiplier)
     end
     items[#items + 1] = header(record, tooltip.object)
-    items[#items + 1] = { text = l10n('Weight'), value = Tooltips.formatOneDecimal(record.weight), name = CONTENT.Weight }
+    items[#items + 1] = { text = l10n('Weight'), value = helpers.formatOneDecimal(record.weight), name = CONTENT.Weight }
     items[#items + 1] = { text = l10n('Value'), value = math.floor(record.value), name = CONTENT.Value }
     items[#items + 1] = {
         type = 'magicEffects',
@@ -668,7 +668,7 @@ Tooltips.probeRecipe = function(tooltip)
     local items = {}
     items[#items + 1] = header(record, tooltip.object)
     items[#items + 1] = { text = l10n('Uses'), value = tostring(uses), name = CONTENT.Condition }
-    items[#items + 1] = { text = l10n('Weight'), value = Tooltips.formatOneDecimal(record.weight), name = CONTENT.Weight }
+    items[#items + 1] = { text = l10n('Weight'), value = helpers.formatOneDecimal(record.weight), name = CONTENT.Weight }
     items[#items + 1] = { text = l10n('Value'), value = math.floor(record.value), name = CONTENT.Value }
     return {
         name = 'Probe',
@@ -684,7 +684,7 @@ Tooltips.repairRecipe = function(tooltip)
     local items = {}
     items[#items + 1] = header(record, tooltip.object)
     items[#items + 1] = { text = l10n('Uses'), value = tostring(uses), name = CONTENT.Condition }
-    items[#items + 1] = { text = l10n('Weight'), value = Tooltips.formatOneDecimal(record.weight), name = CONTENT.Weight }
+    items[#items + 1] = { text = l10n('Weight'), value = helpers.formatOneDecimal(record.weight), name = CONTENT.Weight }
     items[#items + 1] = { text = l10n('Value'), value = math.floor(record.value), name = CONTENT.Value }
     return {
         name = 'Repair',
@@ -742,7 +742,7 @@ Tooltips.weaponRecipe = function(tooltip)
             name = CONTENT.Condition
         }
     end
-    items[#items + 1] = { text = l10n('Weight'), value = Tooltips.formatOneDecimal(record.weight), name = CONTENT.Weight }
+    items[#items + 1] = { text = l10n('Weight'), value = helpers.formatOneDecimal(record.weight), name = CONTENT.Weight }
     items[#items + 1] = { text = l10n('Value'), value = math.floor(record.value), name = CONTENT.Value }
     enchantment(items, record, tooltip.object)
     return {
@@ -770,11 +770,6 @@ local attributeMultiplier = function(attribute, player)
     return 0
 end
 
-Tooltips.formatOneDecimal = function(n)
-    -- Format with 1 decimal and then remove trailing .0
-    return string.format("%.1f", n):gsub("%.0$", "")
-end
-
 Tooltips.buildTooltip = function(recipe, tooltip)
     return Tooltips.builders.root(recipe, tooltip)
 end
@@ -797,7 +792,7 @@ Tooltips.activeEffectRecipe = function(tooltip)
                 local magnitude = math.floor(activeEffect.magnitudeThisFrame)
                 items[#items + 1] = {
                     text = helpers.formatActiveEffectName(activeSpell.name, mgef, activeEffect),
-                    value = magnitude .. helpers.getMagicEffectUnits(mgef, magnitude > 1)
+                    value = helpers.formatMagnitude(mgef, magnitude)
                 }
             end
         end

@@ -12,14 +12,6 @@ local NPC = types.NPC
 local l10n = core.l10n('UTKTooltips')
 local Utils = {}
 
-function Utils.determineType(object, recordId)
-    if object then return object.type end
-    for _, table in pairs(types) do
-        if table.records[recordId] then return table end
-    end
-    return nil
-end
-
 function Utils.formatActiveEffectName(name, mgef, aef)
     local text = name
     if mgef.hasAttribute then
@@ -99,6 +91,15 @@ local mgefMagnitudeDisplayType =
     [core.magic.EFFECT_TYPE.Vampirism] = magnitudeDisplayTypes.None,
 }
 
+function Utils.getMagnitudeDisplayType(mgef)
+    return mgefMagnitudeDisplayType[mgef.id] or magnitudeDisplayTypes.Points
+end
+
+function Utils.formatOneDecimal(n)
+    -- Format with 1 decimal and then remove trailing .0
+    return string.format("%.1f", n):gsub("%.0$", "")
+end
+
 ---@param mgef openmw.core.MagicEffect
 ---@param plural boolean
 function Utils.getMagicEffectUnits(mgef, plural)
@@ -115,7 +116,51 @@ function Utils.getMagicEffectUnits(mgef, plural)
     elseif displayType == nil or displayType == magnitudeDisplayTypes.Points then
         unit = plural and l10n('Points') or l10n('Point')
     end
-    return unit == '' and unit or ' ' .. unit
+    return unit
+end
+
+function Utils.formatMagnitude(mgef, magnitude)
+    local displayType = Utils.getMagnitudeDisplayType(mgef)
+    if displayType == magnitudeDisplayTypes.None or not magnitude then
+        return ''
+    end
+
+    local text = ''
+    magnitude = math.floor(magnitude)
+
+    if displayType == magnitudeDisplayTypes.TimesInt then
+        text = Utils.formatOneDecimal(magnitude / 10)
+    else
+        text = tostring(math.floor(magnitude))
+        if displayType ~= magnitudeDisplayTypes.Percentage then
+            text = text .. ' '
+        end
+    end
+
+    local unit = Utils.getMagicEffectUnits(mgef, magnitude > 1)
+
+    return text .. unit
+end
+
+function Utils.formatDuration(duration)
+    duration = math.max(1, util.round(duration))
+    local str = tostring(duration) .. ' '
+    if duration == 1 then
+        return str .. l10n('second')
+    else
+        return str .. l10n('seconds')
+    end
+end
+
+function Utils.rangeString(range)
+    if range == core.magic.RANGE.Self then
+        return l10n('RangeSelf')
+    elseif range == core.magic.RANGE.Target then
+        return l10n('RangeTarget')
+    elseif range == core.magic.RANGE.Touch then
+        return l10n('RangeTouch')
+    end
+    print('Warning: Unexpected range: ' .. tostring(range))
 end
 
 function Utils.getAnyRecord(id)

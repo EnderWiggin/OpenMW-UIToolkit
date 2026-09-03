@@ -117,31 +117,22 @@ local function effectDescription(content, effect, noTarget, noMagnitude, noDurat
     local effectString = magicEffectName(effect)
     if mgef.hasMagnitude and not noMagnitude then
         effectString = effectString .. ' '
-        local min = effect.magnitudeMin
-        local max = effect.magnitudeMax
+        local min = math.floor(effect.magnitudeMin)
+        local max = math.floor(effect.magnitudeMax)
         if min ~= max then
             effectString = effectString .. tostring(min) .. ' ' .. l10n('To') .. ' '
         end
-        effectString = effectString .. tostring(max) .. helpers.getMagicEffectUnits(mgef, max > 1)
+        effectString = effectString .. helpers.formatMagnitude(mgef, max)
     end
 
     if mgef.hasDuration and not noDuration then
-        effectString = effectString .. ' ' .. tostring(effect.duration) .. ' '
-        if effect.duration == 1 then
-            effectString = effectString .. l10n('second')
-        else
-            effectString = effectString .. l10n('seconds')
-        end
+        effectString = effectString .. ' ' .. l10n('for') .. ' ' .. helpers.formatDuration(effect.duration)
     end
 
     if not noTarget then
-        effectString = effectString .. ' ' .. l10n('On') .. ' '
-        if effect.range == core.magic.RANGE.Self then
-            effectString = effectString .. l10n('RangeSelf')
-        elseif effect.range == core.magic.RANGE.Target then
-            effectString = effectString .. l10n('RangeTarget')
-        elseif effect.range == core.magic.RANGE.Touch then
-            effectString = effectString .. l10n('RangeTouch')
+        local rangeString = helpers.rangeString(effect.range)
+        if rangeString then
+            effectString = effectString .. ' ' .. l10n('On') .. ' ' .. helpers.rangeString(effect.range)
         end
     end
 
