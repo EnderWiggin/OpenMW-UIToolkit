@@ -113,6 +113,9 @@ function Components.sortedList(opts) end
 ---@field setDisabled fun(self:UIToolkit.Component, value: boolean?, deep: boolean?):self:UIToolkit.Component Sets disabled state of the component and queues update, return self.
 ---@field updateProps fun(self:UIToolkit.Component, props: table):UIToolkit.Component update props, return self.
 
+---@class UIToolkit.Scrollable : UIToolkit.Component
+---@field onMouseScrolled fun(self:UIToolkit.Scrollable, delta:number)
+
 ---@class UIToolkit.ButtonOpts : UIToolkit.InteractiveOpts
 ---@field name string? name to give to button layout
 ---@field style UIToolkit.BoxStyle? defaults to 'button'
@@ -195,9 +198,21 @@ function Components.sortedList(opts) end
 ---@field getComponent fun(self:UIToolkit.ListItem.Base<T>, data:T):UIToolkit.Component
 ---@field getCachedComponent fun(self:UIToolkit.ListItem.Base<T>, id:string):UIToolkit.Component?
 ---@field makeComponent fun(self:UIToolkit.ListItem.Base<T>, data:T):UIToolkit.Component
----@field getTooltip fun(self:UIToolkit.ListItem.Base<T>, data:T):UTKTooltips.AnyTooltip
+---@field getTooltip fun(self:UIToolkit.ListItem.Base<T>, data:T):UTKTooltips.AnyTooltip?
+---@field getView fun(self:UIToolkit.ListItem.Base<T>, data:T):openmw.ui.Element
+---@field getCachedView fun(self:UIToolkit.ListItem.Base<T>, id:string):openmw.ui.Element?
 ---@field remove fun(self:UIToolkit.ListItem.Base<T>, id:string) removes cached item
 ---@field clear fun(self:UIToolkit.ListItem.Base<T>) removes all cached items
+
+---@class UIToolkit.ListData.Text : UIToolkit.ListData.Base
+---@field text string
+---@field tooltip UTKTooltips.AnyTooltip?
+
+---@class UIToolkit.ListItem.Text : UIToolkit.ListItem.Base<UIToolkit.ListData.Text>
+---@field new fun(self:UIToolkit.ListItem.Text):UIToolkit.ListItem.Text
+---@field getItemHeight fun(self:UIToolkit.ListItem.Text):number
+---@field makeComponent fun(self:UIToolkit.ListItem.Text, data:UIToolkit.ListData.Text):UIToolkit.Component
+---@field getTooltip fun(self:UIToolkit.ListItem.Text, data:UIToolkit.ListData.Text):UTKTooltips.AnyTooltip?
 
 ---@alias UIToolkit.ListItem.Column.Renderer fun(data:UIToolkit.ListData.Column, cfg:UIToolkit.ListData.ColumnConfig, height:number):openmw.ui.Element
 
@@ -229,12 +244,17 @@ function Components.sortedList(opts) end
 ---@field slimScroll boolean? scrollbar will have no borders around arrows or handle
 ---@field noBorder boolean?
 
----@class UIToolkit.ItemList : UIToolkit.Component
+---@class UIToolkit.ItemList : UIToolkit.Scrollable
 ---@field new fun():UIToolkit.ItemList
 ---@field init fun(self:UIToolkit.ItemList, opts:UIToolkit.ItemListOpts)
+---@field getContentWidth fun(self:UIToolkit.ItemList):number
 ---@field getItems fun(self:UIToolkit.ItemList):UIToolkit.ListData.Base[]
 ---@field setItems fun(self:UIToolkit.ItemList, items:UIToolkit.ListData.Base[])
 ---@field setSize fun(self:UIToolkit.ItemList, size:openmw.util.Vector2)
+---@field getIndexByYPos fun(self:UIToolkit.ItemList, y:number):integer
+---@field updateHoveredItem fun(self:UIToolkit.ItemList)
+---@field getHovered fun(self:UIToolkit.ItemList):UIToolkit.ListData.Base?, integer?
+---@field getItemById fun(self:UIToolkit.ItemList, id:string):UIToolkit.ListData.Base?, integer?
 ---@field getPosition fun(self:UIToolkit.ItemList):number actual position of the scroll
 ---@field setPosition fun(self:UIToolkit.ItemList, position:number) set scroll position
 ---@field getProgress fun(self:UIToolkit.ItemList):number [0-1] progress of the scroll
@@ -257,6 +277,13 @@ function Components.sortedList(opts) end
 ---@field default string?
 ---@field onChanged fun(id: string, ascending: boolean)
 
+---@class UIToolkit.ColumnSorter : UIToolkit.Component
+---@field new fun(self:UIToolkit.ColumnSorter):UIToolkit.ColumnSorter
+---@field init fun(self:UIToolkit.ColumnSorter, opts:UIToolkit.ColumnSorterOpts)
+---@field toggleColumn fun(self:UIToolkit.ColumnSorter, id:string, asc:boolean?)
+---@field getColumnConfig fun(self:UIToolkit.ColumnSorter, id:string?):UIToolkit.ColumnSorter.Column?
+---@field getActiveColumn fun(self:UIToolkit.ColumnSorter):string?, boolean
+
 ---@class UIToolkit.SortedList.Column
 ---@field id string
 ---@field name string?
@@ -277,11 +304,21 @@ function Components.sortedList(opts) end
 ---@field slimScroll boolean? scrollbar will have no borders around arrows or handle
 ---@field noBorder boolean?
 
+---@class UIToolkit.SortedList : UIToolkit.Component
+---@field new fun(self:UIToolkit.SortedList):UIToolkit.SortedList
+---@field init fun(self:UIToolkit.SortedList, opts:UIToolkit.SortedListOpts)
+---@field sortItems fun(self:UIToolkit.SortedList, items:UIToolkit.ListData.Column[]?)
+---@field setItems fun(self:UIToolkit.SortedList, items:UIToolkit.ListData.Column[])
+---@field setSize fun(self:UIToolkit.SortedList, size:openmw.util.Vector2)
+---@field getListSize fun(self:UIToolkit.SortedList):openmw.util.Vector2
+---@field getHeaderSize fun(self:UIToolkit.SortedList):openmw.util.Vector2
+
 ---@class UIToolkit.WindowManager
 ---@field register fun(id: string, opts: UIToolkit.WindowOpts)
 ---@field open fun(id: string, data:any?):UIToolkit.Window
 ---@field close fun(id: string)
 ---@field isOpen fun(id: string):boolean
+---@field getFocusedWindowHandler fun():UIToolkit.WindowHandler?, string?
 
 ---@class UIToolkit.WindowOpts
 ---@field title string

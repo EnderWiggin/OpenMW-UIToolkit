@@ -10,10 +10,6 @@ local Component = require('scripts.UIToolkit.components.component')
 
 local T = require('scripts.UIToolkit.templates.base')
 
----@class UIToolkit.ListData.Text : UIToolkit.ListData.Base
----@field text string
----@field tooltip UTKTooltips.AnyTooltip?
-
 ---@class UIToolkit.ListItem.Text: UIToolkit.ListItem.Base<UIToolkit.ListData.Text>
 ---@field new fun(self:UIToolkit.ListItem.Text):UIToolkit.ListItem.Text
 local ListItemText = Class(ListItemBase)
