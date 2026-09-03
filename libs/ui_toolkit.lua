@@ -75,6 +75,10 @@ local Components = {}
 ---@return UIToolkit.TextButton
 function Components.textButton(opts) end
 
+---@param opts UIToolkit.CheckboxOpts
+---@return UIToolkit.Checkbox
+function Components.checkbox(opts) end
+
 ---@param opts UIToolkit.TextEditOpts
 ---@return UIToolkit.TextEdit
 function Components.textEdit(opts) end
@@ -131,6 +135,20 @@ function Components.sortedList(opts) end
 ---@field new fun():UIToolkit.TextButton
 ---@field init fun(self:UIToolkit.TextButton, opts:UIToolkit.TextButtonOpts)
 ---@field setText fun(self:UIToolkit.TextButton, text:string)
+
+---@class UIToolkit.CheckboxOpts : UIToolkit.InteractiveOpts
+---@field text? string optional label displayed beside the checkbox
+---@field default? boolean|fun():boolean initial value; defaults to false
+---@field onValueChanged? fun(value:boolean) called when the value is changed by a click
+---@field name? string name assigned to the checkbox layout
+---@field boxSize? number defaults to the theme's normal text size
+---@field accentedCheckmark? boolean if set to true, checkmark will be colored in active-style colors (like selected spell in the spell list).
+
+---@class UIToolkit.Checkbox : UIToolkit.Component
+---@field new fun(self:UIToolkit.Checkbox):UIToolkit.Checkbox
+---@field init fun(self:UIToolkit.Checkbox, opts:UIToolkit.CheckboxOpts)
+---@field getValue fun(self:UIToolkit.Checkbox):boolean
+---@field setValue fun(self:UIToolkit.Checkbox, value:boolean):UIToolkit.Checkbox
 
 ---@generic T
 ---@class UIToolkit.TextEditOpts<T>

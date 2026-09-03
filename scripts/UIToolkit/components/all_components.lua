@@ -7,10 +7,19 @@ local ItemList = require('scripts.UIToolkit.components.item_list')
 local ColumnSorter = require('scripts.UIToolkit.components.column_sorter')
 local SortedList = require('scripts.UIToolkit.components.list_with_sorter_columns')
 local Dropbox = require('scripts.UIToolkit.components.dropbox')
+local Checkbox = require('scripts.UIToolkit.components.checkbox')
 
 local M = {}
 
 M.textButton = Buttons.textButton
+
+---@param opts UIToolkit.CheckboxOpts
+---@return UIToolkit.Checkbox
+function M.checkbox(opts)
+    local checkbox = Checkbox:new()
+    checkbox:init(opts)
+    return checkbox
+end
 
 ---@param opts UIToolkit.TextEditOpts
 ---@return UIToolkit.TextEdit

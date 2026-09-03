@@ -372,6 +372,28 @@ function Handler:onOpened(wnd)
                         },
                         I.UIToolkit.Templates.intervalV(5),
                         dropbox.element,
+                        I.UIToolkit.Templates.intervalV(5),
+                        {
+                            type = ui.TYPE.Flex,
+                            props = { horizontal = true, arrange = ui.ALIGNMENT.Center },
+                            content = ui.content {
+                                I.UIToolkit.Components.checkbox {
+                                    text = 'Checkbox',
+                                    onValueChanged = function(value) print('Checkbox:', value) end,
+                                }.element,
+                                I.UIToolkit.Templates.intervalH(5),
+                                I.UIToolkit.Components.checkbox {
+                                    text = 'Accented',
+                                    default = true,
+                                    accentedCheckmark = true,
+                                }.element,
+                                I.UIToolkit.Templates.intervalH(5),
+                                I.UIToolkit.Components.checkbox {
+                                    text = 'Disabled',
+                                    default = true,
+                                }:setDisabled(true).element,
+                            },
+                        },
                     }
                 }
             },

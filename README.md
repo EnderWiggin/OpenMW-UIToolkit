@@ -188,6 +188,35 @@ I.UIToolkit.Components.textButton { text = "Hello", tooltip = 'World!', onClick 
 end}
 ```
 
+## Checkbox
+
+`checkbox(opts)` - creates a boolean checkbox with an optional text label.
+
+Options:
+
+- `text` - optional label displayed beside the checkbox.
+- `default` - optional initial boolean value or a function returning one. Defaults to `false`.
+- `onValueChanged` - optional callback called with the new value when the checkbox is clicked.
+- `boxSize` - optional size of the checkbox box. Defaults to the theme's normal text size.
+- `accentedCheckmark` - optional, if set to true, checkmark will be colored in active-style colors (like selected spell in the spell list).
+- `name` - optional name assigned to the checkbox layout.
+- `tooltip`, `canClick`, `onClick`, `onMouseMove`, `interactiveDisabled` - standard interactive options.
+
+### Example
+
+```lua
+local checkbox = I.UIToolkit.Components.checkbox {
+    text = 'Enabled',
+    default = true,
+    onValueChanged = function(value)
+        print('Enabled:', value)
+    end,
+}
+
+checkbox:setValue(false)
+print(checkbox:getValue())
+```
+
 ## Text Edit
 `textEdit(opts)` - creates a text edit. With optional placeholder text, clear button, value validation and on change callback.
 
@@ -625,7 +654,7 @@ The `observer` field is optional, it is used to determine how many effects potio
 - [x] Make `Component` able to subscribe to `elementUpdated` event
 - [x] Make `Component` able to subscribe to `elementDestroyed` event
 - [x] Option to make `Interactives` not react to hovers/clicks when disabled 
-- [ ] Add `Checkbox` component
+- [x] Add `Checkbox` component
 - [x] Add `Dropbox` component
 - [ ] Add `Tabs`/`Radio group` style component?
 - [ ] Settings menu to customize templates
