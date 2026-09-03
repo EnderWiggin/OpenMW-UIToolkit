@@ -226,14 +226,6 @@ end
 
 local function onFrame()
     local dt = core.getRealFrameDuration()
-    if ctx.focusedInteractiveDelayed ~= nil then
-        if ctx.focusedInteractiveDelayed == false then
-            ctx.focusedInteractive = nil
-        else
-            ctx.focusedInteractive = ctx.focusedInteractiveDelayed
-        end
-        ctx.focusedInteractiveDelayed = nil
-    end
 
     local scrollable = getFocusedScrollable()
     if not scrollable then
