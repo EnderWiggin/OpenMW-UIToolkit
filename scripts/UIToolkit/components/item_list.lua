@@ -260,10 +260,15 @@ end
 ---@param items UIToolkit.ListData.Base[]
 function ItemList:setItems(items)
     local state = self.state
+    local wasHovered
     if state.hovered then --cleanup previously hovered item - it might be gone in new list
         local was = state.items[state.hovered]
-        setItemHoveredStatus(state.provider, was and was.id, false)
-        state.hovered = nil
+        wasHovered = was and was.id
+        local new = items[state.hovered]
+        if not new or wasHovered ~= new.id then
+            setItemHoveredStatus(state.provider, wasHovered, false)
+            state.hovered = nil
+        end
     end
     state.items = items
     state.itemsById = {}
