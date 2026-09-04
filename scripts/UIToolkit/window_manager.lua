@@ -49,7 +49,7 @@ function M.open(id, data)
     opts.handler = handler
 
     ---@type UIToolkit.WindowSaveData
-    local saved = section:get(id)
+    local saved = section:getCopy(id)
     local wnd = Window:new()
     wnd:init(opts, id, saved and {
         pinned = saved.pinned == true,
