@@ -1,3 +1,4 @@
+MENU: scripts/UIToolkit/create_layers.lua
 MENU, PLAYER: scripts/UIToolkit/toolkit.lua
 MENU: scripts/UIToolkit/settings/renderers.lua
 MENU: scripts/UIToolkit/settings/menu.lua
