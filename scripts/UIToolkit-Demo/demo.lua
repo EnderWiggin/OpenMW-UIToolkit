@@ -97,8 +97,11 @@ end
 ---@class Handler: UIToolkit.WindowHandler
 local Handler = Class(WindowHandler)
 
+local state
+
 ---@param wnd UIToolkit.Window
-function Handler:onOpened(wnd)
+function Handler:onOpened(wnd, _, saved)
+    state = saved or {}
     local theme = I.UIToolkit.getTheme()
     I.UI.setMode(I.UI.MODE.Interface, { windows = {} })
     list = I.UIToolkit.Components.sortedList {
@@ -148,6 +151,7 @@ function Handler:onOpened(wnd)
         maxScroll = 198, -- we have 100 values (1-100), position goes from 0 to maxScroll, so it must be scrollStep*(range-1) for our case
         onScroll = function(position)
             local value = math.floor(position / 2) + 1
+            state.slider = value
             edit:setValue(value)
         end,
     }
@@ -166,9 +170,11 @@ function Handler:onOpened(wnd)
         end,
         onValueChanged = function(value)
             local pos = 2 * (value - 1)
+            state.slider = value
             slider:setPosition(pos, true)
         end
     }
+    if state.slider then slider:setPosition(2 * (state.slider - 1)) end
 
     local skills = {}
     for id, record in pairs(core.stats.Skill.records) do
@@ -186,8 +192,10 @@ function Handler:onOpened(wnd)
         maxVisibleItems = 10,
         onItemSelected = function(item, idx)
             print('Selected: ', item.text)
+            state.dropbox = item.id
         end
     }
+    if state.dropbox then dropbox:selectById(state.dropbox) end
 
     wnd:setContent(ui.content {
         list.element,
@@ -379,13 +387,20 @@ function Handler:onOpened(wnd)
                             content = ui.content {
                                 I.UIToolkit.Components.checkbox {
                                     text = 'Checkbox',
-                                    onValueChanged = function(value) print('Checkbox:', value) end,
+                                    default = state.chbox1,
+                                    onValueChanged = function(value)
+                                        print('Checkbox:', value)
+                                        state.chbox1 = value
+                                    end,
                                 }.element,
                                 I.UIToolkit.Templates.intervalH(5),
                                 I.UIToolkit.Components.checkbox {
                                     text = 'Accented',
-                                    default = true,
+                                    default = state.chbox2,
                                     accentedCheckmark = true,
+                                    onValueChanged = function(value)
+                                        state.chbox2 = value
+                                    end,
                                 }.element,
                                 I.UIToolkit.Templates.intervalH(5),
                                 I.UIToolkit.Components.checkbox {
@@ -406,6 +421,7 @@ end
 function Handler:onClosed()
     I.UI.setMode()
     list = nil
+    return state
 end
 
 ---@param inner openmw.util.Vector2
