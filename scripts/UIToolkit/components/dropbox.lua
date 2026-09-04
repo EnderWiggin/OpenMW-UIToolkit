@@ -141,7 +141,7 @@ end
 
 ---@param idx integer
 function Dropbox:selectByIndex(idx)
-    local item = self.items[i]
+    local item = self.items[idx]
     if not item then return end
     self:selectItem(item)
 end
