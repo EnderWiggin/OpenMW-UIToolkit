@@ -10,7 +10,6 @@ local Class = require('scripts.UIToolkit.class')
 local Component = require('scripts.UIToolkit.components.component')
 
 local REVERT_TEX = ui.texture { path = 'icons/UIToolkit/revert.dds' }
-local T = require('scripts.UIToolkit.templates.base')
 
 ---@generic T
 ---@class UIToolkit.TextEdit<T> : UIToolkit.Component
@@ -29,6 +28,7 @@ local function validateText(value) return true, toText(value) end
 
 ---@param opts UIToolkit.TextEditOpts
 function TextEdit:init(opts)
+    local T = I.UIToolkit.Templates
     local t = I.UIToolkit.getTheme()
     local editTemplate = T.editLine()
     ---@type  fun(text:string|T|nil):boolean,T

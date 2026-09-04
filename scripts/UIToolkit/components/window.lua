@@ -9,7 +9,6 @@ local ambient = require('openmw.ambient')
 local I = require('openmw.interfaces')
 local Class = require('scripts.UIToolkit.class')
 local Component = require('scripts.UIToolkit.components.component')
-local T = require('scripts.UIToolkit.templates.base')
 
 local v2 = util.vector2
 
@@ -347,6 +346,7 @@ end
 ---@param id string
 ---@param saved? UIToolkit.WindowSaveData
 function Window:init(opts, id, saved)
+    local T = I.UIToolkit.Templates
     self.id = id
     local theme = I.UIToolkit.getTheme()
 

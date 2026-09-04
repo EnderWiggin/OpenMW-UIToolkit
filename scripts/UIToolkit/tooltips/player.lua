@@ -9,7 +9,6 @@ local core = require('openmw.core')
 local self = require('openmw.self')
 local helpers = require('scripts.UIToolkit.tooltips.utils')
 local Tooltips = require('scripts.UIToolkit.tooltips.tooltips')
-local T = require('scripts.UIToolkit.templates.base')
 local D = require('scripts.UIToolkit.config.defaults')
 
 local tooltipElement = ui.create {
@@ -179,7 +178,7 @@ local function createTooltipLayout(tooltip)
         layout = {
             template = template,
             content = ui.content { {
-                template = T.padding(8),
+                template = I.UIToolkit.Templates.padding(8),
                 content = ui.content { layout }
             } },
             props = {},
