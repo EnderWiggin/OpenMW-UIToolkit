@@ -27,8 +27,10 @@ function ListItemText:makeComponent(data)
     component:init(ui.create {
         template = T.text(),
         props = {
-            size = size,
             text = data.text,
+            autoSize = false,
+            size = v2(0, self:getItemHeight()),
+            relativeSize = v2(1, 0),
             textAlignV = ui.ALIGNMENT.Center,
         },
         userData = { colorable = true },
