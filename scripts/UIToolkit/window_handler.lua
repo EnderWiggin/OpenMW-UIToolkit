@@ -1,4 +1,4 @@
----@omw-context player
+---@omw-context all
 
 local Class = require('scripts.UIToolkit.class')
 

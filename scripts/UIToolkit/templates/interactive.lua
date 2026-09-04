@@ -1,7 +1,6 @@
----@omw-context player
+---@omw-context player|menu
 
 local ui = require('openmw.ui')
-local util = require('openmw.util')
 local async = require('openmw.async')
 local ambient = require('openmw.ambient')
 local I = require('openmw.interfaces')

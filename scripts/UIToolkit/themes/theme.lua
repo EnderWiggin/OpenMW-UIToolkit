@@ -1,4 +1,4 @@
----@omw-context player
+---@omw-context player|menu
 
 local Sizes = require('scripts.UIToolkit.themes.sizes')
 local Colors = require('scripts.UIToolkit.themes.colors')

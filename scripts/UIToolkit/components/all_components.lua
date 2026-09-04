@@ -1,4 +1,4 @@
----@omw-context player
+---@omw-context player|menu
 
 local Buttons = require('scripts.UIToolkit.components.buttons')
 local TextEdit = require('scripts.UIToolkit.components.text_edit')

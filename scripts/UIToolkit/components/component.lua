@@ -1,4 +1,4 @@
----@omw-context player
+---@omw-context player|menu
 
 local I = require('openmw.interfaces')
 local H = require('scripts.UIToolkit.helpers')

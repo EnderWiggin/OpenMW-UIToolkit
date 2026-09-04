@@ -1,6 +1,5 @@
----@omw-context player
+---@omw-context player|menu
 
-local I = require('openmw.interfaces')
 local Class = require('scripts.UIToolkit.class')
 local Component = require('scripts.UIToolkit.components.component')
 

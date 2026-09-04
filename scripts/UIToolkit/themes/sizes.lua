@@ -1,4 +1,4 @@
----@omw-context player
+---@omw-context player|menu
 
 local omwConstants = require('scripts.omw.mwui.constants')
 
