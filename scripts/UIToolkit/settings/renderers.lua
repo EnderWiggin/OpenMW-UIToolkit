@@ -25,4 +25,7 @@ return {
         onKeyPress = onKeyPress,
         onControllerButtonPress = onControllerButtonPress,
     },
+    eventHandlers = {
+        ['UIToolkit:Menu:closeDropdown'] = I.UIToolkit.Layers.closeDropbox,
+    },
 }

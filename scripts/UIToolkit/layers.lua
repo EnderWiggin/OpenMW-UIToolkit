@@ -52,6 +52,7 @@ function M.closeDropbox()
     if not dropbox then return end
     dropBoxHolder.content = nil
     dropBoxLayer:setVisible(false)
+    dropbox = nil
 end
 
 function M.addDropbox(box)

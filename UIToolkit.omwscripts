@@ -2,6 +2,7 @@ MENU, PLAYER: scripts/UIToolkit/toolkit.lua
 MENU: scripts/UIToolkit/settings/renderers.lua
 MENU: scripts/UIToolkit/settings/menu.lua
 PLAYER: scripts/UIToolkit/tooltips/player.lua
+PLAYER: scripts/UIToolkit/ui_mode_detect.lua
 
 #Uncomment to use demo - press Scroll Lock to open/close demo window
 #PLAYER: scripts/UIToolkit-Demo/demo.lua
