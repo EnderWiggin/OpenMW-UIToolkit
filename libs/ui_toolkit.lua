@@ -506,8 +506,9 @@ function Templates.getBorderSize(style) end
 
 --- Setting Renderers
 ---@class UIToolkit.SettingRenderer.Dropbox
----@field l10n string?
+---@field l10n string? localization context with display values for items
 ---@field items UIToolkit.SettingRenderer.DropboxItem[]
+---@field disabled boolean? disables changing the setting from the UI
 
 ---@alias UIToolkit.SettingRenderer.DropboxItem string|{id:string, text:string?}
 

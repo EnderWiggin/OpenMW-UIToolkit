@@ -564,8 +564,9 @@ Equivalent to `'select'` built-in renderer, but displays a dropdown instead of a
 
 The setting's `argument` table accepts these options:
 
-- `l10n` - optional localization domain used to translate item text.
+- `l10n` - optional localization context used to translate item text.
 - `items` - required list of choices. Each item can be a string, or a table with an `id` and optional `text`. The `id` is stored as the setting value; `text` is displayed in the dropdown. If `text` is absent `id` will be used instead.
+- `disabled` - disables changing the setting from the UI
 
 If the current setting value is not present in `items`, the renderer selects the first item and stores its id.
 

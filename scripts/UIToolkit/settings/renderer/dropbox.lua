@@ -36,6 +36,10 @@ return function(value, set, args)
         end
     }
 
+    if args.disabled then
+        dropbox:setDisabled(true)
+    end
+
     --old removed value?
     --reset to first one
     if not selected then
