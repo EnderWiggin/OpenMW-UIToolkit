@@ -128,6 +128,24 @@ function Dropbox:beforeElementDestroy()
     I.UIToolkit.queueDestroy(self.popup, true)
 end
 
+---@param id string
+function Dropbox:selectById(id)
+    for i = 1, #self.items do
+        local item = self.items[i]
+        if item.id == id then
+            self:selectItem(item)
+            break
+        end
+    end
+end
+
+---@param idx integer
+function Dropbox:selectByIndex(idx)
+    local item = self.items[i]
+    if not item then return end
+    self:selectItem(item)
+end
+
 ---@param item UIToolkit.ListData.Text
 function Dropbox:selectItem(item)
     self.selected = item

@@ -184,6 +184,8 @@ function Components.sortedList(opts) end
 ---@class UIToolkit.Dropbox : UIToolkit.Component
 ---@field getSelectedItem fun(self:UIToolkit.Dropbox):UIToolkit.ListData.Text
 ---@field selectItem fun(self:UIToolkit.Dropbox, item:UIToolkit.ListData.Text)
+---@field selectById fun(self:UIToolkit.Dropbox, id:string)
+---@field selectByIndex fun(self:UIToolkit.Dropbox, idx:integer)
 
 ---@class UIToolkit.ScrollBarOpts
 ---@field horizontal boolean?
