@@ -33,7 +33,7 @@ return function(value, set, args)
                 if isInteger then
                     number = util.round(number)
                 end
-                return true, v
+                return true, number
             end
         end,
         onValueChanged = set,
