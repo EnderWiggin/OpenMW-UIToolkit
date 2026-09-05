@@ -28,9 +28,10 @@ return function(value, set, args)
             if not number then
                 return false, nil
             else
-                local v = util.clamp(number, min, max)
+                if min and number < min then number = min end
+                if max and number > max then number = max end
                 if isInteger then
-                    v = util.round(v)
+                    number = util.round(number)
                 end
                 return true, v
             end
