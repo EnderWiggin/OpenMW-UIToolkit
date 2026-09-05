@@ -19,7 +19,7 @@ local ctx = {
     focusedScrollable = nil,
 }
 
----@class openmw.interfaces.UIToolkit
+---@class openmw.interfaces.UIToolkit.Menu
 local Interface = {
     version       = D.API,
     Templates     = require 'scripts.UIToolkit.templates.base',
@@ -29,8 +29,10 @@ local Interface = {
     WindowManager = require 'scripts.UIToolkit.window_manager',
 }
 
+local InterfaceP
 if isPlayer then
-    Interface.Popups = require 'scripts.UIToolkit.popups'
+    InterfaceP = Interface --[[@as openmw.interfaces.UIToolkit.Player]]
+    InterfaceP.Popups = require 'scripts.UIToolkit.popups'
 end
 
 function Interface.getCtx() return ctx end
@@ -215,14 +217,16 @@ local buttonPressDuration = {}
 
 ---@param button number
 local function onControllerButtonRepeat(button)
-    local popup = Interface.Popups.getActivePopup()
-    if popup then
-        local callback = popup.handler.onControllerButtonRepeat
-        if callback then callback(button) end
-        return
+    if isPlayer then
+        local popup = InterfaceP.Popups.getActivePopup()
+        if popup then
+            local callback = popup.handler.onControllerButtonRepeat
+            if callback then callback(button) end
+            return
+        end
     end
 
-    local focused = Interface.WindowManager.getFocusedWindowHandler()
+    local focused = InterfaceP.WindowManager.getFocusedWindowHandler()
     if not focused then return end
     focused:onControllerButtonRepeat(button)
 end
@@ -231,15 +235,17 @@ local function onFrame()
     local dt = core.getRealFrameDuration()
 
     local scrollable = getFocusedScrollable()
-    if not scrollable then
-        local popup = Interface.Popups.getActivePopup()
+    if not scrollable and isPlayer then
+        local popup = InterfaceP.Popups.getActivePopup()
         if popup then
             local method = popup.handler.getFocusedScrollable
             if method then scrollable = method() end
-        else
-            local window = Interface.WindowManager.getFocusedWindowHandler()
-            scrollable = window and window:getFocusedScrollable()
         end
+    end
+
+    if not scrollable then
+        local window = Interface.WindowManager.getFocusedWindowHandler()
+        scrollable = window and window:getFocusedScrollable()
     end
 
     if scrollable then
@@ -275,11 +281,13 @@ end
 local function onControllerButtonPress(button)
     buttonPressDuration[button] = 0
 
-    local popup = Interface.Popups.getActivePopup()
-    if popup then
-        local callback = popup.handler.onControllerButtonPress
-        if callback then callback(button) end
-        return
+    if isPlayer then
+        local popup = InterfaceP.Popups.getActivePopup()
+        if popup then
+            local callback = popup.handler.onControllerButtonPress
+            if callback then callback(button) end
+            return
+        end
     end
 
     local focused = Interface.WindowManager.getFocusedWindowHandler()
