@@ -200,7 +200,8 @@ function Components.sortedList(opts) end
 ---@field width number?
 ---@field slim boolean? scrollbar will have no borders around arrows or handle
 ---@field handleSize number? if set, handle will be this size, if not - it will auto-calculate
----@field onScroll fun(position:number, progress:number)
+---@field onScroll? fun(position:number, progress:number)
+---@field onDragStopped? fun(position:number, progress:number) called when dragging is stopped
 ---@field silentDragging boolean? scrollbar will call `onScroll` only after the mouse is released, not while it moves
 
 ---@class UIToolkit.ScrollBar : UIToolkit.Component

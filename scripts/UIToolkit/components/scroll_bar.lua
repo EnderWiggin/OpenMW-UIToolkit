@@ -56,6 +56,7 @@ function ScrollBar:init(opts)
     self.maxScroll = math.max(0, opts.maxScroll)
     self.handleSize = opts.handleSize
     self.onScroll = opts.onScroll
+    self.onDragStopped = opts.onDragStopped
     self.position = 0
     self.isDragging = false
     ---@type number?
@@ -200,10 +201,14 @@ function ScrollBar:init(opts)
                         return true
                     end),
                     mouseRelease = async:callback(function(e)
-                        if e.button == 1 then
+                        if e.button == 1 and self.isDragging then
                             self.isDragging = false
                             self.dragOffset = nil
+                            if self.onDragStopped then self.onDragStopped(self.position, self:getProgress()) end
                         end
+                        return true
+                    end),
+                    mouseMove = async:callback(function(e)
                         return true
                     end),
                 }
@@ -228,10 +233,9 @@ function ScrollBar:init(opts)
                 end
             end),
             mouseRelease = async:callback(function(e)
-                if e.button == 1 then
+                if e.button == 1 and self.isDragging then
                     self.isDragging = false
-                    local offset = self.horizontal and e.offset.x or e.offset.y
-                    self:setPosition(handlePosToScrollPos(offset))
+                    if self.onDragStopped then self.onDragStopped(self.position, self:getProgress()) end
                 end
                 return true
             end),
