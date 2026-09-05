@@ -599,6 +599,61 @@ I.Settings.registerGroup {
 }
 ```
 
+## Number renderer: `'UIToolkit/Number'`
+Displays a text field for entering a numeric setting value, similar to the default 'number' renderer.
+
+The setting's `argument` table accepts these options:
+
+- `min` - optional minimum value.
+- `max` - optional maximum value.
+- `integer` - optional - rounds the value to an integer when set to `true`.
+- `default` - optional default value. When defined, the field displays a reset button.
+
+### Example
+```lua
+{
+    key = 'n_MaxItems',
+    renderer = 'UIToolkit/Number',
+    name = 'MaxItemsName',
+    description = 'MaxItemsDescription',
+    default = 10,
+    argument = {
+        min = 1,
+        max = 100,
+        integer = true,
+        default = 10,
+    },
+}
+```
+
+## Slider renderer: `'UIToolkit/Slider'`
+Displays a horizontal slider and a numeric text field for changing a setting value. Values entered in the text field are clamped to the configured range.
+
+The setting's `argument` table accepts these options:
+
+- `min` - required minimum value.
+- `max` - required maximum value.
+- `integer` - optional - rounds the value to an integer when set to `true`.
+- `default` - optional default value. When defined, the field displays a reset button.
+- `step` - optional amount changed by the slider arrows. Defaults to `1` for integer values and `0.1` otherwise.
+
+### Example
+```lua
+{
+    key = 'f_Scale',
+    renderer = 'UIToolkit/Slider',
+    name = 'ScaleName',
+    description = 'ScaleDescription',
+    default = 1,
+    argument = {
+        min = 0.5,
+        max = 2,
+        default = 1,
+        step = 0.1,
+    },
+}
+```
+
 # Tooltips
 Taken almost as-is from the [Dehardcode tooltips MR](https://gitlab.com/OpenMW/openmw/-/merge_requests/5336). Only some small tweaks to accommodate for the lack of newer API in 0.51. The idea is to allow modders to play with the dehardcode API before it is released and, hopefully, make transition to it easier when it happens.
 
