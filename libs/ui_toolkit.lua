@@ -159,7 +159,7 @@ function Components.sortedList(opts) end
 ---@class UIToolkit.TextEditOpts<T>
 ---@field default? T|fun():T|nil
 ---@field textSize number?
----@field textAlignH openmw.ui.ALIGNMENT?
+---@field textAlignH openmw.ui.Alignment?
 ---@field textColorNormal openmw.util.Color? defaults to DEFAULT_LIGHT
 ---@field textColorPlaceholder openmw.util.Color? defaults to DISABLED
 ---@field placeholder? string|fun():string will be shown when edit is not in focus and text is empty
@@ -295,7 +295,7 @@ function Components.sortedList(opts) end
 ---@field name string?
 ---@field width number?
 ---@field auto number?
----@field align? openmw.ui.ALIGNMENT
+---@field align? openmw.ui.Alignment
 ---@field inactive boolean? if true - can't be clicked
 
 ---@class UIToolkit.ColumnSorterOpts
@@ -317,7 +317,7 @@ function Components.sortedList(opts) end
 ---@field auto number?
 ---@field render UIToolkit.ListItem.Column.Renderer
 ---@field arg any? additional info for renderer
----@field align? openmw.ui.ALIGNMENT
+---@field align? openmw.ui.Alignment
 ---@field sort? UIToolkit.ColumnComparator|UIToolkit.SimpleColumnComparatorConfig comparator function to use for sorting by this column
 
 ---@class UIToolkit.SortedListOpts
@@ -572,7 +572,7 @@ function Templates.getBorderSize(style) end
 -- Required/ignored fields depend on the recipe item type.
 ---@class UTKTooltips.RecipeItem
 ---@field type UTKTooltips.RecipeItemType? defines which builder is used to create the layout for this item. (default='default')
----@field align openmw.ui.ALIGNMENT? Re-aligns this item. Used by paragraph item to set horizontal text alignment.
+---@field align openmw.ui.Alignment? Re-aligns this item. Used by paragraph item to set horizontal text alignment.
 ---@field text string? (used in default, note, paragraph)
 ---@field value any? (used in default) Value used by the value type. Is passed through tostring() so can be any type.
 ---@field min number? (used in default, progressBar) Min used by the value type, ignored if max is not set.
@@ -596,8 +596,8 @@ function Templates.getBorderSize(style) end
 --- Table of information defining a tooltip recipe
 ---@class UTKTooltips.Recipe
 ---@field type UTKTooltips.TooltipType? The type of tooltip this is a recipe for.
----@field arrange openmw.ui.ALIGNMENT? (Optional) Equivalent to the arrange option of a Flex (See UI documentation).
----@field align openmw.ui.ALIGNMENT? (Optional) Equivalent to the align option of a Flex (See UI documentation).
+---@field arrange openmw.ui.Alignment? (Optional) Equivalent to the arrange option of a Flex (See UI documentation).
+---@field align openmw.ui.Alignment? (Optional) Equivalent to the align option of a Flex (See UI documentation).
 ---@field gap number? (Optional) Equivalent to the gap property of a Flex (See UI documentation). The default gap between each item.
 ---@field grow number? (Optional) Equivalent to the grow property (See UI documentation)
 ---@field stretch number? (Optional) Equivalent to the stretch property (See UI documentation)

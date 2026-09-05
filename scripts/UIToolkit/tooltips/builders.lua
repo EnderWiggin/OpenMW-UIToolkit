@@ -51,7 +51,7 @@ end
 ---@param text string
 ---@param name string?
 ---@param width number?
----@param align openmw.ui.ALIGNMENT?
+---@param align openmw.ui.Alignment?
 ---@return openmw.ui.Layout
 local function textParagraph(text, name, width, align)
     return {
