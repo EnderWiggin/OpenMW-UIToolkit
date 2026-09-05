@@ -519,6 +519,12 @@ function Templates.getBorderSize(style) end
 
 ---@alias UIToolkit.SettingRenderer.DropboxItem string|{id:string, text:string?}
 
+---@class UIToolkit.SettingRenderer.Number
+---@field min number
+---@field max number
+---@field integer boolean? if set to true, will round value
+---@field default number? if defined, then edit box will have reset button that sets value to this
+
 ---@class UIToolkit.SettingRenderer.Slider
 ---@field min number
 ---@field max number

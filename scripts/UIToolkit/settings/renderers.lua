@@ -4,6 +4,7 @@ local I = require 'openmw.interfaces'
 local BUTTON = input.CONTROLLER_BUTTON
 
 I.Settings.registerRenderer('UIToolkit/Dropbox', require('scripts.UIToolkit.settings.renderer.dropbox'))
+I.Settings.registerRenderer('UIToolkit/Number', require('scripts.UIToolkit.settings.renderer.number'))
 I.Settings.registerRenderer('UIToolkit/Slider', require('scripts.UIToolkit.settings.renderer.slider'))
 
 ---@param key openmw.input.KeyboardEvent
