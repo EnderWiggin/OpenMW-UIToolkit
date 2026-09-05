@@ -461,12 +461,15 @@ local input = require 'openmw.input'
 local ui    = require 'openmw.ui'
 local util  = require 'openmw.util'
 local I     = require 'openmw.interfaces'
+local Class = require 'scripts.UIToolkit.class'
+local WindowHandler = require 'scripts.UIToolkit.window_handler'
 
 local windowId = 'my-simple-window'
 
-local handler = {}
+---@class Handler: UIToolkit.WindowHandler
+local Handler = Class(WindowHandler)
 
-function handler:onOpened(wnd)
+function Handler:onOpened(wnd)
     wnd:setContent(ui.content {
         {
             template = I.MWUI.templates.textNormal,
@@ -477,7 +480,7 @@ end
 
 I.UIToolkit.WindowManager.register(windowId, {
     title = 'My Window',
-    handler = handler,
+    handler = Handler,
     size = util.vector2(300, 120),
     position = util.vector2(300, 300),
     draggable = true,
