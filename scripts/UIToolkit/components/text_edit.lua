@@ -38,7 +38,7 @@ function TextEdit:init(opts)
     self._value = self:getDefault()
     self._placeholder = opts.placeholder
     self._textSize = opts.textSize or editTemplate.props.textSize
-    self._textColorNormal = opts.textColorNormal or t.Colors.DEFAULT_LIGHT
+    self._textColorNormal = opts.textColorNormal or t.Colors.DEFAULT
     self._textColorPlaceholder = opts.textColorPlaceholder or t.Colors.DISABLED
     self._onValueChanged = opts.onValueChanged
     local empty = isEmpty(self._value)
