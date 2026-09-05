@@ -197,14 +197,14 @@ function ScrollBar:init(opts)
                             self.isDragging = true
                             self.dragOffset = self.horizontal and e.offset.x or e.offset.y
                         end
-                        return false
+                        return true
                     end),
                     mouseRelease = async:callback(function(e)
                         if e.button == 1 then
                             self.isDragging = false
                             self.dragOffset = nil
                         end
-                        return false
+                        return true
                     end),
                 }
             }
@@ -215,21 +215,23 @@ function ScrollBar:init(opts)
                     local halfHand = (self:calcHandleSize() / 2)
                     local offset = self.horizontal and e.offset.x or e.offset.y
                     local adjustedY = offset - (self.dragOffset or halfHand) + halfHand
-                    self:setPosition(handlePosToScrollPos(adjustedY))
+                    self:setPosition(handlePosToScrollPos(adjustedY), opts.silentDragging)
                 end
                 return true
             end),
             mousePress = async:callback(function(e)
                 if e.button == 1 then
                     ambient.playSound('menu click')
-                    self.isDragging = true
                     local offset = self.horizontal and e.offset.x or e.offset.y
                     self:setPosition(handlePosToScrollPos(offset))
+                    self.isDragging = true
                 end
             end),
             mouseRelease = async:callback(function(e)
                 if e.button == 1 then
                     self.isDragging = false
+                    local offset = self.horizontal and e.offset.x or e.offset.y
+                    self:setPosition(handlePosToScrollPos(offset))
                 end
                 return true
             end),
