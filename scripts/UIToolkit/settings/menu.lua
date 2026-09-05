@@ -61,26 +61,32 @@ I.Settings.registerGroup {
         },
         {
             key = 'n_RepeatingButtonsThreshold',
-            renderer = 'number',
+            renderer = 'UIToolkit/Slider',
             name = 'SettingRepeatingButtonsThreshold',
             description = l10n('SettingRepeatingButtonsThresholdDesc',
                 H.mergeTables(H.TextColorParams, D.RepeatThreshold)),
             default = D.RepeatThreshold.default,
+            ---@type UIToolkit.SettingRenderer.Slider
             argument = {
                 min = D.RepeatThreshold.min,
                 max = D.RepeatThreshold.max,
+                default = D.RepeatThreshold.default,
+                step = 0.005,
             }
         },
         {
             key = 'n_RepeatingButtonsStep',
-            renderer = 'number',
+            renderer = 'UIToolkit/Slider',
             name = 'SettingRepeatingButtonsStep',
             description = l10n('SettingRepeatingButtonsStepDesc',
                 H.mergeTables(H.TextColorParams, D.RepeatStep)),
             default = D.RepeatStep.default,
+            ---@type UIToolkit.SettingRenderer.Slider
             argument = {
                 min = D.RepeatStep.min,
                 max = D.RepeatStep.max,
+                default = D.RepeatStep.default,
+                step = 0.005,
             }
         },
     },
