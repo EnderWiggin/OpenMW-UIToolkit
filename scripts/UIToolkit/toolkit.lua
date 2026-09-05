@@ -1,15 +1,18 @@
 ---@omw-context player|menu
 
-local core = require('openmw.core')
-local input = require('openmw.input')
-local ui = require('openmw.ui')
+local core      = require 'openmw.core'
+local input     = require 'openmw.input'
+local ui        = require 'openmw.ui'
 
-local D = require('scripts.UIToolkit.config.defaults')
-local cfgPlayer = require('scripts.UIToolkit.config.player')
+local context   = require 'scripts.UIToolkit.scriptContext'
+local D         = require 'scripts.UIToolkit.config.defaults'
+local cfgPlayer = require 'scripts.UIToolkit.config.player'
 
-local Theme = require('scripts.UIToolkit.themes.theme')
+local Theme     = require 'scripts.UIToolkit.themes.theme'
 
-local theme = Theme:new()
+local theme     = Theme:new()
+local isPlayer  = context.get() == context.Types.Player
+
 
 local ctx = {
     ---@type UIToolkit.Scrollable?
@@ -18,17 +21,17 @@ local ctx = {
 
 ---@class openmw.interfaces.UIToolkit
 local Interface = {
-    version = D.API,
-    ---@type UIToolkit.Templates
-    Templates = require('scripts.UIToolkit.templates.base'),
-    ---@type UIToolkit.Interactive
-    Interactive = require('scripts.UIToolkit.templates.interactive'),
-    ---@type UIToolkit.Components
-    Components = require('scripts.UIToolkit.components.all_components'),
-    Layers = require('scripts.UIToolkit.layers'),
-    WindowManager = require('scripts.UIToolkit.window_manager'),
-    Popups = require('scripts.UIToolkit.popups'),
+    version       = D.API,
+    Templates     = require 'scripts.UIToolkit.templates.base',
+    Interactive   = require 'scripts.UIToolkit.templates.interactive',
+    Components    = require 'scripts.UIToolkit.components.all_components',
+    Layers        = require 'scripts.UIToolkit.layers',
+    WindowManager = require 'scripts.UIToolkit.window_manager',
 }
+
+if isPlayer then
+    Interface.Popups = require 'scripts.UIToolkit.popups'
+end
 
 function Interface.getCtx() return ctx end
 

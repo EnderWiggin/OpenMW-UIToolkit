@@ -4,6 +4,9 @@ local ui = require('openmw.ui')
 local async = require('openmw.async')
 local ambient = require('openmw.ambient')
 local I = require('openmw.interfaces')
+local context = require 'scripts.UIToolkit.scriptContext'
+local isPlayer = context.get() == context.Types.Player
+local IP = I --[[@as openmw.interfaces.Player]]
 
 local H = require('scripts.UIToolkit.helpers')
 
@@ -63,7 +66,9 @@ function M.makeInteractive(opts, layoutOrElement)
     end)
     local isAlive = function() return element.layout ~= nil end
     element.layout.events.focusLoss = async:callback(function()
-        if I.UTKTooltips then I.UTKTooltips.setTooltip(nil) end
+        if isPlayer then
+            IP.UTKTooltips.setTooltip(nil)
+        end
         if nonInteractiveDisabled and element.layout.userData.disabled then return end
         M.updateState(element, { hovering = false })
         toolkit.queueUpdate(element)
@@ -75,13 +80,13 @@ function M.makeInteractive(opts, layoutOrElement)
         M.updateState(element, { hovering = true })
         toolkit.queueUpdate(element)
 
-        if I.UTKTooltips then
+        if isPlayer then
             local tooltip = opts.tooltip
             if type(tooltip) == "function" then
                 tooltip = tooltip()
             end
             if tooltip then
-                I.UTKTooltips.setTooltip(tooltip, { isAlive = isAlive })
+                IP.UTKTooltips.setTooltip(tooltip, { isAlive = isAlive })
             end
         end
     end)

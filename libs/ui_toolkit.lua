@@ -3,11 +3,14 @@
 -- UIToolkit version: 1
 -- UTKTooltips version: 1
 
----@class openmw.interfaces
----@field UIToolkit openmw.interfaces.UIToolkit
+---@class openmw.interfaces.Menu
+---@field UIToolkit openmw.interfaces.UIToolkit.Menu
+
+---@class openmw.interfaces.Player
+---@field UIToolkit openmw.interfaces.UIToolkit.Player
 ---@field UTKTooltips openmw.interfaces.UTKTooltips
 
----@class openmw.interfaces.UIToolkit
+---@class openmw.interfaces.UIToolkit.Menu
 ---@field version number
 ---@field getCtx fun():UIToolkit.Context
 ---@field getTheme fun():UIToolkit.Theme
@@ -20,6 +23,8 @@
 ---@field Interactive UIToolkit.Interactive
 ---@field Components UIToolkit.Components
 ---@field WindowManager UIToolkit.WindowManager
+
+---@class openmw.interfaces.UIToolkit.Player : openmw.interfaces.UIToolkit.Menu
 ---@field Popups UIToolkit.Popups
 
 ---@class UIToolkit.Context

@@ -12,6 +12,10 @@ local Class = require('scripts.UIToolkit.class')
 local Component = require('scripts.UIToolkit.components.component')
 local Scrollable = require('scripts.UIToolkit.components.scrollable')
 
+local context = require 'scripts.UIToolkit.scriptContext'
+local isPlayer = context.get() == context.Types.Player
+local IP = I --[[@as openmw.interfaces.Player]]
+
 
 ---@generic T : UIToolkit.ListItem.Base
 ---@class UIToolkit.ItemList : UIToolkit.Scrollable
@@ -229,6 +233,7 @@ function ItemList:_updateScrollable()
     local state = self.state
     local width = self:getContentWidth()
     local items = {}
+    ---@type openmw.ui.Layout
     local layout = self._scrollable.layout
     local from, to = self:getVisibleItemRange()
     for i = from, to do
@@ -331,16 +336,16 @@ function ItemList:setHovered(idOrIndex, fixedTipPos, fixedTipAnchor)
     end
     setItemHoveredStatus(state.provider, id, true)
 
-    if I.UTKTooltips then
+    if isPlayer then
         if item then
             local tip = state.provider:getTooltip(item)
-            I.UTKTooltips.setTooltip(tip, {
+            IP.UTKTooltips.setTooltip(tip, {
                 isAlive = function() return not self:isDestroyed() end,
                 fixedTipPos = fixedTipPos,
                 fixedTipAnchor = fixedTipAnchor,
             })
         else
-            I.UTKTooltips.setTooltip(nil)
+            IP.UTKTooltips.setTooltip(nil)
         end
     end
 
