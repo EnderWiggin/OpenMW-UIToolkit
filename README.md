@@ -3,6 +3,8 @@ Library to make creating LUA UI for OpenMW easier. Contains basic templates, int
 
 `libs/ui-toolkit.lua` - meta file for the [Cod3x](https://www.nexusmods.com/morrowind/mods/59122) LLS plugin. You can copy it to your projects that use Cod3x to get code completion for the public API of the UI Toolkit.
 
+>All Components or Elements/Layouts containing Components need to be updated and destroyed through UI Toolkit's `update`/`destroy` or `queueUpdate`/`queueDestroy` (with `deep` flag set to `true` where applicable) methods so that all relevant callbacks are called.
+
 # Templates
 `I.UIToolkit.Templates` contains templates and layout helpers for building UI. The examples below assume these imports:
 ```lua
@@ -136,7 +138,9 @@ I.UIToolkit.Interactive.makeInteractive({
 # Components
 `I.UIToolkit.Components` contains functions that create various UI components.
 
-Note that all component creation methods return `UIToolkit.Component` objects, not `Element` or `Layout`. To add them to layout use `component.element`.
+All component creation methods return `UIToolkit.Component` objects, not `Element` or `Layout`. To add them to layout use `component.element`.
+
+>All Components or Elements/Layouts containing Components need to be updated and destroyed through UI Toolkit's `update`/`destroy` or `queueUpdate`/`queueDestroy` (with `deep` flag set to `true` where applicable) methods so that all relevant callbacks are called. 
 
 Component objects have methods to get/set their visibility, active and disables states:
 ```lua
