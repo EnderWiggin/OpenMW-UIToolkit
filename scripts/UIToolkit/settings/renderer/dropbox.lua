@@ -1,6 +1,7 @@
 ---@omw-context menu
 
 local core = require 'openmw.core'
+local time = require 'openmw_aux.time'
 local I = require 'openmw.interfaces'
 
 ---@param value string
@@ -47,6 +48,16 @@ return function(value, set, args)
         set(selected.id)
     end
     dropbox:selectItem(selected)
+
+    -- check if component was destroyed - call destruction callback
+    -- needed for cleanup because it wasn't destroyed through UIToolkit's methods
+    local stopFn
+    stopFn = time.runRepeatedly(function()
+        if dropbox:isDestroyed() then
+            stopFn()
+            dropbox:beforeElementDestroy()
+        end
+    end, time.second)
 
     return dropbox.element
 end
