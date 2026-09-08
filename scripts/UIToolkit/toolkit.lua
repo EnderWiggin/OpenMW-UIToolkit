@@ -21,18 +21,18 @@ local ctx = {
 
 ---@class openmw.interfaces.UIToolkit.Menu
 local Interface = {
-    version       = D.API,
-    Templates     = require 'scripts.UIToolkit.templates.base',
-    Interactive   = require 'scripts.UIToolkit.templates.interactive',
-    Components    = require 'scripts.UIToolkit.components.all_components',
-    Layers        = require 'scripts.UIToolkit.layers',
-    WindowManager = require 'scripts.UIToolkit.window_manager',
+    version     = D.API,
+    Templates   = require 'scripts.UIToolkit.templates.base',
+    Interactive = require 'scripts.UIToolkit.templates.interactive',
+    Components  = require 'scripts.UIToolkit.components.all_components',
+    Layers      = require 'scripts.UIToolkit.layers',
 }
 
 local InterfaceP
 if isPlayer then
-    InterfaceP = Interface --[[@as openmw.interfaces.UIToolkit.Player]]
-    InterfaceP.Popups = require 'scripts.UIToolkit.popups'
+    InterfaceP               = Interface --[[@as openmw.interfaces.UIToolkit.Player]]
+    InterfaceP.WindowManager = require 'scripts.UIToolkit.window_manager'
+    InterfaceP.Popups        = require 'scripts.UIToolkit.popups'
 end
 
 function Interface.getCtx() return ctx end
@@ -241,12 +241,13 @@ local function onFrame()
             local method = popup.handler.getFocusedScrollable
             if method then scrollable = method() end
         end
+
+        if not scrollable then
+            local window = InterfaceP.WindowManager.getFocusedWindowHandler()
+            scrollable = window and window:getFocusedScrollable()
+        end
     end
 
-    if not scrollable then
-        local window = Interface.WindowManager.getFocusedWindowHandler()
-        scrollable = window and window:getFocusedScrollable()
-    end
 
     if scrollable then
         local rightStick = input.getAxisValue(input.CONTROLLER_AXIS.RightY)
@@ -266,7 +267,9 @@ local function onFrame()
             buttonPressDuration[button] = held
         end
     end
-    Interface.WindowManager._onFrame(dt)
+    if isPlayer then
+        InterfaceP.WindowManager._onFrame(dt)
+    end
 
     processUpdateAndDestroyQueues()
 end
@@ -288,11 +291,11 @@ local function onControllerButtonPress(button)
             if callback then callback(button) end
             return
         end
-    end
 
-    local focused = Interface.WindowManager.getFocusedWindowHandler()
-    if not focused then return end
-    focused:onControllerButtonPress(button)
+        local focused = InterfaceP.WindowManager.getFocusedWindowHandler()
+        if not focused then return end
+        focused:onControllerButtonPress(button)
+    end
 end
 
 ---@param button number

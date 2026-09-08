@@ -1,4 +1,4 @@
----@omw-context player|menu
+---@omw-context player
 
 local ui = require('openmw.ui')
 local util = require('openmw.util')

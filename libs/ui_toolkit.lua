@@ -22,9 +22,9 @@
 ---@field Templates UIToolkit.Templates
 ---@field Interactive UIToolkit.Interactive
 ---@field Components UIToolkit.Components
----@field WindowManager UIToolkit.WindowManager
 
 ---@class openmw.interfaces.UIToolkit.Player : openmw.interfaces.UIToolkit.Menu
+---@field WindowManager UIToolkit.WindowManager
 ---@field Popups UIToolkit.Popups
 
 ---@class UIToolkit.Context
