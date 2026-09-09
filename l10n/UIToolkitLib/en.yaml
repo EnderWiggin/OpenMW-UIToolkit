@@ -27,6 +27,19 @@ ControllerSettingsName: Controller Settings
 ControllerSettingsDesc: |-
   Configure UI Toolkit controller settings.
 
+SettingControllerStyleName: Controller Type
+SettingControllerStyleDesc: Defines style of icons used by controller input hints
+
+ConfigControllerType_Default: Default
+ConfigControllerType_XBox: Xbox
+ConfigControllerType_PSX: PSX
+ConfigControllerType_Switch: Switch
+
+SettingAlwaysShowHintName: Always Show Input Hint
+SettingAlwaysShowHintDesc: |-
+  If turned on, will always show controller input hint, if available.
+  If off will show only if the last used input was controller.
+
 SettingRepeatingButtons: Repeating Buttons
 SettingRepeatingButtonsDesc: Allows to repeat controller button input while held.
 

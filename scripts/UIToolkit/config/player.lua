@@ -10,6 +10,8 @@ local D = require 'scripts.UIToolkit.config.defaults'
 ---@field b_ScaleScrollbarWidthWithText boolean
 
 ---@class UIToolkit.Config.Player.Controller
+---@field s_ControllerStyle string
+---@field b_AlwaysShowHint boolean
 ---@field b_RepeatingButtons boolean
 ---@field n_RepeatingButtonsThreshold number
 ---@field n_RepeatingButtonsStep number

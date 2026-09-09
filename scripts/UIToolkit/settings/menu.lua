@@ -53,6 +53,24 @@ I.Settings.registerGroup {
     permanentStorage = true,
     settings = {
         {
+            key = 's_ControllerStyle',
+            renderer = 'UIToolkit/Dropbox',
+            name = 'SettingControllerStyleName',
+            description = l10n('SettingControllerStyleDesc', H.TextColorParams),
+            default = D.Controller.Default,
+            argument = {
+                l10n = D.L10N,
+                items = { D.Controller.Default, D.Controller.XBox, D.Controller.PSX, D.Controller.Switch },
+            }
+        },
+        {
+            key = 'b_AlwaysShowHint',
+            renderer = 'checkbox',
+            name = 'SettingAlwaysShowHintName',
+            description = 'SettingAlwaysShowHintDesc',
+            default = false,
+        },
+        {
             key = 'b_RepeatingButtons',
             renderer = 'checkbox',
             name = 'SettingRepeatingButtons',

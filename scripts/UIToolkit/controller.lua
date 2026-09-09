@@ -1,13 +1,18 @@
 ---@omw-context player
 
-local input  = require 'openmw.input'
-local ui     = require 'openmw.ui'
-local util   = require 'openmw.util'
+local async     = require 'openmw.async'
+local input     = require 'openmw.input'
+local ui        = require 'openmw.ui'
+local util      = require 'openmw.util'
+local storage   = require 'openmw.storage'
 
-local I      = require 'openmw.interfaces'
-local v2     = util.vector2
-local BUTTON = input.CONTROLLER_BUTTON
-local AXIS   = input.CONTROLLER_AXIS
+local I         = require 'openmw.interfaces'
+local v2        = util.vector2
+local BUTTON    = input.CONTROLLER_BUTTON
+local AXIS      = input.CONTROLLER_AXIS
+
+local D         = require 'scripts.UIToolkit.config.defaults'
+local cfgPlayer = require 'scripts.UIToolkit.config.player'
 
 ---@class UIToolkit.Controller.HintData
 ---@field source string window or popup
@@ -27,8 +32,6 @@ local M = {}
 
 
 local controllerIsActive = false
-
---TODO: read from settings
 local isPsx              = false
 local isXbox             = false
 local isSwitch           = false
@@ -307,17 +310,35 @@ function M._onFrame(dt)
     showControllerHint(hintData.hints)
 end
 
+function M._updateHintVisibility()
+    if not element then return end
+    element.layout.props.visible = controllerIsActive or alwaysShowHint
+    I.UIToolkit.update(element)
+end
+
 function M._setControllerActiveState(state)
     if state == controllerIsActive then return end
     controllerIsActive = state
-    if element then
-        element.layout.props.visible = controllerIsActive or alwaysShowHint
-        I.UIToolkit.update(element)
-    end
+    M._updateHintVisibility()
 end
 
 function M.getControllerActiveState()
     return controllerIsActive
 end
+
+local function updateConfig()
+    local c        = cfgPlayer.controller
+    local style    = c.s_ControllerStyle
+    local STYLE    = D.Controller
+
+    isPsx          = style == STYLE.PSX
+    isXbox         = style == STYLE.XBox
+    isSwitch       = style == STYLE.Switch
+
+    alwaysShowHint = c.b_AlwaysShowHint
+    M._updateHintVisibility()
+end
+storage.playerSection(D.Section.Controller):subscribe(async:callback(updateConfig))
+updateConfig()
 
 return M

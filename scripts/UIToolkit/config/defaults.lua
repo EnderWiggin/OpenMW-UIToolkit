@@ -17,6 +17,13 @@ local M = {
         Controller = section 'Controller',
     },
 
+    Controller = {
+        Default = 'ConfigControllerType_Default',
+        XBox    = 'ConfigControllerType_XBox',
+        PSX     = 'ConfigControllerType_PSX',
+        Switch  = 'ConfigControllerType_Switch',
+    },
+
     RepeatThreshold = {
         default = 0.5,
         min = 0.2,
