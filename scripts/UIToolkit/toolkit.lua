@@ -29,11 +29,13 @@ local Interface = {
 }
 
 local InterfaceP
+local Controller
 if isPlayer then
     InterfaceP               = Interface --[[@as openmw.interfaces.UIToolkit.Player]]
     InterfaceP.WindowManager = require 'scripts.UIToolkit.window_manager'
     InterfaceP.Popups        = require 'scripts.UIToolkit.popups'
-    InterfaceP.Controller    = require 'scripts.UIToolkit.controller'
+    Controller               = require 'scripts.UIToolkit.controller' --[[@as UIToolkit.ControllerPrivate]]
+    InterfaceP.Controller    = Controller
 end
 
 function Interface.getCtx() return ctx end
@@ -232,6 +234,17 @@ local function onControllerButtonRepeat(button)
     focused:onControllerButtonRepeat(button)
 end
 
+local function controllerStickMoved()
+    return math.max(
+        math.abs(input.getAxisValue(input.CONTROLLER_AXIS.RightY)),
+        math.abs(input.getAxisValue(input.CONTROLLER_AXIS.RightX)),
+        math.abs(input.getAxisValue(input.CONTROLLER_AXIS.LeftX)),
+        math.abs(input.getAxisValue(input.CONTROLLER_AXIS.LeftY)),
+        math.abs(input.getAxisValue(input.CONTROLLER_AXIS.TriggerLeft)),
+        math.abs(input.getAxisValue(input.CONTROLLER_AXIS.TriggerRight))
+    ) > 0.25
+end
+
 local function onFrame()
     local dt = core.getRealFrameDuration()
 
@@ -270,13 +283,21 @@ local function onFrame()
     end
     if isPlayer then
         InterfaceP.WindowManager._onFrame(dt)
-        InterfaceP.Controller._onFrame(dt)
+        Controller._onFrame(dt)
+        if input.getMouseMoveX() ~= 0 or input.getMouseMoveY() ~= 0 then
+            Controller._setControllerActiveState(false)
+        elseif controllerStickMoved() then
+            Controller._setControllerActiveState(true)
+        end
     end
 
     processUpdateAndDestroyQueues()
 end
 
 local function onMouseWheel(v)
+    if isPlayer then
+        Controller._setControllerActiveState(false)
+    end
     local scrollable = getFocusedScrollable()
     if not scrollable then return end
     scrollable:onMouseScrolled(v)
@@ -287,6 +308,7 @@ local function onControllerButtonPress(button)
     buttonPressDuration[button] = 0
 
     if isPlayer then
+        Controller._setControllerActiveState(true)
         local popup = InterfaceP.Popups.getActivePopup()
         if popup then
             local callback = popup.handler.onControllerButtonPress
@@ -303,6 +325,9 @@ end
 ---@param button number
 local function onControllerButtonRelease(button)
     buttonPressDuration[button] = nil
+    if isPlayer then
+        Controller._setControllerActiveState(true)
+    end
 end
 
 local function onUIModeChanged()

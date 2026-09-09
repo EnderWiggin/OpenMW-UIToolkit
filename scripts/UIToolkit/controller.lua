@@ -22,13 +22,17 @@ local currentHint = nil
 local element = nil
 
 
+---@class UIToolkit.ControllerPrivate : UIToolkit.Controller
 local M = {}
 
 
+local controllerIsActive = false
+
 --TODO: read from settings
-local isPsx    = false
-local isXbox   = false
-local isSwitch = false
+local isPsx              = false
+local isXbox             = false
+local isSwitch           = false
+local alwaysShowHint     = false
 
 ---@param button number
 ---@return string
@@ -259,6 +263,7 @@ local function showControllerHint(hints)
             relativeSize = v2(1, 0),
             anchor = v2(0.5, 1),
             relativePosition = v2(0.5, 1),
+            visible = controllerIsActive or alwaysShowHint,
         },
         content = ui.content { {
             type = ui.TYPE.Flex,
@@ -296,6 +301,19 @@ function M._onFrame(dt)
     end
     currentHint = hintData
     showControllerHint(hintData.hints)
+end
+
+function M._setControllerActiveState(state)
+    if state == controllerIsActive then return end
+    controllerIsActive = state
+    if element then
+        element.layout.props.visible = controllerIsActive or alwaysShowHint
+        I.UIToolkit.update(element)
+    end
+end
+
+function M.getControllerActiveState()
+    return controllerIsActive
 end
 
 return M
