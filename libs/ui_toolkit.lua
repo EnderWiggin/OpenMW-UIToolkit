@@ -422,6 +422,16 @@ function Components.sortedList(opts) end
 ---@field hoverColor openmw.util.Color?
 ---@field baseColor openmw.util.Color?
 
+
+---@class UIToolkit.Controller
+
+---@class UIToolkit.Controller.IconOpts
+---@field color? openmw.util.Color
+---@field size? number
+
+---@alias UIToolkit.Controller.DPAdDirection 'left'|'right'|'up'|'down'|'horizontal'|'vertical'|'all'
+
+
 ---@class UIToolkit.Templates
 local Templates = {}
 

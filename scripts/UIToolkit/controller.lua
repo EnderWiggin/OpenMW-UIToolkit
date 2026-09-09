@@ -12,9 +12,10 @@ local AXIS   = input.CONTROLLER_AXIS
 
 local M = {}
 
+
 --TODO: read from settings
-local isPsx = false
-local isXbox = false
+local isPsx    = false
+local isXbox   = false
 local isSwitch = false
 
 ---@param button number
@@ -33,14 +34,11 @@ function M.getControllerButtonIcon(button)
     if button == BUTTON.Y then
         return isPsx and 'textures/omw_psx_button_triangle.dds' or 'textures/omw_steam_button_y.dds';
     end
-    if button == BUTTON.DPadDown
-        or button == BUTTON.DPadRight
-        or button == BUTTON.DPadLeft
-        or button == BUTTON.DPadUp
-    then
-        --TODO: split into different icons for each direction?
-        return isPsx and 'textures/omw_psx_button_dpad.dds' or 'textures/omw_steam_button_dpad.dds'
-    end
+
+    if button == BUTTON.DPadDown then return M.getDPadIcon 'down' end
+    if button == BUTTON.DPadUp then return M.getDPadIcon 'up' end
+    if button == BUTTON.DPadLeft then return M.getDPadIcon 'left' end
+    if button == BUTTON.DPadRight then return M.getDPadIcon 'right' end
 
     if button == BUTTON.Back then return 'textures/omw_steam_button_view.dds' end
     if button == BUTTON.Start then return 'textures/omw_steam_button_menu.dds' end
@@ -97,11 +95,40 @@ function M.getControllerAxisIcon(axis)
     return 'icons/UIToolkit/unknown-effect.dds'
 end
 
+---@param direction UIToolkit.Controller.DPAdDirection
+---@return string
+function M.getDPadIcon(direction)
+    if direction == 'down' then
+        return isPsx and 'icons/UIToolkit/psx_dpad_down.dds' or 'icons/UIToolkit/steam_dpad_down.dds'
+    end
+    if direction == 'up' then
+        return isPsx and 'icons/UIToolkit/psx_dpad_up.dds' or 'icons/UIToolkit/steam_dpad_up.dds'
+    end
+    if direction == 'left' then
+        return isPsx and 'icons/UIToolkit/psx_dpad_left.dds' or 'icons/UIToolkit/steam_dpad_left.dds'
+    end
+    if direction == 'right' then
+        return isPsx and 'icons/UIToolkit/psx_dpad_right.dds' or 'icons/UIToolkit/steam_dpad_right.dds'
+    end
+
+    if direction == 'horizontal' then
+        return isPsx and 'icons/UIToolkit/psx_dpad_h.dds' or 'icons/UIToolkit/steam_dpad_h.dds'
+    end
+    if direction == 'vertical' then
+        return isPsx and 'icons/UIToolkit/psx_dpad_v.dds' or 'icons/UIToolkit/steam_dpad_v.dds'
+    end
+
+    return isPsx and 'textures/omw_psx_button_dpad.dds' or 'textures/omw_steam_button_dpad.dds'
+end
+
+---@param icon string
+---@param opts UIToolkit.Controller.IconOpts?
+---@return openmw.ui.Layout
 local function makeIconLayout(icon, opts)
     local toolkit = I.UIToolkit
     local theme = toolkit.getTheme()
     local size = opts and opts.size or 4 * math.ceil((theme.Sizes.textNormal + 4) / 4)
-    local color = theme.Colors.DISABLED --TODO: customize color?
+    local color = opts and opts.color or theme.Colors.HEADER
     return {
         type = ui.TYPE.Image,
         props = {
@@ -113,14 +140,14 @@ local function makeIconLayout(icon, opts)
 end
 
 ---@param button number
----@param opts? {size: number?}
+---@param opts UIToolkit.Controller.IconOpts?
 ---@return openmw.ui.Layout
 function M.makeButtonLayout(button, opts)
     return makeIconLayout(M.getControllerButtonIcon(button), opts)
 end
 
 ---@param axis number
----@param opts? {size: number?}
+---@param opts UIToolkit.Controller.IconOpts?
 ---@return openmw.ui.Layout
 function M.makeAxisLayout(axis, opts)
     return makeIconLayout(M.getControllerAxisIcon(axis), opts)
