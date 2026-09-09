@@ -24,10 +24,15 @@ local BUTTON        = input.CONTROLLER_BUTTON
 local textSize  = I.UIToolkit.getTheme().Sizes.textNormal
 local rowHeight = 1.5 * (textSize + 2)
 
+
+local SHOW_POPUP_BUTTON  = input.CONTROLLER_BUTTON.Y
+local CLOSE_POPUP_BUTTON = SHOW_POPUP_BUTTON
+
+
 ---@type UIToolkit.SortedList?
 local list
 ---@type UIToolkit.SortedList.Column[]
-local columns   = {
+local columns = {
     { id = 'icon',   name = nil,    sort = { col = 'id' },     render = ColumnItem.renderIcon, width = rowHeight + 5,   arg = { sz = 1.5 * textSize } },
     { id = 'name',   name = 'Name', sort = {},                 render = ColumnItem.renderText, },
     { id = 'weight', name = 'Wgt.', sort = { numeric = true }, render = ColumnItem.renderText, width = 2 * rowHeight,   arg = { textAlignH = ui.ALIGNMENT.End }, align = ui.ALIGNMENT.End },
@@ -94,6 +99,95 @@ local function makeSpellList()
     return spellList, onClicked
 end
 
+local function onShowPopupClicked()
+    local closePopup
+    closePopup = I.UIToolkit.Popups.show {
+        title = 'THE POPUP',
+        body =
+        'This is a very cool popup. It has a long text on it. Very good, very long text.\nIt probably takes up several lines on this popup, wow!',
+        controllerHints = { { text = 'Close Popup', input = { id = CLOSE_POPUP_BUTTON } } },
+        onControllerButtonPress = function(button)
+            if button == CLOSE_POPUP_BUTTON then
+                closePopup()
+            end
+        end,
+        buttons = {
+            {
+                text = 'Select Spell',
+                onClicked = function()
+                    local spellList, clicked = makeSpellList()
+                    local function onButton(button)
+                        if button == BUTTON.DPadDown then
+                            spellList.list:shiftHoveredItem(1)
+                        elseif button == BUTTON.DPadUp then
+                            spellList.list:shiftHoveredItem(-1)
+                        elseif button == BUTTON.A then
+                            local hovered = spellList.list:getHovered()
+                            if hovered then clicked(hovered) end
+                        end
+                    end
+
+                    I.UIToolkit.Popups.show {
+                        title = 'Select the spell',
+                        body = spellList,
+                        buttons = { { text = 'Close' } },
+                        getFocusedScrollable = function() return spellList.list end,
+                        onControllerButtonPress = onButton,
+                        onControllerButtonRepeat = function(button)
+                            if button == BUTTON.DPadDown or button == BUTTON.DPadUp then
+                                onButton(button)
+                            end
+                        end,
+                    }
+                end,
+            },
+            {
+                text = 'Queue Popup',
+                noClose = true,
+                style = 'thin',
+                onClicked = function()
+                    local attrs = {}
+                    for id, record in pairs(core.stats.Attribute.records) do
+                        attrs[#attrs + 1] = {
+                            id = id,
+                            text = record.name,
+                            tooltip = { key = id, type = I.UTKTooltips.TYPE.Attribute },
+                        }
+                    end
+
+                    I.UIToolkit.Popups.show {
+                        body = {
+                            type = ui.TYPE.Flex,
+                            props = {},
+                            content = ui.content {
+                                {
+                                    template = I.UIToolkit.Templates.paragraph(),
+                                    props = {
+                                        size = v2(300, 0),
+                                        text = 'Press OK to close this popup an return to the previous one!\nOr select attribute for some fun:',
+                                    },
+                                },
+                                I.UIToolkit.Templates.intervalV(5),
+                                I.UIToolkit.Components.dropbox {
+                                    width = 150,
+                                    items = attrs,
+                                    onItemSelected = function(item, idx)
+                                        print('Attribute:', item.text)
+                                    end
+                                }.element
+                            },
+                        },
+                        borderStyle = 'thin',
+                        buttons = { { text = 'OK' }, }
+                    }
+                end,
+                tooltip = { body = 'Will open new popup without closing this one.', width = 200 }
+            },
+            { text = 'Cancel', tooltip = 'Closes this popup' },
+        }
+    }
+end
+
 ---@class Handler: UIToolkit.WindowHandler
 local Handler = Class(WindowHandler)
 
@@ -104,6 +198,11 @@ function Handler:onOpened(wnd, _, saved)
     state = saved or {}
     local theme = I.UIToolkit.getTheme()
     I.UI.setMode(I.UI.MODE.Interface, { windows = {} })
+
+    wnd:setControllerHints {
+        { text = 'Show Popup', input = { id = SHOW_POPUP_BUTTON } },
+    }
+
     list = I.UIToolkit.Components.sortedList {
         size = v2(200, 300),
         onItemClicked = function(data)
@@ -256,87 +355,7 @@ function Handler:onOpened(wnd, _, saved)
                             },
                         },
                         I.UIToolkit.Templates.intervalV(5),
-                        I.UIToolkit.Components.textButton { text = 'Show Popup', onClick = function()
-                            I.UIToolkit.Popups.show {
-                                title = 'THE POPUP',
-                                body =
-                                'This is a very cool popup. It has a long text on it. Very good, very long text.\nIt probably takes up several lines on this popup, wow!',
-                                buttons = {
-                                    {
-                                        text = 'Select Spell',
-                                        onClicked = function()
-                                            local spellList, clicked = makeSpellList()
-                                            local function onButton(button)
-                                                if button == BUTTON.DPadDown then
-                                                    spellList.list:shiftHoveredItem(1)
-                                                elseif button == BUTTON.DPadUp then
-                                                    spellList.list:shiftHoveredItem(-1)
-                                                elseif button == BUTTON.A then
-                                                    local hovered = spellList.list:getHovered()
-                                                    if hovered then clicked(hovered) end
-                                                end
-                                            end
-
-                                            I.UIToolkit.Popups.show {
-                                                title = 'Select the spell',
-                                                body = spellList,
-                                                buttons = { { text = 'Close' } },
-                                                getFocusedScrollable = function() return spellList.list end,
-                                                onControllerButtonPress = onButton,
-                                                onControllerButtonRepeat = function(button)
-                                                    if button == BUTTON.DPadDown or button == BUTTON.DPadUp then
-                                                        onButton(button)
-                                                    end
-                                                end,
-                                            }
-                                        end,
-                                    },
-                                    {
-                                        text = 'Queue Popup',
-                                        noClose = true,
-                                        style = 'thin',
-                                        onClicked = function()
-                                            local attrs = {}
-                                            for id, record in pairs(core.stats.Attribute.records) do
-                                                attrs[#attrs + 1] = {
-                                                    id = id,
-                                                    text = record.name,
-                                                    tooltip = { key = id, type = I.UTKTooltips.TYPE.Attribute },
-                                                }
-                                            end
-
-                                            I.UIToolkit.Popups.show {
-                                                body = {
-                                                    type = ui.TYPE.Flex,
-                                                    props = {},
-                                                    content = ui.content {
-                                                        {
-                                                            template = I.UIToolkit.Templates.paragraph(),
-                                                            props = {
-                                                                size = v2(300, 0),
-                                                                text = 'Press OK to close this popup an return to the previous one!\nOr select attribute for some fun:',
-                                                            },
-                                                        },
-                                                        I.UIToolkit.Templates.intervalV(5),
-                                                        I.UIToolkit.Components.dropbox {
-                                                            width = 150,
-                                                            items = attrs,
-                                                            onItemSelected = function(item, idx)
-                                                                print('Attribute:', item.text)
-                                                            end
-                                                        }.element
-                                                    },
-                                                },
-                                                borderStyle = 'thin',
-                                                buttons = { { text = 'OK' }, }
-                                            }
-                                        end,
-                                        tooltip = { body = 'Will open new popup without closing this one.', width = 200 }
-                                    },
-                                    { text = 'Cancel', tooltip = 'Closes this popup' },
-                                }
-                            }
-                        end }.element,
+                        I.UIToolkit.Components.textButton { text = 'Show Popup', onClick = onShowPopupClicked }.element,
                         I.UIToolkit.Templates.intervalV(5),
                         I.UIToolkit.Components.textButton { text = 'Width=110', width = 110 }.element,
                         I.UIToolkit.Templates.intervalV(5),
@@ -428,6 +447,13 @@ end
 function Handler:onResized(inner)
     if list then
         list:setSize(inner - v2(340, 0))
+    end
+end
+
+---@param button number
+function Handler:onControllerButtonPress(button)
+    if button == SHOW_POPUP_BUTTON then
+        onShowPopupClicked()
     end
 end
 
