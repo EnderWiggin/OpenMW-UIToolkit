@@ -39,7 +39,7 @@ local alwaysShowHint     = false
 
 ---@param button number
 ---@return string
-function M.getControllerButtonIcon(button)
+function M.getButtonIcon(button)
     if button == BUTTON.A then
         return isPsx and 'textures/omw_psx_button_x.dds' or 'textures/omw_steam_button_a.dds';
     end
@@ -80,7 +80,7 @@ end
 
 ---@param axis number
 ---@return string
-function M.getControllerAxisIcon(axis)
+function M.getAxisIcon(axis)
     if axis == AXIS.LeftX or axis == AXIS.LeftY
         or axis == AXIS.MoveLeftRight or axis == AXIS.MoveForwardBackward
     then
@@ -162,14 +162,14 @@ end
 ---@param opts UIToolkit.Controller.IconOpts?
 ---@return openmw.ui.Layout
 function M.makeButtonLayout(button, opts)
-    return makeIconLayout(M.getControllerButtonIcon(button), opts)
+    return makeIconLayout(M.getButtonIcon(button), opts)
 end
 
 ---@param axis number
 ---@param opts UIToolkit.Controller.IconOpts?
 ---@return openmw.ui.Layout
 function M.makeAxisLayout(axis, opts)
-    return makeIconLayout(M.getControllerAxisIcon(axis), opts)
+    return makeIconLayout(M.getAxisIcon(axis), opts)
 end
 
 ---@param hints (UIToolkit.Controller.Hint|'separator')[]

@@ -428,6 +428,12 @@ function Components.sortedList(opts) end
 
 
 ---@class UIToolkit.Controller
+---@field getButtonIcon fun(button:number):string
+---@field getAxisIcon fun(axis:number):string
+---@field getDPadIcon fun(direction:UIToolkit.Controller.DPAdDirection):string
+---@field makeButtonLayout fun(button:number, opts:UIToolkit.Controller.IconOpts?)
+---@field makeAxisLayout fun(axis:number, opts:UIToolkit.Controller.IconOpts?)
+---@field getControllerActiveState fun():boolean
 
 ---@class UIToolkit.Controller.IconOpts
 ---@field color? openmw.util.Color
