@@ -26,6 +26,7 @@
 ---@class openmw.interfaces.UIToolkit.Player : openmw.interfaces.UIToolkit.Menu
 ---@field WindowManager UIToolkit.WindowManager
 ---@field Popups UIToolkit.Popups
+---@field Controller UIToolkit.Controller
 
 ---@class UIToolkit.Context
 ---@field lastMousePos openmw.util.Vector2? last mouse position detected by interactive elements. Needed until `ui.mousePosition()` is merged (0.52?)
@@ -187,6 +188,7 @@ function Components.sortedList(opts) end
 ---@field maxVisibleItems integer? defaults to all
 
 ---@class UIToolkit.Dropbox : UIToolkit.Component
+---@field setItems fun(self:UIToolkit.Dropbox, items:UIToolkit.ListData.Text[])
 ---@field getSelectedItem fun(self:UIToolkit.Dropbox):UIToolkit.ListData.Text
 ---@field selectItem fun(self:UIToolkit.Dropbox, item:UIToolkit.ListData.Text)
 ---@field selectById fun(self:UIToolkit.Dropbox, id:string)

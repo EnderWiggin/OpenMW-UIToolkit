@@ -33,6 +33,7 @@ if isPlayer then
     InterfaceP               = Interface --[[@as openmw.interfaces.UIToolkit.Player]]
     InterfaceP.WindowManager = require 'scripts.UIToolkit.window_manager'
     InterfaceP.Popups        = require 'scripts.UIToolkit.popups'
+    InterfaceP.Controller    = require 'scripts.UIToolkit.controller'
 end
 
 function Interface.getCtx() return ctx end
