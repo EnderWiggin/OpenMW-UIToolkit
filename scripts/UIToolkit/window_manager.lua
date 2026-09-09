@@ -19,7 +19,7 @@ local windows = {}
 ---@type string[]
 local windowFocusQueue = {}
 
----@type table<string, UIToolkit.COntroller.HintData>
+---@type table<string, UIToolkit.Controller.HintData>
 local controllerHints = {}
 
 ---@param id string
@@ -103,7 +103,7 @@ function M.close(id)
     H.removeFromArray(windowFocusQueue, id)
 end
 
----@return UIToolkit.COntroller.HintData?
+---@return UIToolkit.Controller.HintData?
 function M.getFocusedWindowHintData()
     for i = 1, #windowFocusQueue do
         local id = windowFocusQueue[i]

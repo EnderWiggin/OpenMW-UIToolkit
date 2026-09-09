@@ -9,14 +9,14 @@ local v2     = util.vector2
 local BUTTON = input.CONTROLLER_BUTTON
 local AXIS   = input.CONTROLLER_AXIS
 
----@class UIToolkit.COntroller.HintData
+---@class UIToolkit.Controller.HintData
 ---@field source string window or popup
 ---@field id string|number id of the window or popup
 ---@field ts number time this hint was updated at
 ---@field hints? (UIToolkit.Controller.Hint|'separator')[]
 
 
----@type UIToolkit.COntroller.HintData|nil
+---@type UIToolkit.Controller.HintData|nil
 local currentHint = nil
 ---@type openmw.ui.Element?
 local element = nil
@@ -191,33 +191,33 @@ local function makeLayouts(hints)
 
     local layouts = {}
 
-    local isSeperator = false
-    local wasSeperator = false
+    local isSeparator = false
+    local wasSeparator = false
     for i = 1, #hints do
         local hint = hints[i]
-        isSeperator = hint == 'separator'
+        isSeparator = hint == 'separator'
 
-        if i > 1 and not isSeperator and not wasSeperator then
+        if i > 1 and not isSeparator and not wasSeparator then
             layouts[#layouts + 1] = gap
         end
 
-        if isSeperator then
+        if isSeparator then
             layouts[#layouts + 1] = separator
         else
-            local input = hint.input
-            if #input == 0 then
-                layouts[#layouts + 1] = input.axis
-                    and M.makeAxisLayout(input.id)
-                    or M.makeButtonLayout(input.id)
+            local _input = hint.input
+            if #_input == 0 then
+                layouts[#layouts + 1] = _input.axis
+                    and M.makeAxisLayout(_input.id)
+                    or M.makeButtonLayout(_input.id)
             else
-                for j = 1, #input do
+                for j = 1, #_input do
                     if hint.combo and j > 1 then
                         layouts[#layouts + 1] = {
                             template = T.header(),
                             props = { text = '+', textSize = textSize + 2 },
                         }
                     end
-                    local tmp = input[j]
+                    local tmp = _input[j]
                     layouts[#layouts + 1] = tmp.axis
                         and M.makeAxisLayout(tmp.id)
                         or M.makeButtonLayout(tmp.id)
@@ -229,7 +229,7 @@ local function makeLayouts(hints)
             }
         end
 
-        wasSeperator = isSeperator
+        wasSeparator = isSeparator
     end
 
     return layouts
