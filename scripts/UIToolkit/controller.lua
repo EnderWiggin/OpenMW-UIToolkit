@@ -74,19 +74,19 @@ end
 ---@param axis number
 ---@return string
 function M.getControllerAxisIcon(axis)
-    if axis == AXIS.LeftX
-        or axis == AXIS.LeftY
+    if axis == AXIS.LeftX or axis == AXIS.LeftY
+        or axis == AXIS.MoveLeftRight or axis == AXIS.MoveForwardBackward
     then
         return 'textures/omw_steam_button_lstick.dds'
     end
 
-    if axis == AXIS.RightX
-        or axis == AXIS.RightY
+    if axis == AXIS.RightX or axis == AXIS.RightY
+        or axis == AXIS.LookLeftRight or axis == AXIS.LookUpDown
     then
         return 'textures/omw_steam_button_rstick.dds'
     end
 
-    if axis == AXIS.TriggerLeft then
+    if axis == AXIS.TriggerRight then
         if isXbox then
             return 'textures/omw_xbox_button_rt.dds';
         elseif isSwitch then
@@ -95,7 +95,7 @@ function M.getControllerAxisIcon(axis)
         return 'textures/omw_steam_button_r2.dds';
     end
 
-    if axis == AXIS.TriggerRight then
+    if axis == AXIS.TriggerLeft then
         if isXbox then
             return 'textures/omw_xbox_button_lt.dds';
         elseif isSwitch then
