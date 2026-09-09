@@ -3,6 +3,7 @@
 local ui = require('openmw.ui')
 local util = require('openmw.util')
 local I = require('openmw.interfaces')
+local core = require('openmw.core')
 
 local H = require('scripts.UIToolkit.helpers')
 local C = require('scripts.UIToolkit.constants')
@@ -13,6 +14,8 @@ local hasGapAPI = C.API.GAP
 local Component = require('scripts.UIToolkit.components.component')
 
 local M = {}
+
+local nextPopupId = 0
 
 ---@type UIToolkit.Popups.Entry[]
 local popups = {}
@@ -198,6 +201,18 @@ function M.show(opts)
     }
     entry.element = element
     entry.close = function() closePopup(entry) end
+
+    local id = nextPopupId
+    nextPopupId = nextPopupId + 1
+
+    entry.id = id
+    ---@type UIToolkit.Controller.HintData
+    entry.hints = {
+        source = 'popup',
+        id = id,
+        ts = core.getRealTime(),
+        hints = opts.controllerHints,
+    }
 
     popups[#popups + 1] = entry
 

@@ -282,8 +282,12 @@ end
 
 function M._onFrame(dt)
     local hintData
-    --TODO: check popups first
-    hintData = I.UIToolkit.WindowManager.getFocusedWindowHintData()
+    local popup = I.UIToolkit.Popups.getActivePopup()
+    if popup then
+        hintData = popup.hints
+    else
+        hintData = I.UIToolkit.WindowManager.getFocusedWindowHintData()
+    end
 
     if not hintData then
         showControllerHint(nil)

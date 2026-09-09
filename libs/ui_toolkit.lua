@@ -399,6 +399,7 @@ function Components.sortedList(opts) end
 ---@field body string|openmw.ui.Layout|openmw.ui.Element|UIToolkit.Component
 ---@field borderStyle UIToolkit.BoxStyle?
 ---@field buttons? UIToolkit.PopupButtonOpts[]
+---@field controllerHints? (UIToolkit.Controller.Hint|'separator')[]
 
 ---@class UIToolkit.PopupButtonOpts
 ---@field text string text on the button
@@ -414,9 +415,11 @@ function Components.sortedList(opts) end
 ---@field onClosed? fun()
 
 ---@class UIToolkit.Popups.Entry
+---@field id number
 ---@field handler UIToolkit.Popups.Handler
 ---@field element openmw.ui.Element
 ---@field close fun() closes popup
+---@field hints UIToolkit.Controller.HintData
 
 ---@class UIToolkit.InteractiveColors
 ---@field pressColor openmw.util.Color?
