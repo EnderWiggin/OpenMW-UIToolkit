@@ -38,7 +38,7 @@ function Dropbox:init(opts)
     local visibleItems = opts.maxVisibleItems or #self.items
     visibleItems = math.min(visibleItems, #self.items)
     local listHeight = visibleItems * self.provider:getItemHeight()
-    local list = I.UIToolkit.Components.itemList {
+    self.list = I.UIToolkit.Components.itemList {
         provider = self.provider,
         size = v2(self.width - outer, listHeight),
         noBorder = true,
@@ -53,8 +53,8 @@ function Dropbox:init(opts)
             end
         end
     }
-    list:setItems(self.items)
-    list:updateProps {
+    self.list:setItems(self.items)
+    self.list:updateProps {
         anchor = v2(0.5, 1),
         relativePosition = v2(0.5, 1),
     }
@@ -92,7 +92,7 @@ function Dropbox:init(opts)
                     position = v2(0, height - 2 * pad - border),
                 },
             },
-            list.element,
+            self.list.element,
         }
     }
 
@@ -126,6 +126,22 @@ end
 function Dropbox:beforeElementDestroy()
     self:closePopup()
     I.UIToolkit.queueDestroy(self.popup, true)
+end
+
+---@param items UIToolkit.ListData.Text[]
+function Dropbox:setItems(items)
+    self.items = items
+    self.list:setItems(items)
+    local found = false
+    for i = 1, #items do
+        if items[i] == self.selected then
+            found = true
+            break
+        end
+    end
+    if not found then
+        self:selectByIndex(1)
+    end
 end
 
 ---@param id string
