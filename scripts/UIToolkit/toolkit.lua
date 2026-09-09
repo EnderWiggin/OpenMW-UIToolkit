@@ -270,6 +270,7 @@ local function onFrame()
     end
     if isPlayer then
         InterfaceP.WindowManager._onFrame(dt)
+        InterfaceP.Controller._onFrame(dt)
     end
 
     processUpdateAndDestroyQueues()

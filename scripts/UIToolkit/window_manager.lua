@@ -1,5 +1,6 @@
 ---@omw-context player
 
+local core = require('openmw.core')
 local ui = require('openmw.ui')
 local util = require('openmw.util')
 local I = require('openmw.interfaces')
@@ -17,6 +18,9 @@ local windows = {}
 
 ---@type string[]
 local windowFocusQueue = {}
+
+---@type table<string, UIToolkit.COntroller.HintData>
+local controllerHints = {}
 
 ---@param id string
 ---@param opts UIToolkit.WindowOpts
@@ -95,7 +99,29 @@ function M.close(id)
     data.wnd = nil
     I.UIToolkit.queueDestroy(wnd.element, true)
     data.handler = nil
+    controllerHints[id] = nil
     H.removeFromArray(windowFocusQueue, id)
+end
+
+---@return UIToolkit.COntroller.HintData?
+function M.getFocusedWindowHintData()
+    for i = 1, #windowFocusQueue do
+        local id = windowFocusQueue[i]
+        local data = windows[id]
+        if data and data.handler then return controllerHints[id] end
+    end
+    return nil
+end
+
+---@param id string
+---@param hints? (UIToolkit.Controller.Hint|'separator')[]
+function M.setControllerHints(id, hints)
+    controllerHints[id] = {
+        id = id,
+        source = 'window',
+        ts = core.getRealTime(),
+        hints = hints,
+    }
 end
 
 ---@return UIToolkit.WindowHandler? handler, string? id

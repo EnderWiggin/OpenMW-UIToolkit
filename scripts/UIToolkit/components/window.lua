@@ -1,4 +1,4 @@
----@omw-context player|menu
+---@omw-context player
 
 local ui = require('openmw.ui')
 local util = require('openmw.util')
@@ -630,6 +630,11 @@ function Window:init(opts, id, saved)
     end
 
     Component.init(self, window)
+end
+
+---@param hints? (UIToolkit.Controller.Hint|'separator')[]
+function Window:setControllerHints(hints)
+    I.UIToolkit.WindowManager.setControllerHints(self.id, hints)
 end
 
 return Window

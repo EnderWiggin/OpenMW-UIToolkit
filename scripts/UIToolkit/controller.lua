@@ -9,6 +9,18 @@ local v2     = util.vector2
 local BUTTON = input.CONTROLLER_BUTTON
 local AXIS   = input.CONTROLLER_AXIS
 
+---@class UIToolkit.COntroller.HintData
+---@field source string window or popup
+---@field id string|number id of the window or popup
+---@field ts number time this hint was updated at
+---@field hints? (UIToolkit.Controller.Hint|'separator')[]
+
+
+---@type UIToolkit.COntroller.HintData|nil
+local currentHint = nil
+---@type openmw.ui.Element?
+local element = nil
+
 
 local M = {}
 
@@ -151,6 +163,139 @@ end
 ---@return openmw.ui.Layout
 function M.makeAxisLayout(axis, opts)
     return makeIconLayout(M.getControllerAxisIcon(axis), opts)
+end
+
+---@param hints (UIToolkit.Controller.Hint|'separator')[]
+---@return openmw.ui.Layout[]
+local function makeLayouts(hints)
+    local toolkit = I.UIToolkit
+    local T = toolkit.Templates
+    local theme = toolkit.getTheme()
+    local textSize = theme.Sizes.textNormal
+    local rowHeight = util.round((textSize + 2) * 1.5)
+
+    ---@type openmw.ui.Layout
+    local separator = {
+        props = {
+            size = v2(rowHeight, rowHeight),
+        },
+        content = ui.content { {
+            template = I.MWUI.templates.verticalLine,
+            props = {
+                anchor = v2(0.5, 0),
+                relativePosition = v2(0.5, 0),
+            },
+        } }
+    }
+    local gap = T.intervalH(util.round((textSize + 2) / 2))
+
+    local layouts = {}
+
+    local isSeperator = false
+    local wasSeperator = false
+    for i = 1, #hints do
+        local hint = hints[i]
+        isSeperator = hint == 'separator'
+
+        if i > 1 and not isSeperator and not wasSeperator then
+            layouts[#layouts + 1] = gap
+        end
+
+        if isSeperator then
+            layouts[#layouts + 1] = separator
+        else
+            local input = hint.input
+            if #input == 0 then
+                layouts[#layouts + 1] = input.axis
+                    and M.makeAxisLayout(input.id)
+                    or M.makeButtonLayout(input.id)
+            else
+                for j = 1, #input do
+                    if hint.combo and j > 1 then
+                        layouts[#layouts + 1] = {
+                            template = T.header(),
+                            props = { text = '+', textSize = textSize + 2 },
+                        }
+                    end
+                    local tmp = input[j]
+                    layouts[#layouts + 1] = tmp.axis
+                        and M.makeAxisLayout(tmp.id)
+                        or M.makeButtonLayout(tmp.id)
+                end
+            end
+            layouts[#layouts + 1] = {
+                template = T.text(),
+                props = { text = hint.text },
+            }
+        end
+
+        wasSeperator = isSeperator
+    end
+
+    return layouts
+end
+
+---@param hints? (UIToolkit.Controller.Hint|'separator')[]
+local function showControllerHint(hints)
+    if element then
+        I.UIToolkit.destroy(element)
+        element = nil
+    end
+
+    if not hints then return end
+
+    local toolkit = I.UIToolkit
+    local theme = toolkit.getTheme()
+    local textSize = theme.Sizes.textNormal
+
+    element = ui.create {
+        layer = 'ControllerButtons',
+        type = ui.TYPE.Image,
+        props = {
+            resource = theme.Colors.whiteTexture,
+            color = theme.Colors.BACKGROUND,
+            alpha = 0.8,
+            size = v2(0, 30 + textSize),
+            relativeSize = v2(1, 0),
+            anchor = v2(0.5, 1),
+            relativePosition = v2(0.5, 1),
+        },
+        content = ui.content { {
+            type = ui.TYPE.Flex,
+            props = {
+                horizontal = true,
+                align = ui.ALIGNMENT.Center,
+                arrange = ui.ALIGNMENT.Center,
+                autoSize = false,
+                relativeSize = v2(1, 1),
+            },
+            content = ui.content(makeLayouts(hints)),
+        } },
+
+    }
+end
+
+function M._onFrame(dt)
+    local hintData
+    --TODO: check popups first
+    hintData = I.UIToolkit.WindowManager.getFocusedWindowHintData()
+
+    if not hintData then
+        showControllerHint(nil)
+        currentHint = nil
+        return
+    end
+
+    if currentHint then
+        if currentHint.source == hintData.source
+            and currentHint.id == hintData.id
+            and currentHint.ts >= hintData.ts
+        then
+            return
+        end
+    end
+    currentHint = hintData
+    showControllerHint(hintData.hints)
 end
 
 return M

@@ -386,6 +386,7 @@ function Components.sortedList(opts) end
 ---@field isPinned fun(self:UIToolkit.Window):boolean
 ---@field setPinnable fun(self:UIToolkit.Window, pinnable:boolean)
 ---@field setMinSize fun(self:UIToolkit.Window, minSz: openmw.util.Vector2)
+---@field setControllerHints fun(self:UIToolkit.Window, hints?: (UIToolkit.Controller.Hint|'separator')[])
 
 
 ---@class UIToolkit.Popups
@@ -428,6 +429,15 @@ function Components.sortedList(opts) end
 ---@class UIToolkit.Controller.IconOpts
 ---@field color? openmw.util.Color
 ---@field size? number
+
+---@class UIToolkit.Controller.Input
+---@field id number
+---@field axis boolean? if true the id is for axis, otherwise for button
+
+---@class UIToolkit.Controller.Hint
+---@field text string
+---@field input UIToolkit.Controller.Input|UIToolkit.Controller.Input[]
+---@field combo boolean?
 
 ---@alias UIToolkit.Controller.DPAdDirection 'left'|'right'|'up'|'down'|'horizontal'|'vertical'|'all'
 
