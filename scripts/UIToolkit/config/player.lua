@@ -7,7 +7,6 @@ local D = require 'scripts.UIToolkit.config.defaults'
 
 ---@class UIToolkit.Config.Player.Interface
 ---@field s_NumberSeparators string
----@field b_ScaleScrollbarWidthWithText boolean
 
 ---@class UIToolkit.Config.Player.Controller
 ---@field s_ControllerStyle string

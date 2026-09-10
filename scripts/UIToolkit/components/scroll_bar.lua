@@ -12,11 +12,7 @@ local Class = require('scripts.UIToolkit.class')
 local Component = require('scripts.UIToolkit.components.component')
 
 local function getDefaultWidth()
-    local sz = 14
-    if cfgPlayer.interface.b_ScaleScrollbarWidthWithText then
-        sz = util.round(sz * I.UIToolkit.getTheme().Sizes.textNormal / 16)
-    end
-    return sz
+    return 14
 end
 
 local SLIM_OFFSET = 2
