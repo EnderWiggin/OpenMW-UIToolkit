@@ -189,6 +189,7 @@ function ScrollBar:init(opts)
                 props = handleProps,
                 events = {
                     mousePress = async:callback(function(e)
+                        if self:isDisabled() then return true end
                         if e.button == 1 then
                             ambient.playSound('menu click')
                             self.isDragging = true
@@ -197,6 +198,7 @@ function ScrollBar:init(opts)
                         return true
                     end),
                     mouseRelease = async:callback(function(e)
+                        if self:isDisabled() then return true end
                         if e.button == 1 and self.isDragging then
                             self.isDragging = false
                             self.dragOffset = nil
@@ -212,6 +214,7 @@ function ScrollBar:init(opts)
         },
         events = {
             mouseMove = async:callback(function(e)
+                if self:isDisabled() then return true end
                 if e.button == 1 then
                     local halfHand = (self:calcHandleSize() / 2)
                     local offset = self.horizontal and e.offset.x or e.offset.y
@@ -221,6 +224,7 @@ function ScrollBar:init(opts)
                 return true
             end),
             mousePress = async:callback(function(e)
+                if self:isDisabled() then return true end
                 if e.button == 1 then
                     ambient.playSound('menu click')
                     local offset = self.horizontal and e.offset.x or e.offset.y
@@ -229,6 +233,7 @@ function ScrollBar:init(opts)
                 end
             end),
             mouseRelease = async:callback(function(e)
+                if self:isDisabled() then return true end
                 if e.button == 1 and self.isDragging then
                     self.isDragging = false
                     if self.onDragStopped then self.onDragStopped(self.position, self:getProgress()) end
@@ -254,7 +259,10 @@ function ScrollBar:init(opts)
             scrollBar,
             padding(gap),
             downButton,
-        }
+        },
+        userData = {
+            opacityStates = { default = 1, disabled = 0.75 },
+        },
     }
 
     self.position = -1
