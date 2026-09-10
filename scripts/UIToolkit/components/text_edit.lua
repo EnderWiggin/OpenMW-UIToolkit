@@ -66,6 +66,7 @@ function TextEdit:init(opts)
         props = self._editProps,
         events = {
             textChanged = async:callback(function(text, layout)
+                if self:isDisabled() then return end
                 local prev = self._value
                 local ok, value = self._validate(text)
                 if ok then
@@ -80,6 +81,7 @@ function TextEdit:init(opts)
                 end
             end),
             focusGain = async:callback(function(_, layout)
+                if self:isDisabled() then return end
                 if self:isEmpty() then
                     layout.props.text = ''
                     layout.props.textColor = self:_textColor(false)
@@ -87,6 +89,7 @@ function TextEdit:init(opts)
                 end
             end),
             focusLoss = async:callback(function(_, layout)
+                if self:isDisabled() then return end
                 if self:isEmpty() then
                     layout.props.text = self:getPlaceholder() or ''
                     layout.props.textColor = self:_textColor(true)
@@ -116,6 +119,7 @@ function TextEdit:init(opts)
         content:add(I.UIToolkit.Interactive.makeInteractive({
             interactiveDisabled = true,
             onClick = function()
+                if self:isDisabled() then return end
                 local prev = self._value
                 self:setValue(self:getDefault())
                 if self._onValueChanged and prev ~= self._value then
@@ -134,10 +138,26 @@ function TextEdit:init(opts)
         props = {
             size = v2(w, h + 2 * (t.Sizes.padding + t.Sizes.border))
         },
-        content = content
+        content = content,
+        userData = {
+            opacityStates = { default = 1, disabled = 0.75 },
+        },
     }
 
     Component.init(self, element)
+end
+
+--- Sets disabled state of the component and queues update.
+---@param value boolean?
+---@param deep boolean?
+---@return UIToolkit.TextEdit self
+function TextEdit:setDisabled(value, deep)
+    if self:isDestroyed() then return self end
+
+    self._editProps.readOnly = value == true
+
+    Component.setDisabled(self, value, deep)
+    return self
 end
 
 function TextEdit:isEmpty()
