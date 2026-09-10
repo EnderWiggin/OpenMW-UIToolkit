@@ -51,6 +51,12 @@ function SortedList:init(opts)
     self.defaultSort = convertSort(opts.defaultSort)
     ---@type UIToolkit.ColumnComparator[]
     self.comparators = {}
+    ---@type UIToolkit.ListData.Column[]
+    self.allItems = {}
+    ---@type UIToolkit.ListData.Column[]
+    self.filteredItems = {}
+    ---@type table<string,  UIToolkit.SortedList.Filter>
+    self.filters = {}
 
     local theme = I.UIToolkit.getTheme()
     local rowHeight = opts.rowHeight or util.round(1.5 * (theme.Sizes.textNormal + 2))
@@ -98,7 +104,7 @@ function SortedList:init(opts)
 
     self.header = I.UIToolkit.Components.columnSorter {
         columns = headerColumns,
-        onChanged = function() self:sortItems() end,
+        onChanged = function() self:sort() end,
     }
 
     self.header:updateProps {
@@ -120,9 +126,13 @@ function SortedList:init(opts)
     self:setSize(opts.size)
 end
 
----@param items? UIToolkit.ListData.Column[]
-function SortedList:sortItems(items)
-    items = items or self.list:getItems() --[[@as UIToolkit.ListData.Column[] ]]
+function SortedList:refresh()
+    self.list:setItems(self.filteredItems)
+end
+
+---@param refresh boolean?
+function SortedList:sort(refresh)
+    local items = self.filteredItems
     local col, asc = self.header:getActiveColumn()
     local comparator = col ~= nil and self.comparators[col]
     table.sort(items, function(a, b)
@@ -138,12 +148,53 @@ function SortedList:sortItems(items)
         end
         return a.id < b.id
     end)
-    self.list:setItems(items)
+
+    if refresh == false then return end
+    self:refresh()
+end
+
+---@param  name string
+---@param filter UIToolkit.SortedList.Filter|nil
+function SortedList:setFilter(name, filter)
+    self.filters[name] = filter
+    self:filter(false)
+    self:refresh()
+end
+
+---@param refresh boolean?
+function SortedList:filter(refresh)
+    local filters = {}
+    for name, filter in pairs(self.filters) do
+        --TODO: a way to disable a filter? or just setting it to `nil` is good enough?
+        filters[#filters + 1] = filter
+    end
+    if #filters > 0 then
+        local filtered = {}
+        for i = 1, #self.allItems do
+            local item = self.allItems[i]
+            local matching = true
+            for j = 1, #filters do
+                if not filters[j](item) then
+                    matching = false
+                    break
+                end
+            end
+            if matching then filtered[#filtered + 1] = item end
+        end
+        self.filteredItems = filtered
+    else
+        self.filteredItems = self.allItems
+    end
+    self:sort(false)
+
+    if refresh == false then return end
+    self:refresh()
 end
 
 ---@param items UIToolkit.ListData.Column[]
 function SortedList:setItems(items)
-    self:sortItems(items)
+    self.allItems = items
+    self:filter()
 end
 
 ---@param size openmw.util.Vector2

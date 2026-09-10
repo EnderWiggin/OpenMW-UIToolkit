@@ -333,11 +333,16 @@ function Components.sortedList(opts) end
 ---@field slimScroll boolean? scrollbar will have no borders around arrows or handle
 ---@field noBorder boolean?
 
+---@alias UIToolkit.SortedList.Filter fun(item:UIToolkit.ListData.Column):boolean
+
 ---@class UIToolkit.SortedList : UIToolkit.Component
 ---@field new fun(self:UIToolkit.SortedList):UIToolkit.SortedList
 ---@field init fun(self:UIToolkit.SortedList, opts:UIToolkit.SortedListOpts)
----@field sortItems fun(self:UIToolkit.SortedList, items:UIToolkit.ListData.Column[]?)
 ---@field setItems fun(self:UIToolkit.SortedList, items:UIToolkit.ListData.Column[])
+---@field setFilter fun(self:UIToolkit.SortedList, name:string, filter:UIToolkit.SortedList.Filter|nil) sets/removes filter with a name - only items matching all filters will be shown.
+---@field refresh fun(self:UIToolkit.SortedList) refreshes list items
+---@field sort fun(self:UIToolkit.SortedList, refresh:boolean?) sorts items and calls refresh, unless refresh is false
+---@field filter fun(self:UIToolkit.SortedList, refresh:boolean?) filters items and calls refresh, unless refresh is false
 ---@field setSize fun(self:UIToolkit.SortedList, size:openmw.util.Vector2)
 ---@field getListSize fun(self:UIToolkit.SortedList):openmw.util.Vector2
 ---@field getHeaderSize fun(self:UIToolkit.SortedList):openmw.util.Vector2
