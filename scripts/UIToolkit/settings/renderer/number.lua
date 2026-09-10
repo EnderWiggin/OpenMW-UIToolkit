@@ -7,8 +7,6 @@ local I    = require 'openmw.interfaces'
 
 local TEXT_WIDTH = 100
 
---TODO: implement `disabled` option
-
 ---@param value number
 ---@param set fun(value:number)
 ---@param args UIToolkit.SettingRenderer.Slider

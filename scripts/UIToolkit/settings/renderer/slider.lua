@@ -9,8 +9,6 @@ local LENGTH     = 250
 local BAR_WIDTH  = 20
 local TEXT_WIDTH = 90
 
---TODO: implement `disabled` option
-
 ---@param value number
 ---@param set fun(value:number)
 ---@param args UIToolkit.SettingRenderer.Slider
