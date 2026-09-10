@@ -41,5 +41,9 @@ return function(value, set, args)
 
     edit:setValue(value)
 
+    if args.disabled then
+        edit:setDisabled(true)
+    end
+
     return edit.element
 end

@@ -87,6 +87,11 @@ return function(value, set, args)
     slider:setProgress(valueToProgress(value), true)
     edit:setValue(value)
 
+    if args.disabled then
+        slider:setDisabled(true)
+        edit:setDisabled(true)
+    end
+
     return {
         type = ui.TYPE.Flex,
         props = {

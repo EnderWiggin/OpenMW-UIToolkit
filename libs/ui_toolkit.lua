@@ -555,6 +555,7 @@ function Templates.getBorderSize(style) end
 ---@field max number?
 ---@field integer boolean? if set to true, will round value
 ---@field default number? if defined, then edit box will have reset button that sets value to this
+---@field disabled boolean? disables changing the setting from the UI
 
 ---@class UIToolkit.SettingRenderer.Slider
 ---@field min number
@@ -562,6 +563,7 @@ function Templates.getBorderSize(style) end
 ---@field integer boolean? if set to true, will round value
 ---@field default number? if defined, then edit box will have reset button that sets value to this
 ---@field step number? how much to change value when scrollbar arrows are clicked. Defaults to `1` for integer and `0.1` otherwise
+---@field disabled boolean? disables changing the setting from the UI
 
 
 ---@class UTKTooltips.ExtraParams
