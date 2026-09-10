@@ -188,6 +188,11 @@ local function onShowPopupClicked()
     }
 end
 
+local selectedType = nil
+local function ofType(item)
+    return selectedType == nil or selectedType == item.type
+end
+
 ---@class Handler: UIToolkit.WindowHandler
 local Handler = Class(WindowHandler)
 
@@ -213,7 +218,7 @@ function Handler:onOpened(wnd, _, saved)
         end,
         columns = columns,
     }
-    list.header:toggleColumn('icon')
+    list.header:toggleColumn('name')
 
     ---@type UIToolkit.ListData.Column[]
     local rows = {}
@@ -230,13 +235,39 @@ function Handler:onOpened(wnd, _, saved)
                     and record.name .. ' (' .. H.addSeparators(item.count) .. ')'
                     or record.name
             end,
+            type = item.type,
             weight = record.weight > 0 and record.weight or '-',
             value = record.value > 0 and record.value or '-',
             ['V/W'] = record.value > 0 and record.weight > 0 and util.round(record.value / record.weight) or '-',
             tooltip = { object = item, observer = player }
         }
     end
+    list:setFilter('filter', ofType)
     list:setItems(rows)
+
+    local tabs = {
+        type = ui.TYPE.Flex,
+        props = {
+            horizontal = true,
+        },
+        content = ui.content {
+            I.UIToolkit.Templates.intervalH(5),
+            I.UIToolkit.Components.textButton { text = 'All', onClick = function()
+                selectedType = nil
+                list:filter()
+            end, style = 'thin' }.element,
+            I.UIToolkit.Templates.intervalH(5),
+            I.UIToolkit.Components.textButton { text = 'Weapons', onClick = function()
+                selectedType = types.Weapon
+                list:filter()
+            end, style = 'thin' }.element,
+            I.UIToolkit.Templates.intervalH(5),
+            I.UIToolkit.Components.textButton { text = 'Misc', onClick = function()
+                selectedType = types.Miscellaneous
+                list:filter()
+            end, style = 'thin' }.element,
+        },
+    }
 
     -- slider+text combo that allows entering value in range [1 - 100]
     local slider
@@ -297,7 +328,15 @@ function Handler:onOpened(wnd, _, saved)
     if state.dropbox then dropbox:selectById(state.dropbox) end
 
     wnd:setContent(ui.content {
-        list.element,
+        {
+            type = ui.TYPE.Flex,
+            props = {},
+            content = ui.content {
+                I.UIToolkit.Templates.intervalV(5),
+                tabs,
+                list.element,
+            },
+        },
         {
             template = I.UIToolkit.Templates.border { padding = 5 },
             props = {
@@ -446,7 +485,7 @@ end
 ---@param inner openmw.util.Vector2
 function Handler:onResized(inner)
     if list then
-        list:setSize(inner - v2(340, 0))
+        list:setSize(inner - v2(340, 30))
     end
 end
 
