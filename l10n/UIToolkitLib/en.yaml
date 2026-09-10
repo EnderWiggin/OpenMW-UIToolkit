@@ -17,6 +17,10 @@ ConfigNumberSeparators_None: None
 ConfigNumberSeparators_Comma: Comma
 ConfigNumberSeparators_Space: Space
 
+SettingSoulGemValueRebalanceName: Soulgem Values Rebalance
+SettingSoulGemValueRebalanceDesc: |-
+  Set this to match same setting from the game launcher.
+  Makes the value of filled soul gems depend only on soul magnitude.
 
 # -------------- Controller Settings --------------
 ControllerSettingsName: Controller Settings

@@ -33,6 +33,13 @@ I.Settings.registerGroup {
                 items = { D.Separators.None, D.Separators.Space, D.Separators.Comma },
             }
         },
+        {
+            key = 'b_SoulGemValueRebalance',
+            renderer = 'checkbox',
+            name = 'SettingSoulGemValueRebalanceName',
+            description = 'SettingSoulGemValueRebalanceDesc',
+            default = false,
+        },
     },
 }
 

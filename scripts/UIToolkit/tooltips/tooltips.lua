@@ -6,6 +6,7 @@ local ui = require('openmw.ui')
 local I = require('openmw.interfaces')
 local helpers = require('scripts.UIToolkit.tooltips.utils')
 local H = require('scripts.UIToolkit.helpers')
+local cfgPlayer = require('scripts.UIToolkit.config.player')
 
 -- Short-hands
 local Player = types.Player
@@ -20,8 +21,6 @@ local V2 = util.vector2
 local Tooltips = {}
 
 Tooltips.builders = require('scripts.UIToolkit.tooltips.builders')
-
-local rebalanceSoulGems = false --TODO: read setting
 
 ---@type UTKTooltips.ContentNames
 local CONTENT =
@@ -574,7 +573,7 @@ Tooltips.miscellaneousRecipe = function(tooltip)
     local value = record.value
     local soul = helpers.getSoul(tooltip.object)
     if soul then
-        value = helpers.soulGemValue(soul.soulValue, value, rebalanceSoulGems)
+        value = helpers.soulGemValue(soul.soulValue, value, cfgPlayer.interface.b_SoulGemValueRebalance)
     end
     local items = {}
     items[#items + 1] = header(record, tooltip.object)
