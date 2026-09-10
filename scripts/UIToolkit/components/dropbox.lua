@@ -21,6 +21,7 @@ function Dropbox:init(opts)
     local pad = theme.Sizes.padding
     local border = T.getBorderSize('thin')
     local outer = 2 * (pad + border)
+    local arrowSize = theme.Sizes.textNormal - 2
 
     self.width = opts.width or 150
     local height = theme.Sizes.textNormal + outer
@@ -78,7 +79,7 @@ function Dropbox:init(opts)
                         type = ui.TYPE.Image,
                         props = {
                             resource = I.UIToolkit.texture 'textures/omw_menu_scroll_left.dds',
-                            size = v2(16, 16), --TODO: size with text?
+                            size = v2(arrowSize, arrowSize),
                             anchor = v2(1, 0.5),
                             relativePosition = v2(1, 0.5),
                             alpha = 0.65,
@@ -113,7 +114,7 @@ function Dropbox:init(opts)
                 type = ui.TYPE.Image,
                 props = {
                     resource = I.UIToolkit.texture 'textures/omw_menu_scroll_down.dds',
-                    size = v2(16, 16), --TODO: size with text?
+                    size = v2(arrowSize, arrowSize),
                     anchor = v2(1, 0.5),
                     relativePosition = v2(1, 0.5),
                 },
