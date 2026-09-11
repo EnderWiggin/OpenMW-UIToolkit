@@ -242,7 +242,7 @@ function Handler:onOpened(wnd, _, saved)
             tooltip = { object = item, observer = player }
         }
     end
-    list:setFilter('filter', ofType)
+    list:setFilter(ofType)
     list:setItems(rows)
 
     local tabs = {

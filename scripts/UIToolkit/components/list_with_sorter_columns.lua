@@ -55,8 +55,8 @@ function SortedList:init(opts)
     self.allItems = {}
     ---@type UIToolkit.ListData.Column[]
     self.filteredItems = {}
-    ---@type table<string,  UIToolkit.SortedList.Filter>
-    self.filters = {}
+    ---@type UIToolkit.SortedList.Filter?
+    self._filter = nil
 
     local theme = I.UIToolkit.getTheme()
     local rowHeight = opts.rowHeight or util.round(1.5 * (theme.Sizes.textNormal + 2))
@@ -149,37 +149,25 @@ function SortedList:sort(refresh)
         return a.id < b.id
     end)
 
-    if refresh == false then return end
-    self:refresh()
+    if refresh ~= false then self:refresh() end
 end
 
----@param  name string
 ---@param filter UIToolkit.SortedList.Filter|nil
-function SortedList:setFilter(name, filter)
-    self.filters[name] = filter
+function SortedList:setFilter(filter)
+    if self._filter == filter then return end
+    self._filter = filter
     self:filter(false)
     self:refresh()
 end
 
 ---@param refresh boolean?
 function SortedList:filter(refresh)
-    local filters = {}
-    for name, filter in pairs(self.filters) do
-        --TODO: a way to disable a filter? or just setting it to `nil` is good enough?
-        filters[#filters + 1] = filter
-    end
-    if #filters > 0 then
+    local filter = self._filter
+    if filter then
         local filtered = {}
         for i = 1, #self.allItems do
             local item = self.allItems[i]
-            local matching = true
-            for j = 1, #filters do
-                if not filters[j](item) then
-                    matching = false
-                    break
-                end
-            end
-            if matching then filtered[#filtered + 1] = item end
+            if filter(item) then filtered[#filtered + 1] = item end
         end
         self.filteredItems = filtered
     else
@@ -187,8 +175,7 @@ function SortedList:filter(refresh)
     end
     self:sort(false)
 
-    if refresh == false then return end
-    self:refresh()
+    if refresh ~= false then self:refresh() end
 end
 
 ---@param items UIToolkit.ListData.Column[]

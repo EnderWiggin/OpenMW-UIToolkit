@@ -339,7 +339,7 @@ function Components.sortedList(opts) end
 ---@field new fun(self:UIToolkit.SortedList):UIToolkit.SortedList
 ---@field init fun(self:UIToolkit.SortedList, opts:UIToolkit.SortedListOpts)
 ---@field setItems fun(self:UIToolkit.SortedList, items:UIToolkit.ListData.Column[])
----@field setFilter fun(self:UIToolkit.SortedList, name:string, filter:UIToolkit.SortedList.Filter|nil) sets/removes filter with a name - only items matching all filters will be shown.
+---@field setFilter fun(self:UIToolkit.SortedList, filter:UIToolkit.SortedList.Filter|nil) sets/removes filter - only items passing the filter will be shown.
 ---@field refresh fun(self:UIToolkit.SortedList) refreshes list items
 ---@field sort fun(self:UIToolkit.SortedList, refresh:boolean?) sorts items and calls refresh, unless refresh is false
 ---@field filter fun(self:UIToolkit.SortedList, refresh:boolean?) filters items and calls refresh, unless refresh is false
