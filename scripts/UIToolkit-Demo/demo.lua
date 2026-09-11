@@ -13,6 +13,7 @@ local H             = require 'scripts.UIToolkit.helpers'
 local tipUtils      = require 'scripts.UIToolkit.tooltips.utils'
 
 local Class         = require 'scripts.UIToolkit.class'
+local Filter        = require 'scripts.UIToolkit.compound_filter'
 local WindowHandler = require 'scripts.UIToolkit.window_handler'
 local ColumnItem    = require 'scripts.UIToolkit.components.list_items.column_item'
 
@@ -242,13 +243,23 @@ function Handler:onOpened(wnd, _, saved)
             tooltip = { object = item, observer = player }
         }
     end
-    list:setFilter(ofType)
+
+    ---@type UIToolkit.CompoundFilter<UIToolkit.SortedList.Filter>
+    local f = Filter:new()
+    f:add('type', ofType)
+    f:add('weight', function(item)
+        return type(item.weight) == 'number' and item.weight > 0
+    end)
+    f:disable('weight', state.hideWeightless ~= true)
+
+    list:setFilter(f)
     list:setItems(rows)
 
     local tabs = {
         type = ui.TYPE.Flex,
         props = {
             horizontal = true,
+            arrange = ui.ALIGNMENT.Center,
         },
         content = ui.content {
             I.UIToolkit.Templates.intervalH(5),
@@ -266,6 +277,16 @@ function Handler:onOpened(wnd, _, saved)
                 selectedType = types.Miscellaneous
                 list:filter()
             end, style = 'thin' }.element,
+            I.UIToolkit.Templates.intervalH(10),
+            I.UIToolkit.Components.checkbox {
+                text = 'No Weightless',
+                default = state.hideWeightless == true,
+                onValueChanged = function(value)
+                    state.hideWeightless = value
+                    f:disable('weight', not value)
+                    list:filter()
+                end,
+            }.element,
         },
     }
 
