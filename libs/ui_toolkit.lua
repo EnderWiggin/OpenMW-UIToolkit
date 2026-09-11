@@ -339,13 +339,25 @@ function Components.sortedList(opts) end
 ---@field new fun(self:UIToolkit.SortedList):UIToolkit.SortedList
 ---@field init fun(self:UIToolkit.SortedList, opts:UIToolkit.SortedListOpts)
 ---@field setItems fun(self:UIToolkit.SortedList, items:UIToolkit.ListData.Column[])
----@field setFilter fun(self:UIToolkit.SortedList, filter:UIToolkit.SortedList.Filter|nil) sets/removes filter - only items passing the filter will be shown.
+---@field setFilter fun(self:UIToolkit.SortedList, filter:UIToolkit.SortedList.Filter|UIToolkit.CompoundFilter<UIToolkit.SortedList.Filter>|nil) sets/removes filter - only items passing the filter will be shown.
 ---@field refresh fun(self:UIToolkit.SortedList) refreshes list items
 ---@field sort fun(self:UIToolkit.SortedList, refresh:boolean?) sorts items and calls refresh, unless refresh is false
 ---@field filter fun(self:UIToolkit.SortedList, refresh:boolean?) filters items and calls refresh, unless refresh is false
 ---@field setSize fun(self:UIToolkit.SortedList, size:openmw.util.Vector2)
 ---@field getListSize fun(self:UIToolkit.SortedList):openmw.util.Vector2
 ---@field getHeaderSize fun(self:UIToolkit.SortedList):openmw.util.Vector2
+
+---Combines several filters into one. Can me called as if it was a function: `filter(a)` is equivalent to `filter:match(a)`
+---@generic T
+---@class UIToolkit.CompoundFilter<T>
+---@field new fun(self:UIToolkit.CompoundFilter?):UIToolkit.CompoundFilter
+---@field add fun(self:UIToolkit.CompoundFilter, name:string, filter:fun(item:T):boolean) adds named filter
+---@field remove fun(self:UIToolkit.CompoundFilter, name:string) removes filter by name
+---@field disable fun(self:UIToolkit.CompoundFilter, name:string, value:boolean?) disables filter by name, unless value is `false`
+---@field match fun(self:UIToolkit.CompoundFilter, item:T):boolean returns `true` if item matches all not disabled filters
+---@overload fun(item:T):boolean
+---@operator call(T):boolean
+
 
 ---@class UIToolkit.WindowManager
 ---@field register fun(id: string, opts: UIToolkit.WindowOpts)
