@@ -68,6 +68,38 @@ function ScrollBar:init(opts)
         return progress * self.maxScroll
     end
 
+    ---@param slim boolean
+    ---@param icon openmw.ui.TextureResource
+    ---@param events table
+    ---@return openmw.ui.Layout
+    local function makeArrowLayout(slim, icon, events)
+        return slim
+            and {
+                type = ui.TYPE.Image,
+                props = {
+                    resource = icon,
+                    size = v2(width, width),
+                },
+                events = events
+            }
+            or {
+                template = T.border(),
+                props = {
+                    size = v2(width, width),
+                },
+                content = ui.content {
+                    {
+                        type = ui.TYPE.Image,
+                        props = {
+                            resource = icon,
+                            relativeSize = v2(1, 1),
+                        }
+                    }
+                },
+                events = events
+            }
+    end
+
     local handleSz = self:calcHandleSize()
     local bsz = not self.slim and 2 * T.getBorderSize('thin') or 2 * SLIM_OFFSET
     local handleProps = {
@@ -100,81 +132,24 @@ function ScrollBar:init(opts)
         if not silent then this.onScroll(this.position, progress) end
     end
 
-    local upButton = self.slim
-        and {
-            type = ui.TYPE.Image,
-            props = {
-                resource = self.horizontal and BTN_LEFT_TEX or BTN_UP_TEX,
-                size = v2(width, width),
-            },
-            events = {
-                mousePress = async:callback(function(e)
-                    if e.button ~= 1 then return end
-                    ambient.playSound('menu click', { scale = false })
-                    self:scroll(-1)
-                end),
-            }
-        }
-        or {
-            template = T.border(),
-            props = {
-                size = v2(width, width),
-            },
-            content = ui.content {
-                {
-                    type = ui.TYPE.Image,
-                    props = {
-                        resource = self.horizontal and BTN_LEFT_TEX or BTN_UP_TEX,
-                        relativeSize = v2(1, 1),
-                    }
-                }
-            },
-            events = {
-                mousePress = async:callback(function(e)
-                    if e.button ~= 1 then return end
-                    ambient.playSound('menu click', { scale = false })
-                    self:scroll(-1)
-                end),
-            }
-        }
+    local upButton = makeArrowLayout(self.slim, self.horizontal and BTN_LEFT_TEX or BTN_UP_TEX, {
+        mousePress = async:callback(function(e)
+            if self:isDisabled() then return end
+            if e.button ~= 1 then return end
+            ambient.playSound('menu click', { scale = false })
+            self:scroll(-1)
+        end),
+    })
 
-    local downButton = self.slim
-        and {
-            type = ui.TYPE.Image,
-            props = {
-                resource = self.horizontal and BTN_RIGHT_TEX or BTN_DOWN_TEX,
-                size = v2(width, width),
-            },
-            events = {
-                mousePress = async:callback(function(e)
-                    if e.button ~= 1 then return end
-                    ambient.playSound('menu click', { scale = false })
-                    self:scroll(1)
-                end),
-            }
-        }
-        or {
-            template = T.border(),
-            props = {
-                size = v2(width, width),
-            },
-            content = ui.content {
-                {
-                    type = ui.TYPE.Image,
-                    props = {
-                        resource = self.horizontal and BTN_RIGHT_TEX or BTN_DOWN_TEX,
-                        relativeSize = v2(1, 1),
-                    }
-                }
-            },
-            events = {
-                mousePress = async:callback(function(e)
-                    if e.button ~= 1 then return end
-                    ambient.playSound('menu click', { scale = false })
-                    self:scroll(1)
-                end),
-            }
-        }
+    local downButton = makeArrowLayout(self.slim, self.horizontal and BTN_RIGHT_TEX or BTN_DOWN_TEX, {
+        mousePress = async:callback(function(e)
+            if self:isDisabled() then return end
+            if e.button ~= 1 then return end
+            ambient.playSound('menu click', { scale = false })
+            self:scroll(1)
+        end),
+    })
+
     self._scrollProps = {
         size = calcScrollBarSize(self),
     }
