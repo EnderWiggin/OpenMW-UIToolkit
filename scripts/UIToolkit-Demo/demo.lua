@@ -36,6 +36,7 @@ local list
 local columns = {
     { id = 'icon',   name = nil,    sort = { col = 'id' },     render = ColumnItem.renderIcon, width = rowHeight + 5,   arg = { sz = 1.5 * textSize } },
     { id = 'name',   name = 'Name', sort = {},                 render = ColumnItem.renderText, },
+    { id = 'damage', name = 'Dmg.', sort = { numeric = true }, render = ColumnItem.renderText, width = 2 * rowHeight,   arg = { textAlignH = ui.ALIGNMENT.End }, align = ui.ALIGNMENT.End },
     { id = 'weight', name = 'Wgt.', sort = { numeric = true }, render = ColumnItem.renderText, width = 2 * rowHeight,   arg = { textAlignH = ui.ALIGNMENT.End }, align = ui.ALIGNMENT.End },
     { id = 'value',  name = 'Val.', sort = { numeric = true }, render = ColumnItem.renderText, width = 2.7 * rowHeight, arg = { textAlignH = ui.ALIGNMENT.End }, align = ui.ALIGNMENT.End },
     { id = 'V/W',    name = 'V/W',  sort = { numeric = true }, render = ColumnItem.renderText, width = 2.7 * rowHeight, arg = { textAlignH = ui.ALIGNMENT.End }, align = ui.ALIGNMENT.End },
@@ -218,6 +219,7 @@ function Handler:onOpened(wnd, _, saved)
             cached:setActive(not cached:isActive())
         end,
         columns = columns,
+        hiddenColumns = { damage = true, ['V/W'] = true }
     }
     list.header:toggleColumn('name')
 
@@ -231,12 +233,16 @@ function Handler:onOpened(wnd, _, saved)
         rows[#rows + 1] = {
             id = item.id,
             icon = record.icon,
-            name = function()
-                return item.count > 1
-                    and record.name .. ' (' .. H.addSeparators(item.count) .. ')'
-                    or record.name
-            end,
+            name = item.count > 1
+                and record.name .. ' (' .. H.addSeparators(item.count) .. ')'
+                or record.name,
             type = item.type,
+            damage = function()
+                if not types.Weapon.objectIsInstance(item) then return '-' end
+
+                local wRecord = item.type.record(item)
+                return math.max(wRecord.chopMaxDamage, wRecord.slashMaxDamage, wRecord.thrustMaxDamage)
+            end,
             weight = record.weight > 0 and record.weight or '-',
             value = record.value > 0 and record.value or '-',
             ['V/W'] = record.value > 0 and record.weight > 0 and util.round(record.value / record.weight) or '-',
@@ -265,16 +271,19 @@ function Handler:onOpened(wnd, _, saved)
             I.UIToolkit.Templates.intervalH(5),
             I.UIToolkit.Components.textButton { text = 'All', onClick = function()
                 selectedType = nil
+                list:setHiddenColumns { damage = true, ['V/W'] = true }
                 list:filter()
             end, style = 'thin' }.element,
             I.UIToolkit.Templates.intervalH(5),
             I.UIToolkit.Components.textButton { text = 'Weapons', onClick = function()
                 selectedType = types.Weapon
+                list:setHiddenColumns { ['V/W'] = true }
                 list:filter()
             end, style = 'thin' }.element,
             I.UIToolkit.Templates.intervalH(5),
             I.UIToolkit.Components.textButton { text = 'Misc', onClick = function()
                 selectedType = types.Miscellaneous
+                list:setHiddenColumns { damage = true }
                 list:filter()
             end, style = 'thin' }.element,
             I.UIToolkit.Templates.intervalH(10),
