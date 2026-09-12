@@ -128,7 +128,7 @@ function ColumnSorter:getActiveColumn()
     return self.activeColumn, self.ascending == true
 end
 
----Applies size based on condif and whether column is hidden
+---Applies size based on config and whether column is hidden
 ---@param layoutOrElement openmw.ui.Layout|openmw.ui.Element
 ---@param cfg UIToolkit.ColumnSorter.Column
 ---@param hidden boolean?

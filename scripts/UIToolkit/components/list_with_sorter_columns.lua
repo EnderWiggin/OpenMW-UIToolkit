@@ -178,6 +178,14 @@ function SortedList:filter(refresh)
     if refresh ~= false then self:refresh() end
 end
 
+---@param hidden table<string, boolean>
+function SortedList:setHiddenColumns(hidden)
+    if self:isDestroyed() then return end
+    self.header:setHiddenColumns(hidden)
+    self.provider:setHiddenColumns(hidden)
+    self:refresh()
+end
+
 ---@param items UIToolkit.ListData.Column[]
 function SortedList:setItems(items)
     self.allItems = items
