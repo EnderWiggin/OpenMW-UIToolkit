@@ -24,6 +24,7 @@ local Item = Class(ListItemBase)
 function Item:init(columns, rowHeight)
     self.columns = columns
     self.rowHeight = rowHeight
+    self.hidden = {}
 end
 
 ---@return number
@@ -39,7 +40,11 @@ function Item:makeComponent(data)
     local columns = {}
     for i = 1, #self.columns do
         local cfg = self.columns[i]
-        columns[#columns + 1] = cfg.render(data, cfg, self.rowHeight)
+        if self.hidden[cfg.id] then
+            columns[#columns + 1] = Item.renderHidden(data, cfg, self.rowHeight)
+        else
+            columns[#columns + 1] = cfg.render(data, cfg, self.rowHeight)
+        end
     end
     local layout = {
         name = data.id,
@@ -86,7 +91,11 @@ function Item:refreshColumns(idOrData, ...)
             local cfg = self.columns[i]
             --TODO: add possibility to update instead of re-render?
             I.UIToolkit.queueDestroy(part, true)
-            content[i] = cfg.render(data, cfg, self.rowHeight)
+            if self.hidden[cfg.id] then
+                content[i] = Item.renderHidden(data, cfg, self.rowHeight)
+            else
+                content[i] = cfg.render(data, cfg, self.rowHeight)
+            end
             I.UIToolkit.Interactive.updateState(cached.element)
             I.UIToolkit.queueUpdate(cached.element)
         end
@@ -123,6 +132,12 @@ function Item:getTooltip(data)
         return tip()
     end
     return tip
+end
+
+---@param hidden table<string, boolean>
+function Item:setHiddenColumns(hidden)
+    self.hidden = hidden
+    self:clear()
 end
 
 ---@type UIToolkit.ListItem.Column.Renderer
@@ -176,6 +191,15 @@ function Item.renderIcon(data, cfg, height)
 
     Item.applySize(layout, cfg, height)
     return ui.create(layout)
+end
+
+---@type UIToolkit.ListItem.Column.Renderer
+function Item.renderHidden(_, cfg, height)
+    return ui.create {
+        name = cfg.id,
+        type = ui.TYPE.Widget,
+        props = { size = v2(0, height) },
+    }
 end
 
 ---@param layout openmw.ui.Layout
