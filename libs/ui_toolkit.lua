@@ -304,6 +304,7 @@ function Components.sortedList(opts) end
 ---@class UIToolkit.ColumnSorterOpts
 ---@field columns UIToolkit.ColumnSorter.Column[]
 ---@field default string?
+---@field hidden? table<string, boolean>
 ---@field onChanged fun(id: string, ascending: boolean)
 
 ---@class UIToolkit.ColumnSorter : UIToolkit.Component
@@ -327,6 +328,7 @@ function Components.sortedList(opts) end
 ---@field size openmw.util.Vector2
 ---@field defaultSort? UIToolkit.ColumnComparator|UIToolkit.SimpleColumnComparatorConfig
 ---@field columns UIToolkit.SortedList.Column[]
+---@field hiddenColumns? table<string, boolean>
 ---@field rowHeight number? Defaults to 1.5 * (textNormal + 2)
 ---@field onItemClicked? fun(data:UIToolkit.ListData.Base, idx:integer)
 ---@field scrollWidth number?

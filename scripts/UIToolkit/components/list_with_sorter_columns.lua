@@ -92,6 +92,7 @@ function SortedList:init(opts)
     end
 
     self.provider:init(providerColumns, rowHeight)
+    self.provider:setHiddenColumns(opts.hiddenColumns)
 
     self.list = I.UIToolkit.Components.itemList {
         size = self:getListSize(),
@@ -104,6 +105,7 @@ function SortedList:init(opts)
 
     self.header = I.UIToolkit.Components.columnSorter {
         columns = headerColumns,
+        hidden = opts.hiddenColumns,
         onChanged = function() self:sort() end,
     }
 
@@ -178,7 +180,7 @@ function SortedList:filter(refresh)
     if refresh ~= false then self:refresh() end
 end
 
----@param hidden table<string, boolean>
+---@param hidden? table<string, boolean>
 function SortedList:setHiddenColumns(hidden)
     if self:isDestroyed() then return end
     self.header:setHiddenColumns(hidden)

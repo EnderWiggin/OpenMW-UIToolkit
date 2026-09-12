@@ -134,9 +134,9 @@ function Item:getTooltip(data)
     return tip
 end
 
----@param hidden table<string, boolean>
+---@param hidden? table<string, boolean>
 function Item:setHiddenColumns(hidden)
-    self.hidden = hidden
+    self.hidden = hidden or {}
     self:clear()
 end
 

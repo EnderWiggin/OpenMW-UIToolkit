@@ -31,12 +31,12 @@ function ColumnSorter:init(opts)
     self.columns = opts.columns --[[@as  UIToolkit.ColumnSorter.Column[] ]]
     self.activeColumn = opts.default
     self.ascending = true
-    self.hidden = {} --TODO: add option to initialize this
+    self.hidden = opts.hidden or {}
 
     local items = {}
     for i = 1, #self.columns do
         local cfg = self.columns[i]
-        items[#items + 1] = M.renderItem(self, cfg)
+        items[#items + 1] = M.renderItem(self, cfg, self.hidden[cfg.id])
     end
     local layout = {
         type = ui.TYPE.Flex,
@@ -49,10 +49,10 @@ function ColumnSorter:init(opts)
     Component.init(self, ui.create(layout))
 end
 
----@param hidden table<string, boolean>
+---@param hidden? table<string, boolean>
 function ColumnSorter:setHiddenColumns(hidden)
     if self:isDestroyed() then return end
-    self.hidden = hidden
+    self.hidden = hidden or {}
     self:updateColumnVisibility()
 end
 
