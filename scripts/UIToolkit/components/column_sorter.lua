@@ -9,6 +9,7 @@ local I = require('openmw.interfaces')
 
 local Class = require('scripts.UIToolkit.class')
 local Component = require('scripts.UIToolkit.components.component')
+local H = require 'scripts.UIToolkit.helpers'
 
 local SORT_ASC = ui.texture { path = 'icons/UIToolkit/sort_asc.dds' }
 local SORT_DESC = ui.texture { path = 'icons/UIToolkit/sort_desc.dds' }
@@ -21,6 +22,7 @@ local M = {}
 ---@field new fun(self:UIToolkit.ColumnSorter):UIToolkit.ColumnSorter
 ---@field activeColumn string|nil
 ---@field ascending boolean
+---@field hidden table<string, boolean>
 local ColumnSorter = Class(Component)
 
 ---@param opts UIToolkit.ColumnSorterOpts
@@ -29,6 +31,7 @@ function ColumnSorter:init(opts)
     self.columns = opts.columns --[[@as  UIToolkit.ColumnSorter.Column[] ]]
     self.activeColumn = opts.default
     self.ascending = true
+    self.hidden = {} --TODO: add option to initialize this
 
     local items = {}
     for i = 1, #self.columns do
@@ -44,6 +47,23 @@ function ColumnSorter:init(opts)
         content = ui.content(items),
     }
     Component.init(self, ui.create(layout))
+end
+
+---@param hidden table<string, boolean>
+function ColumnSorter:setHiddenColumns(hidden)
+    if self:isDestroyed() then return end
+    self.hidden = hidden
+    self:updateColumnVisibility()
+end
+
+function ColumnSorter:updateColumnVisibility()
+    ---@type openmw.ui.Content
+    local content = self.element.layout.content
+    for i = 1, #self.columns do
+        local cfg = self.columns[i]
+        M.applySizeAndVisibility(content[i], cfg, self.hidden[cfg.id])
+    end
+    I.UIToolkit.queueUpdate(self.element, true)
 end
 
 ---@param id string
@@ -108,12 +128,31 @@ function ColumnSorter:getActiveColumn()
     return self.activeColumn, self.ascending == true
 end
 
----@param self UIToolkit.ColumnSorter
+---Applies size based on condif and whether column is hidden
+---@param layoutOrElement openmw.ui.Layout|openmw.ui.Element
 ---@param cfg UIToolkit.ColumnSorter.Column
----@return openmw.ui.Layout|openmw.ui.Element
-function M.renderItem(self, cfg)
+---@param hidden boolean?
+function M.applySizeAndVisibility(layoutOrElement, cfg, hidden)
     local width = cfg.width or 0
     local auto = (width == 0 and (cfg.auto or 1)) or nil
+
+    if hidden then
+        width = 0
+        auto = nil
+    end
+
+    local props = H.props(layoutOrElement)
+    props.size = v2(width, 0)
+    props.visible = not hidden
+
+    H.external(layoutOrElement).grow = auto
+end
+
+---@param self UIToolkit.ColumnSorter
+---@param cfg UIToolkit.ColumnSorter.Column
+---@param hidden boolean?
+---@return openmw.ui.Layout|openmw.ui.Element
+function M.renderItem(self, cfg, hidden)
     local name = cfg.name
     local t = I.UIToolkit.getTheme()
 
@@ -157,14 +196,13 @@ function M.renderItem(self, cfg)
         props = {
             horizontal = true,
             autoSize = false,
-            size = v2(width, 0),
             relativeSize = v2(0, 1),
             arrange = ui.ALIGNMENT.Center,
             align = cfg.align,
         },
-        external = { grow = auto },
         content = content,
     }
+    M.applySizeAndVisibility(layout, cfg, hidden)
     if cfg.inactive then return layout end
 
     return I.UIToolkit.Interactive.makeInteractive({

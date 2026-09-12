@@ -257,6 +257,16 @@ function H.userData(layoutOrElement)
     return layout.userData
 end
 
+
+---@param layoutOrElement openmw.ui.Layout|openmw.ui.Element
+---@return table
+function H.external(layoutOrElement)
+    local layout = H.toLayout(layoutOrElement)
+    if not layout then return {} end
+    layout.external = layout.external or {}
+    return layout.external
+end
+
 if not context.isRuntime() then return H end
 ---@omw-context-begin runtime
 
