@@ -47,4 +47,9 @@ function WindowHandler:getFocusedScrollable()
     return nil
 end
 
+---@return string?
+function WindowHandler:getStorageSuffix()
+    return nil
+end
+
 return WindowHandler

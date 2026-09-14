@@ -29,6 +29,13 @@ function M.register(id, opts)
     windows[id] = { opts = opts }
 end
 
+local function getStorageKey(id, handler)
+    if not handler then return id end
+    local suffix = handler:getStorageSuffix()
+    if not suffix then return id end
+    return id .. suffix
+end
+
 ---@param c openmw.util.Vector2
 ---@return openmw.util.Vector2
 local function toAbsolute(c)
@@ -53,7 +60,7 @@ function M.open(id, data)
     opts.handler = handler
 
     ---@type UIToolkit.WindowSaveData
-    local saved = section:getCopy(id)
+    local saved = section:getCopy(getStorageKey(id, handler))
     local wnd = Window:new()
     wnd:init(opts, id, saved and {
         pinned = saved.pinned == true,
@@ -86,6 +93,7 @@ function M.close(id)
 
     local handler = data.handler
     local custom
+    local key = getStorageKey(id, handler)
     if handler then custom = handler:onClosed() end
 
     ---@type UIToolkit.WindowSaveData
@@ -95,7 +103,7 @@ function M.close(id)
         size = toRelative(wnd:getSize()),
         custom = custom,
     }
-    section:set(id, saved)
+    section:set(key, saved)
     data.wnd = nil
     I.UIToolkit.queueDestroy(wnd.element, true)
     data.handler = nil
