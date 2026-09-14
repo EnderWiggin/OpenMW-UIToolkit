@@ -243,7 +243,7 @@ function Components.sortedList(opts) end
 ---@field makeComponent fun(self:UIToolkit.ListItem.Text, data:UIToolkit.ListData.Text):UIToolkit.Component
 ---@field getTooltip fun(self:UIToolkit.ListItem.Text, data:UIToolkit.ListData.Text):UTKTooltips.AnyTooltip?
 
----@alias UIToolkit.ListItem.Column.Renderer fun(data:UIToolkit.ListData.Column, cfg:UIToolkit.ListData.ColumnConfig, height:number):openmw.ui.Element
+---@alias UIToolkit.ListItem.Column.Renderer fun(data:UIToolkit.ListData.Column, cfg:UIToolkit.ListData.ColumnConfig, height:number):openmw.ui.Layout|openmw.ui.Element
 
 ---@class UIToolkit.ListData.ColumnConfig
 ---@field id string
@@ -259,7 +259,7 @@ function Components.sortedList(opts) end
 ---@class UIToolkit.ListItem.Column: UIToolkit.ListItem.Base
 ---@field new fun(self:UIToolkit.ListItem.Column):UIToolkit.ListItem.Column
 ---@field init fun(self:UIToolkit.ListItem.Column, columns:UIToolkit.ListData.ColumnConfig[], rowHeight:number)
----@field refreshColumns fun(self:UIToolkit.ListItem.Column, idOrData:string|UIToolkit.ListData.Column, ...:string|integer)
+---@field refreshColumns fun(self:UIToolkit.ListItem.Column, idOrData:string|UIToolkit.ListData.Column, ...:string)
 ---@field refreshActiveState fun(self:UIToolkit.ListItem.Column, idOrData:string|UIToolkit.ListData.Column)
 ---@field renderText UIToolkit.ListItem.Column.Renderer
 ---@field renderIcon UIToolkit.ListItem.Column.Renderer
@@ -272,6 +272,7 @@ function Components.sortedList(opts) end
 ---@field scrollWidth number?
 ---@field slimScroll boolean? scrollbar will have no borders around arrows or handle
 ---@field noBorder boolean?
+---@field itemDeepUpdate boolean?
 
 ---@class UIToolkit.ItemList : UIToolkit.Scrollable
 ---@field new fun():UIToolkit.ItemList

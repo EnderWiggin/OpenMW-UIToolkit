@@ -146,6 +146,19 @@ H.addSeparators = function(number)
     return minus .. int:reverse():gsub("^" .. separator, "") .. fraction
 end
 
+--Returns `true` if `str` contains `word` - separated from other text by non-letter character
+---@param str string
+---@param word string
+---@return boolean
+function H.hasWord(str, word)
+    if string.find(str, "[^%a]+" .. word .."[^%a]+")
+            or string.find(str, "^" .. word .."[^%a]+")
+            or string.find(str, "[^%a]+" .. word .."$")
+            or string.find(str, "^" .. word .."$")
+    then return true end
+    return false
+end
+
 ---Returns list of `str` parts split by `separator`
 ---@param str string string to split
 ---@param separator string? defaults to `%s` (space)

@@ -45,6 +45,7 @@ function ItemList:init(opts)
         ---@type openmw.util.Vector2|nil
         lastHoveredPos = nil,
     }
+    self.itemDeepUpdate = opts.itemDeepUpdate == true
     self.state = state
     self.noBorder = opts.noBorder
     ---@type openmw.ui.Element[]
@@ -246,15 +247,16 @@ function ItemList:_updateScrollable()
     I.UIToolkit.queueUpdate(self._scrollable)
 end
 
+---@private
 ---@param provider UIToolkit.ListItem.Base
 ---@param id string|nil
 ---@param hovered boolean
-local function setItemHoveredStatus(provider, id, hovered)
+function ItemList:setItemHoveredStatus(provider, id, hovered)
     if not id then return end
     local view = provider:getCachedView(id)
     if not view then return end
     I.UIToolkit.Interactive.updateState(view, { hovering = hovered })
-    I.UIToolkit.queueUpdate(view, true)
+    I.UIToolkit.update(view, self.itemDeepUpdate)
 end
 
 ---@return UIToolkit.ListData.Base[]
@@ -271,7 +273,7 @@ function ItemList:setItems(items)
         wasHovered = was and was.id
         local new = items[state.hovered]
         if not new or wasHovered ~= new.id then
-            setItemHoveredStatus(state.provider, wasHovered, false)
+            self:setItemHoveredStatus(state.provider, wasHovered, false)
             state.hovered = nil
         end
     end
@@ -332,9 +334,9 @@ function ItemList:setHovered(idOrIndex, fixedTipPos, fixedTipAnchor)
 
     if state.hovered then
         local was = state.items[state.hovered]
-        setItemHoveredStatus(state.provider, was and was.id, false)
+        self:setItemHoveredStatus(state.provider, was and was.id, false)
     end
-    setItemHoveredStatus(state.provider, id, true)
+    self:setItemHoveredStatus(state.provider, id, true)
 
     if isPlayer then
         if item then

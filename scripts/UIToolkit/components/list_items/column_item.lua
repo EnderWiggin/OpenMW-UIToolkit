@@ -37,12 +37,10 @@ end
 function Item:makeComponent(data)
     local active = data.isActive and data.isActive()
 
-    local columns = {}
+    local columns = ui.content {}
     for i = 1, #self.columns do
         local cfg = self.columns[i]
-        if self.hidden[cfg.id] then
-            columns[#columns + 1] = Item.renderHidden(data, cfg, self.rowHeight)
-        else
+        if not self.hidden[cfg.id] then
             columns[#columns + 1] = cfg.render(data, cfg, self.rowHeight)
         end
     end
@@ -54,7 +52,7 @@ function Item:makeComponent(data)
             autoSize = false,
             relativeSize = v2(1, 1),
         },
-        content = ui.content(columns),
+        content = columns,
         userData = { active = active }
     }
     I.UIToolkit.Interactive.updateState(layout)
@@ -65,7 +63,7 @@ function Item:makeComponent(data)
 end
 
 ---@param idOrData string|UIToolkit.ListData.Column
----@param ... string|integer
+---@param ... string
 function Item:refreshColumns(idOrData, ...)
     local id, data
     if type(idOrData) == 'string' then
@@ -74,26 +72,22 @@ function Item:refreshColumns(idOrData, ...)
         id = idOrData.id
         data = idOrData
     end
-    local columns = {}
     local args = { ... }
-    for i = 1, select("#", ...) do
-        columns[args[i]] = true
-    end
     local cached = self:getCachedComponent(id) --[[@as UIToolkit.ListItem.RowComponent]]
     if not cached or cached:isDestroyed() then return end
     data = data or cached.data
     assert(data)
     local content = cached.element.layout.content
     if not content then return end
-    for i = 1, #content do
+    for i = 1, #self.columns do
         local part = content[i] --[[@as openmw.ui.Element]]
-        if columns[i] or columns[part.layout.name] then
+        local layout = H.toLayout(part)
+        local isElement = part ~= layout
+        if layout and H.findInArray(args, layout.name) then
             local cfg = self.columns[i]
             --TODO: add possibility to update instead of re-render?
-            I.UIToolkit.queueDestroy(part, true)
-            if self.hidden[cfg.id] then
-                content[i] = Item.renderHidden(data, cfg, self.rowHeight)
-            else
+            if isElement and part then I.UIToolkit.queueDestroy(part, true) end
+            if not self.hidden[cfg.id] then
                 content[i] = cfg.render(data, cfg, self.rowHeight)
             end
             I.UIToolkit.Interactive.updateState(cached.element)
@@ -166,7 +160,7 @@ function Item.renderText(data, cfg, height)
     }
 
     Item.applySize(layout, cfg, height)
-    return ui.create(layout)
+    return layout
 end
 
 ---@type UIToolkit.ListItem.Column.Renderer
@@ -190,7 +184,7 @@ function Item.renderIcon(data, cfg, height)
     }
 
     Item.applySize(layout, cfg, height)
-    return ui.create(layout)
+    return layout
 end
 
 ---@type UIToolkit.ListItem.Column.Renderer
