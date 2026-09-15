@@ -11,10 +11,6 @@ local Class = require('scripts.UIToolkit.class')
 local Component = require('scripts.UIToolkit.components.component')
 local ListItemBase = require('scripts.UIToolkit.components.list_items.base_item')
 
----@class UIToolkit.ListItem.RowComponent : UIToolkit.Component
----@field data UIToolkit.ListData.Column?
-local RowComponent = Class(Component)
-
 ---@class UIToolkit.ListItem.Column: UIToolkit.ListItem.Base<UIToolkit.ListData.Column>
 ---@field new fun(self:UIToolkit.ListItem.Column):UIToolkit.ListItem.Column
 local Item = Class(ListItemBase)
@@ -56,8 +52,7 @@ function Item:makeComponent(data)
         userData = { active = active }
     }
     I.UIToolkit.Interactive.updateState(layout)
-    local component = RowComponent:new() --[[@as UIToolkit.ListItem.RowComponent]]
-    component.data = data
+    local component = Component:new()
     component:init(ui.create(layout))
     return component
 end
@@ -93,26 +88,6 @@ function Item:refreshColumns(idOrData, ...)
             I.UIToolkit.Interactive.updateState(cached.element)
             I.UIToolkit.queueUpdate(cached.element)
         end
-    end
-end
-
----@param idOrData string|UIToolkit.ListData.Column
-function Item:refreshActiveState(idOrData)
-    local id, data
-    if type(idOrData) == 'string' then
-        id = idOrData
-    else
-        id = idOrData.id
-        data = idOrData
-    end
-    local cached = self:getCachedComponent(id) --[[@as UIToolkit.ListItem.RowComponent]]
-    if not cached or cached:isDestroyed() then return end
-    data = data or cached.data
-    assert(data)
-    local isActive = (data.isActive and data.isActive()) == true
-    if cached:isActive() == true ~= isActive then
-        cached:setActive(isActive)
-        I.UIToolkit.queueUpdate(cached.element, true)
     end
 end
 

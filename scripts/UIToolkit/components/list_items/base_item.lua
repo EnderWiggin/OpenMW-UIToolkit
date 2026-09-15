@@ -4,6 +4,26 @@ local I = require('openmw.interfaces')
 
 local Class = require('scripts.UIToolkit.class')
 
+---@generic T : UIToolkit.ListData.Base
+---@class UIToolkit.ListItem.RowComponent<T> : UIToolkit.Component
+---@field data T?
+
+---@param data UIToolkit.ListData.Base
+---@param component UIToolkit.ListItem.RowComponent<UIToolkit.ListData.Base>
+local function updateState(data, component)
+    local isActive = (data.isActive and data.isActive()) == true
+    local isDisabled = (data.isDisabled and data.isDisabled()) == true
+
+    if (component:isActive() == true) ~= isActive or (component:isDisabled() == true) ~= isDisabled then
+        I.UIToolkit.Interactive.updateState(component.element, {
+            active = data.isActive and data.isActive(),
+            disabled = data.isDisabled and data.isDisabled(),
+        })
+        return true
+    end
+    return false
+end
+
 ---@generic T: UIToolkit.ListData.Base
 ---@class UIToolkit.ListItem.Base<T>
 ---@field cache table<string, UIToolkit.Component>
@@ -45,7 +65,9 @@ function ListItemBase:getComponent(data)
     local cached = self.cache[data.id]
     if cached and not cached:isDestroyed() then return cached end
 
-    local component = self:makeComponent(data)
+    local component = self:makeComponent(data) --[[@as UIToolkit.ListItem.RowComponent<UIToolkit.ListData.Base>]]
+    component.data = data
+    updateState(data, component)
     self.cache[data.id] = component
     return component
 end
@@ -66,6 +88,26 @@ function ListItemBase:getCachedComponent(id)
     end
 
     return cached
+end
+
+---@param idOrData string|UIToolkit.ListData.Base
+function ListItemBase:refreshState(idOrData)
+    local id, data
+    if type(idOrData) == 'string' then
+        id = idOrData
+    else
+        id = idOrData.id
+        data = idOrData
+    end
+
+    local cached = self:getCachedView(id) --[[@as UIToolkit.ListItem.RowComponent<UIToolkit.ListData.Base>?]]
+    if not cached then return end
+    data = data or cached.data
+    assert(data)
+
+    if updateState(data, cached) then
+        I.UIToolkit.queueUpdate(cached.element, true)
+    end
 end
 
 ---@param id string

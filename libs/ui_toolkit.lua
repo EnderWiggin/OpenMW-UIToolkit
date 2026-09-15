@@ -220,6 +220,9 @@ function Components.sortedList(opts) end
 
 ---@class UIToolkit.ListData.Base
 ---@field id string
+---@field tooltip? UTKTooltips.AnyTooltip|UIToolkit.TooltipProvider
+---@field isActive? fun():boolean
+---@field isDisabled? fun():boolean
 
 ---@generic T: UIToolkit.ListData.Base
 ---@class UIToolkit.ListItem.Base<T>
@@ -229,13 +232,13 @@ function Components.sortedList(opts) end
 ---@field makeComponent fun(self:UIToolkit.ListItem.Base<T>, data:T):UIToolkit.Component
 ---@field getTooltip fun(self:UIToolkit.ListItem.Base<T>, data:T):UTKTooltips.AnyTooltip?
 ---@field getView fun(self:UIToolkit.ListItem.Base<T>, data:T):openmw.ui.Element
+---@field refreshState fun(self:UIToolkit.ListItem.Base<T>, idOrData:string|UIToolkit.ListData.Base)
 ---@field getCachedView fun(self:UIToolkit.ListItem.Base<T>, id:string):openmw.ui.Element?
 ---@field remove fun(self:UIToolkit.ListItem.Base<T>, id:string) removes cached item
 ---@field clear fun(self:UIToolkit.ListItem.Base<T>) removes all cached items
 
 ---@class UIToolkit.ListData.Text : UIToolkit.ListData.Base
 ---@field text string
----@field tooltip UTKTooltips.AnyTooltip?
 
 ---@class UIToolkit.ListItem.Text : UIToolkit.ListItem.Base<UIToolkit.ListData.Text>
 ---@field new fun(self:UIToolkit.ListItem.Text):UIToolkit.ListItem.Text
@@ -253,14 +256,11 @@ function Components.sortedList(opts) end
 ---@field arg any? additional info for renderer
 
 ---@class UIToolkit.ListData.Column: UIToolkit.ListData.Base
----@field isActive? fun():boolean
----@field tooltip? UTKTooltips.AnyTooltip|UIToolkit.TooltipProvider
 
 ---@class UIToolkit.ListItem.Column: UIToolkit.ListItem.Base
 ---@field new fun(self:UIToolkit.ListItem.Column):UIToolkit.ListItem.Column
 ---@field init fun(self:UIToolkit.ListItem.Column, columns:UIToolkit.ListData.ColumnConfig[], rowHeight:number)
 ---@field refreshColumns fun(self:UIToolkit.ListItem.Column, idOrData:string|UIToolkit.ListData.Column, ...:string)
----@field refreshActiveState fun(self:UIToolkit.ListItem.Column, idOrData:string|UIToolkit.ListData.Column)
 ---@field renderText UIToolkit.ListItem.Column.Renderer
 ---@field renderIcon UIToolkit.ListItem.Column.Renderer
 
