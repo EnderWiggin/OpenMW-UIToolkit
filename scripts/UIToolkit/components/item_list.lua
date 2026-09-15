@@ -155,10 +155,11 @@ end
 
 function ItemList:getContentWidth()
     local s = I.UIToolkit.getTheme().Sizes
-    if self.noBorder then
-        return math.floor(math.max(0, self.state.currentSize.x - self._scrollBar:getSize().x))
+    local width = self.state.currentSize.x - self._scrollBar:getSize().x - s.standardGap
+    if not self.noBorder then
+        width = width - 2 * (s.padding + s.border)
     end
-    return math.floor(math.max(0, self.state.currentSize.x - self._scrollBar:getSize().x - 3 * s.padding - 2 * s.border))
+    return math.floor(math.max(0, width))
 end
 
 ---@param n integer
