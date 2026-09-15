@@ -193,11 +193,7 @@ end
 
 local function getMousePosition()
     if extraParams and extraParams.fixedTipPos then return extraParams.fixedTipPos end
-    ---@diagnostic disable-next-line: undefined-field
-    if ui.mousePosition then return ui.mousePosition() end
-
-    local ctx = I.UIToolkit.getCtx()
-    return ctx.lastMousePos
+    return I.UIToolkit.getCursorPos()
 end
 
 local function updatePosition()

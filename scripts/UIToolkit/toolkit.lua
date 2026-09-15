@@ -3,6 +3,7 @@
 local core      = require 'openmw.core'
 local input     = require 'openmw.input'
 local ui        = require 'openmw.ui'
+local util      = require 'openmw.util'
 
 local context   = require 'scripts.UIToolkit.scriptContext'
 local D         = require 'scripts.UIToolkit.config.defaults'
@@ -41,6 +42,29 @@ end
 function Interface.getCtx() return ctx end
 
 function Interface.getTheme() return theme end
+
+local lastMousePos = util.vector2(0, 0)
+local framesSinceMousePosChanged = 0
+
+---@return openmw.util.Vector2
+function Interface.getCursorPos()
+    ---@diagnostic disable-next-line: undefined-field
+    if ui.mousePosition then return ui.mousePosition() end
+    return lastMousePos
+end
+
+---@param p openmw.util.Vector2
+function Interface.setCursorPos(p)
+    lastMousePos = p or util.vector2(0, 0)
+    framesSinceMousePosChanged = 0
+end
+
+function Interface.cursorPosIsFresh()
+    ---@diagnostic disable-next-line: undefined-field
+    if ui.mousePosition then return true end
+
+    return framesSinceMousePosChanged < 3
+end
 
 ---@type openmw.ui.Element[]
 local updateQueue = {}
@@ -292,6 +316,14 @@ local function onFrame()
     end
 
     processUpdateAndDestroyQueues()
+    local mouseMoved
+    if input.getMouseMoveX() ~= 0 or input.getMouseMoveY() ~= 0 then
+        mouseMoved = true
+    end
+
+    if mouseMoved and framesSinceMousePosChanged < 10 then
+        framesSinceMousePosChanged = framesSinceMousePosChanged + 1
+    end
 end
 
 local function onMouseWheel(v)

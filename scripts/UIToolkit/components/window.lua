@@ -495,7 +495,7 @@ function Window:init(opts, id, saved)
                 local minWidth = data.minSize.x
                 local minHeight = data.minSize.y
                 --userData.hadMouseMoveThisFrame = true
-                I.UIToolkit.getCtx().lastMousePos = e.position
+                I.UIToolkit.setCursorPos(e.position)
                 if data.dragging and data.dragStartAbs and data.dragStartSize and data.dragStartPos then
                     local delta = e.position - data.dragStartAbs
                     local layerSize = ui.layers[ui.layers.indexOf('Windows')].size
@@ -569,16 +569,16 @@ function Window:init(opts, id, saved)
     else
         window.layout.events = {
             mouseMove = async:callback(function(e)
-                I.UIToolkit.getCtx().lastMousePos = e.position
+                I.UIToolkit.setCursorPos(e.position)
                 I.UIToolkit.WindowManager._queueFocusedWindow(self.id)
             end),
             mousePress = async:callback(function(e)
                 I.UIToolkit.WindowManager._queueFocusedWindow(self.id)
-                I.UIToolkit.getCtx().lastMousePos = e.position
+                I.UIToolkit.setCursorPos(e.position)
             end),
             mouseRelease = async:callback(function(e)
                 I.UIToolkit.WindowManager._queueFocusedWindow(self.id)
-                I.UIToolkit.getCtx().lastMousePos = e.position
+                I.UIToolkit.setCursorPos(e.position)
             end),
         }
     end

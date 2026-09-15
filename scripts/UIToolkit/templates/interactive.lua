@@ -37,7 +37,7 @@ function M.makeInteractive(opts, layoutOrElement)
     element.layout.events = element.layout.events or {}
     element.layout.events.mousePress = async:callback(function(e)
         --TODO: this is temporary, until 0.52, where `ui.mousePosition` would hopefully exist
-        ctx.lastMousePos = e.position
+        I.UIToolkit.setCursorPos(e.position)
         if e.button ~= 1 then return end
         if nonInteractiveDisabled and element.layout.userData.disabled then return end
         if opts.onClick then
@@ -51,7 +51,7 @@ function M.makeInteractive(opts, layoutOrElement)
     end)
     element.layout.events.mouseRelease = async:callback(function(e)
         --TODO: this is temporary, until 0.52, where `ui.mousePosition` would hopefully exist
-        ctx.lastMousePos = e.position
+        I.UIToolkit.setCursorPos(e.position)
         if e.button ~= 1 then return end
         if nonInteractiveDisabled and element.layout.userData.disabled then return end
         if opts.onClick then
@@ -72,7 +72,6 @@ function M.makeInteractive(opts, layoutOrElement)
         if nonInteractiveDisabled and element.layout.userData.disabled then return end
         M.updateState(element, { hovering = false })
         toolkit.queueUpdate(element)
-        ctx.lastMousePos = nil
         return true
     end)
     element.layout.events.focusGain = async:callback(function()
@@ -92,7 +91,7 @@ function M.makeInteractive(opts, layoutOrElement)
     end)
     element.layout.events.mouseMove = async:callback(function(e, tgt)
         --TODO: this is temporary, until 0.52, where `ui.mousePosition` would hopefully exist
-        ctx.lastMousePos = e.position
+        I.UIToolkit.setCursorPos(e.position)
         if opts.onMouseMove then
             opts.onMouseMove(e, tgt, element)
         end

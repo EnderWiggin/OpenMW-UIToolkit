@@ -79,7 +79,7 @@ function ItemList:init(opts)
             end),
             ---@param e openmw.ui.MouseEvent
             mouseMove = async:callback(function(e)
-                I.UIToolkit.getCtx().lastMousePos = e.position
+                I.UIToolkit.setCursorPos(e.position)
                 self.state.lastHoveredPos = e.offset.y - self._scrollBar:getPosition()
                 self:setHovered(self:getIndexByYPos(e.offset.y))
             end),
