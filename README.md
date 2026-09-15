@@ -612,6 +612,7 @@ The setting's `argument` table accepts these options:
 - `max` - optional maximum value.
 - `integer` - optional - rounds the value to an integer when set to `true`.
 - `default` - optional default value. When defined, the field displays a reset button.
+- `disabled` - disables changing the setting from the UI.
 
 ### Example
 ```lua
@@ -626,6 +627,7 @@ The setting's `argument` table accepts these options:
         max = 100,
         integer = true,
         default = 10,
+        disabled = false, -- set to true to disable editing
     },
 }
 ```
@@ -640,6 +642,7 @@ The setting's `argument` table accepts these options:
 - `integer` - optional - rounds the value to an integer when set to `true`.
 - `default` - optional default value. When defined, the field displays a reset button.
 - `step` - optional amount changed by the slider arrows. Defaults to `1` for integer values and `0.1` otherwise.
+- `disabled` - disables changing the setting from the UI.
 
 ### Example
 ```lua
@@ -654,6 +657,7 @@ The setting's `argument` table accepts these options:
         max = 2,
         default = 1,
         step = 0.1,
+        disabled = false, -- set to true to disable editing
     },
 }
 ```
