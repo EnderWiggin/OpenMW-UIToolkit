@@ -367,6 +367,7 @@ function Components.sortedList(opts) end
 ---@field open fun(id: string, data:any?):UIToolkit.Window
 ---@field close fun(id: string)
 ---@field isOpen fun(id: string):boolean
+---@field getHandler fun(id: string):UIToolkit.WindowHandler?
 ---@field getFocusedWindowHandler fun():UIToolkit.WindowHandler?, string?
 
 ---@class UIToolkit.WindowOpts

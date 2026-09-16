@@ -165,4 +165,12 @@ function M.isOpen(id)
     return windows[id].wnd ~= nil
 end
 
+---@param id string
+---@return UIToolkit.WindowHandler?
+function M.getHandler(id)
+    local data = windows[id]
+    if not data or not data.handler then return nil end
+    return data.handler
+end
+
 return M
