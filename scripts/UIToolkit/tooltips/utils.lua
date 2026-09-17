@@ -4,6 +4,7 @@ local camera = require('openmw.camera')
 local core = require('openmw.core')
 local util = require('openmw.util')
 local types = require('openmw.types')
+local I = require('openmw.interfaces')
 local Creature = types.Creature
 local Item = types.Item
 local Lockable = types.Lockable
@@ -240,6 +241,85 @@ function Utils.objectTooltipViewportCoords(object)
         local viewport = camera.worldToViewportVector(worldPos)
         return viewport
     end
+end
+
+---@param items? UTKTooltips.RecipeItem[]
+---@return UTKTooltips.RecipeItem?, integer
+function Utils.findByName(items, name)
+    if not items then return nil, 0 end
+    for i = 1, #items do
+        local item = items[i]
+        if item.name == name then
+            return item, i
+        end
+    end
+    return nil, 0
+end
+
+local Armor = types.Armor
+local armorTypeGmst = {
+    [Armor.TYPE.Boots] = core.getGMST('iBootsWeight'),
+    [Armor.TYPE.Cuirass] = core.getGMST('iCuirassWeight'),
+    [Armor.TYPE.Greaves] = core.getGMST('iGreavesWeight'),
+    [Armor.TYPE.Helmet] = core.getGMST('iHelmWeight'),
+    [Armor.TYPE.LBracer] = core.getGMST('iGauntletWeight'),
+    [Armor.TYPE.LGauntlet] = core.getGMST('iGauntletWeight'),
+    [Armor.TYPE.LPauldron] = core.getGMST('iPauldronWeight'),
+    [Armor.TYPE.RBracer] = core.getGMST('iGauntletWeight'),
+    [Armor.TYPE.RGauntlet] = core.getGMST('iGauntletWeight'),
+    [Armor.TYPE.RPauldron] = core.getGMST('iPauldronWeight'),
+    [Armor.TYPE.Shield] = core.getGMST('iShieldWeight'),
+}
+
+local function asRecord(itemOrId)
+    if not itemOrId then return end
+    if type(itemOrId) == 'string' then
+        return Armor.records[itemOrId]
+    elseif itemOrId.__type.name == 'ESM::Armor' then
+        return itemOrId
+    end
+    return Armor.records[itemOrId.recordId]
+end
+
+function Utils.getArmorSkill(itemOrId)
+    local item = asRecord(itemOrId)
+    if not item then
+        return 'unarmored'
+    end
+    local weightGmst = armorTypeGmst[item.type]
+    local epsilon = 0.0005
+    if item.weight <= weightGmst * core.getGMST('fLightMaxMod') + epsilon then
+        return 'lightarmor'
+    elseif item.weight <= weightGmst * core.getGMST('fMedMaxMod') + epsilon then
+        return 'mediumarmor'
+    else
+        return 'heavyarmor'
+    end
+end
+
+---@param record openmw.types.ArmorRecord
+---@param object openmw.Object?
+---@return string
+function Utils.armorWeightClass(record, object)
+    local armorSkill
+    if I.Combat.version >= 4 then
+        ---@diagnostic disable-next-line: param-type-mismatch
+        armorSkill = I.Combat.getArmorSkill(record)
+    elseif object then
+        armorSkill = I.Combat.getArmorSkill(object)
+    else
+        Utils.getArmorSkill(record)
+    end
+    assert(armorSkill)
+    if armorSkill == 'lightarmor' then
+        return l10n('Light')
+    elseif armorSkill == 'mediumarmor' then
+        return l10n('Medium')
+    elseif armorSkill == 'heavyarmor' then
+        return l10n('Heavy')
+    end
+    -- In case mods allow non-standard armor weight classes
+    return core.stats.Skill.record(armorSkill).name
 end
 
 ---@param spellRecord openmw.core.Spell
