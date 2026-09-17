@@ -18,6 +18,8 @@
 ---@field destroy fun(element:openmw.ui.Element, deep:boolean?) destroys element, calling destructors on components.  If `deep` is `true` will also destroy all descendant elements.
 ---@field queueUpdate fun(element:openmw.ui.Element, deep:boolean?) queues element to be updated on next frame. If `deep` is `true` will also update all descendant elements.
 ---@field queueDestroy fun(element:openmw.ui.Element, deep:boolean?) queues element to be destroyed on next frame, calling destructors on components. If `deep` is `true` will also delete all descendant elements.
+---@field getCursorPos fun():openmw.util.Vector2? returns last seen mouse position, or nil if not in UI mode
+---@field cursorPosIsFresh fun():boolean returns true if mouse position was updated recently
 ---@field texture fun(path:string, size:openmw.util.Vector2?, offset:openmw.util.Vector2?):openmw.ui.TextureResource
 ---@field Templates UIToolkit.Templates
 ---@field Interactive UIToolkit.Interactive
@@ -458,7 +460,7 @@ function Components.sortedList(opts) end
 ---@field getDPadIcon fun(direction:UIToolkit.Controller.DPAdDirection):string
 ---@field makeButtonLayout fun(button:number, opts:UIToolkit.Controller.IconOpts?)
 ---@field makeAxisLayout fun(axis:number, opts:UIToolkit.Controller.IconOpts?)
----@field getControllerActiveState fun():boolean
+---@field isControllerActive fun():boolean
 
 ---@class UIToolkit.Controller.IconOpts
 ---@field color? openmw.util.Color

@@ -322,7 +322,7 @@ function M._setControllerActiveState(state)
     M._updateHintVisibility()
 end
 
-function M.getControllerActiveState()
+function M.isControllerActive()
     return controllerIsActive
 end
 

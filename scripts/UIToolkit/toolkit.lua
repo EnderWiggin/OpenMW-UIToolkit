@@ -46,10 +46,11 @@ function Interface.getTheme() return theme end
 local lastMousePos = util.vector2(0, 0)
 local framesSinceMousePosChanged = 0
 
----@return openmw.util.Vector2
+---@return openmw.util.Vector2?
 function Interface.getCursorPos()
     ---@diagnostic disable-next-line: undefined-field
     if ui.mousePosition then return ui.mousePosition() end
+    if isPlayer and IP.UI.getMode() == nil then return nil end
     return lastMousePos
 end
 
