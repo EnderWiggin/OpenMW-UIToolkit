@@ -302,8 +302,7 @@ local function enchantment(items, record, object, noCharge)
             type = 'magicEffects',
             effects = enchant.effects,
             skipTarget = noTarget,
-            skipDuration =
-                noDuration,
+            skipDuration = noDuration,
             name = CONTENT.MagicEffects
         }
 
@@ -319,8 +318,7 @@ local function enchantment(items, record, object, noCharge)
                 type = 'progressBar',
                 current = chargeCurrent,
                 max = chargeMax,
-                name = CONTENT
-                    .ChargeMeter
+                name = CONTENT.ChargeMeter
             }
         end
     end
@@ -367,8 +365,7 @@ Tooltips.apparatusRecipe = function(tooltip)
     items[#items + 1] = {
         text = l10n('Quality'),
         value = helpers.formatOneDecimal(record.quality),
-        name = CONTENT
-            .Quality
+        name = CONTENT.Quality
     }
     Tooltips.standardValues(items, record)
     return {
@@ -393,8 +390,7 @@ Tooltips.armorRecipe = function(tooltip)
     items[#items + 1] = {
         text = l10n('Condition'),
         value = tostring(condition) .. '/' .. tostring(record.health),
-        name =
-            CONTENT.Condition
+        name = CONTENT.Condition
     }
     Tooltips.addWeight(items, helpers.formatOneDecimal(record.weight) .. ' (' .. weightClass .. ')')
     Tooltips.addValue(items, record.value)
@@ -601,8 +597,7 @@ Tooltips.potionRecipe = function(tooltip)
         unknown = unknown,
         effects = record.effects,
         skipTarget = true,
-        name =
-            CONTENT.MagicEffects
+        name = CONTENT.MagicEffects
     }
     return {
         name = 'Potion',
@@ -994,8 +989,7 @@ Tooltips.skillRecipe = function(tooltip)
                 type = 'progressBar',
                 current = current,
                 color = theme.Colors.HEALTH,
-                align = ui
-                    .ALIGNMENT.Center
+                align = ui.ALIGNMENT.Center
             }
         else
             items[#items + 1] = { type = 'gap' }
