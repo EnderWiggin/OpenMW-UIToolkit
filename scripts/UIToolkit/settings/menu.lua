@@ -34,6 +34,13 @@ I.Settings.registerGroup {
             }
         },
         {
+            key = 'b_CompactWeightValue',
+            renderer = 'checkbox',
+            name = 'SettingCompactWeightValueName',
+            description = 'SettingCompactWeightValueDesc',
+            default = false,
+        },
+        {
             key = 'b_SoulGemValueRebalance',
             renderer = 'checkbox',
             name = 'SettingSoulGemValueRebalanceName',

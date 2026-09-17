@@ -269,7 +269,17 @@ local function controllerStickMoved()
     ) > 0.25
 end
 
+local needInit = true
+local function doInit()
+    needInit = false
+    if isPlayer then
+        require 'scripts.UIToolkit.tooltips.tweaks'
+    end
+end
+
 local function onFrame()
+    if needInit then doInit() end
+
     local dt = core.getRealFrameDuration()
 
     local scrollable = getFocusedScrollable()

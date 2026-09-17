@@ -17,6 +17,10 @@ ConfigNumberSeparators_None: None
 ConfigNumberSeparators_Comma: Comma
 ConfigNumberSeparators_Space: Space
 
+SettingCompactWeightValueName: Condensed weight/value
+SettingCompactWeightValueDesc: |-
+  Moves weight and value information in item tooltips to the footer.
+
 SettingSoulGemValueRebalanceName: Soulgem Values Rebalance
 SettingSoulGemValueRebalanceDesc: |-
   Set this to match same setting from the game launcher.
