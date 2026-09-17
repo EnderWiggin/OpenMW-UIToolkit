@@ -41,6 +41,13 @@ I.Settings.registerGroup {
             default = false,
         },
         {
+            key = 'b_ConditionAsBar',
+            renderer = 'checkbox',
+            name = 'SettingConditionAsBarName',
+            description = 'SettingConditionAsBarDesc',
+            default = false,
+        },
+        {
             key = 'b_SoulGemValueRebalance',
             renderer = 'checkbox',
             name = 'SettingSoulGemValueRebalanceName',

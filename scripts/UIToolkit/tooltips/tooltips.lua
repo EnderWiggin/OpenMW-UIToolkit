@@ -314,8 +314,13 @@ local function enchantment(items, record, object, noCharge)
                 chargeCurrent = itemData.enchantmentCharge
             end
             items[#items + 1] = { text = l10n('Charge'), name = CONTENT.Text }
+            local color
+            if cfgPlayer.interface.b_ConditionAsBar then
+                color = I.UIToolkit.getTheme().Colors.MAGICK
+            end
             items[#items + 1] = {
                 type = 'progressBar',
+                color = color,
                 current = chargeCurrent,
                 max = chargeMax,
                 name = CONTENT.ChargeMeter
@@ -387,11 +392,20 @@ Tooltips.armorRecipe = function(tooltip)
     local items = {}
     items[#items + 1] = header(record, tooltip.object)
     items[#items + 1] = { text = l10n('ArmorRating'), value = math.floor(rating), name = CONTENT.ArmorRating }
-    items[#items + 1] = {
-        text = l10n('Condition'),
-        value = tostring(condition) .. '/' .. tostring(record.health),
-        name = CONTENT.Condition
-    }
+    if cfgPlayer.interface.b_ConditionAsBar then
+        items[#items + 1] = {
+            type = 'progressBar',
+            current = condition,
+            max = record.health,
+            name = CONTENT.Condition
+        }
+    else
+        items[#items + 1] = {
+            text = l10n('Condition'),
+            value = H.addSeparators(condition) .. '/' .. H.addSeparators(record.health),
+            name = CONTENT.Condition
+        }
+    end
     Tooltips.addWeight(items, helpers.formatOneDecimal(record.weight) .. ' (' .. weightClass .. ')')
     Tooltips.addValue(items, record.value)
     enchantment(items, record, tooltip.object)
@@ -567,7 +581,16 @@ Tooltips.lockpickRecipe = function(tooltip)
     local uses = getCondition(tooltip.object) or record.maxCondition
     local items = {}
     items[#items + 1] = header(record, tooltip.object)
-    items[#items + 1] = { text = l10n('Uses'), value = tostring(uses), name = CONTENT.Condition }
+    if cfgPlayer.interface.b_ConditionAsBar then
+        items[#items + 1] = {
+            type = 'progressBar',
+            current = uses,
+            max = record.maxCondition,
+            name = CONTENT.Condition
+        }
+    else
+        items[#items + 1] = { text = l10n('Uses'), value = tostring(uses), name = CONTENT.Condition }
+    end
     Tooltips.standardValues(items, record)
     return {
         name = 'Lockpick',
@@ -612,7 +635,16 @@ Tooltips.probeRecipe = function(tooltip)
     local uses = getCondition(tooltip.object) or record.maxCondition
     local items = {}
     items[#items + 1] = header(record, tooltip.object)
-    items[#items + 1] = { text = l10n('Uses'), value = tostring(uses), name = CONTENT.Condition }
+    if cfgPlayer.interface.b_ConditionAsBar then
+        items[#items + 1] = {
+            type = 'progressBar',
+            current = uses,
+            max = record.maxCondition,
+            name = CONTENT.Condition
+        }
+    else
+        items[#items + 1] = { text = l10n('Uses'), value = tostring(uses), name = CONTENT.Condition }
+    end
     Tooltips.standardValues(items, record)
     return {
         name = 'Probe',
@@ -627,7 +659,16 @@ Tooltips.repairRecipe = function(tooltip)
     local uses = getCondition(tooltip.object) or record.maxCondition
     local items = {}
     items[#items + 1] = header(record, tooltip.object)
-    items[#items + 1] = { text = l10n('Uses'), value = tostring(uses), name = CONTENT.Condition }
+    if cfgPlayer.interface.b_ConditionAsBar then
+        items[#items + 1] = {
+            type = 'progressBar',
+            current = uses,
+            max = record.maxCondition,
+            name = CONTENT.Condition
+        }
+    else
+        items[#items + 1] = { text = l10n('Uses'), value = tostring(uses), name = CONTENT.Condition }
+    end
     Tooltips.standardValues(items, record)
     return {
         name = 'Repair',
@@ -679,11 +720,20 @@ Tooltips.weaponRecipe = function(tooltip)
     end
 
     if condition and not noHealth[record.type] then
-        items[#items + 1] = {
-            text = l10n('Condition'),
-            value = tostring(condition) .. '/' .. tostring(record.health),
-            name = CONTENT.Condition
-        }
+        if cfgPlayer.interface.b_ConditionAsBar then
+            items[#items + 1] = {
+                type = 'progressBar',
+                current = condition,
+                max = record.health,
+                name = CONTENT.Condition
+            }
+        else
+            items[#items + 1] = {
+                text = l10n('Condition'),
+                value = tostring(condition) .. '/' .. tostring(record.health),
+                name = CONTENT.Condition
+            }
+        end
     end
     Tooltips.standardValues(items, record)
     enchantment(items, record, tooltip.object)

@@ -21,6 +21,11 @@ SettingCompactWeightValueName: Condensed weight/value
 SettingCompactWeightValueDesc: |-
   Moves weight and value information in item tooltips to the footer.
 
+SettingConditionAsBarName: Condition as progress bar
+SettingConditionAsBarDesc: |-
+  Makes item condition and tool uses displayed as a progress bar.
+  Also makes item charge bar use magicka color.
+
 SettingSoulGemValueRebalanceName: Soulgem Values Rebalance
 SettingSoulGemValueRebalanceDesc: |-
   Set this to match same setting from the game launcher.
