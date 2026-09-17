@@ -444,22 +444,23 @@ end
 
 function Builders.progressBar(item)
     local theme = I.UIToolkit.getTheme()
+    local T = I.UIToolkit.Templates
     local current = item.current or 0
     local max = item.max or 100
     local color = item.color or theme.Colors.HEALTH
-    local barWidth = item.barWidth or 204
-    barWidth = math.max(0, math.min(1, current / max)) * barWidth
+    local width = item.barWidth or 204
+    local barWidth = math.max(0, math.min(1, current / max)) * width
     local barText = tostring(math.floor(current)) .. '/' .. tostring(math.floor(max))
     return {
-        template = I.MWUI.templates.box,
+        template = T.box(),
         content = ui.content { {
             type = ui.TYPE.Widget,
             props = {
-                size = V2(204, 16),
+                size = V2(width, theme.Sizes.textNormal),
             },
             content = ui.content {
                 {
-                    template = I.MWUI.templates.textNormal,
+                    template = T.text(),
                     props = {
                         text = barText,
                         textShadow = true,
@@ -469,13 +470,13 @@ function Builders.progressBar(item)
                         -- text widgets are slightly misaligned and need to be manually raised 2 pixels
                         autoSize = false,
                         relativeSize = V2(1, 1),
-                        position = V2(0, -2),
+                        position = V2(0, -1),
                     }
                 },
                 {
                     type = ui.TYPE.Image,
                     props = {
-                        size = V2(barWidth, 16),
+                        size = V2(barWidth, theme.Sizes.textNormal),
                         resource = theme.Colors.menuBarGray,
                         color = color,
                     },
