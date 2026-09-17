@@ -5,6 +5,7 @@ local util = require('openmw.util')
 local ui = require('openmw.ui')
 local I = require('openmw.interfaces')
 local helpers = require('scripts.UIToolkit.tooltips.utils')
+local H = require('scripts.UIToolkit.helpers')
 
 local hasGapAPI = core.API_REVISION >= 132
 
@@ -450,7 +451,7 @@ function Builders.progressBar(item)
     local color = item.color or theme.Colors.HEALTH
     local width = item.barWidth or 204
     local barWidth = math.max(0, math.min(1, current / max)) * width
-    local barText = tostring(math.floor(current)) .. '/' .. tostring(math.floor(max))
+    local barText = H.addSeparators(math.floor(current)) .. '/' .. H.addSeparators(math.floor(max))
     return {
         template = T.box(),
         content = ui.content { {
