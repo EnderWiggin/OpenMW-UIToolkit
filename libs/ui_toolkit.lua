@@ -291,8 +291,8 @@ function Components.sortedList(opts) end
 ---@field setProgress fun(self:UIToolkit.ItemList, progress:number) set [0-1] progress of the scroll
 ---@field getVisibleItemRange fun(self:UIToolkit.ItemList, strict:boolean?):integer, integer
 ---@field getVisibleItemCount fun(self:UIToolkit.ItemList):integer
----@field setHovered fun(self:UIToolkit.ItemList, idOrIndex:string|integer|nil, fixedTipPos:openmw.util.Vector2?, fixedTipAnchor:openmw.util.Vector2?)
----@field shiftHoveredItem fun(self:UIToolkit.ItemList, shift:integer, fixedTipPos:openmw.util.Vector2?, fixedTipAnchor:openmw.util.Vector2?)
+---@field setHovered fun(self:UIToolkit.ItemList, idOrIndex:string|integer|nil)
+---@field shiftHoveredItem fun(self:UIToolkit.ItemList, shift:integer)
 
 ---@class UIToolkit.ColumnSorter.Column
 ---@field id string?
@@ -619,6 +619,7 @@ function Templates.getBorderSize(style) end
 ---@field notes string[]? (Optional) notes, used by @{#TooltipType.MapMarker}.
 ---@field recipe UTKTooltips.Recipe? (Optional) recipe. If set, this recipe is used directly.
 ---@field layout openmw.ui.Layout? (Optional) layout. If set, this layout is used directly, skipping all builders.
+---@field position? fun():openmw.util.Vector2?,openmw.util.Vector2? 
 
 --- Recipe item type. Decides which builder is used to create the layout.
 ---@alias UTKTooltips.RecipeItemBuilder fun(item:UTKTooltips.RecipeItem):openmw.ui.Layout

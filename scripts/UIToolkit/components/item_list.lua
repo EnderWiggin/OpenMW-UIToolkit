@@ -313,9 +313,7 @@ function ItemList:updateHoveredItem()
 end
 
 ---@param idOrIndex string|integer|nil
----@param fixedTipPos openmw.util.Vector2?
----@param fixedTipAnchor openmw.util.Vector2?
-function ItemList:setHovered(idOrIndex, fixedTipPos, fixedTipAnchor)
+function ItemList:setHovered(idOrIndex)
     local state = self.state
     ---@type string?
     local id
@@ -344,8 +342,6 @@ function ItemList:setHovered(idOrIndex, fixedTipPos, fixedTipAnchor)
             local tip = state.provider:getTooltip(item)
             IP.UTKTooltips.setTooltip(tip, {
                 isAlive = function() return not self:isDestroyed() end,
-                fixedTipPos = fixedTipPos,
-                fixedTipAnchor = fixedTipAnchor,
             })
         else
             IP.UTKTooltips.setTooltip(nil)
@@ -384,9 +380,7 @@ end
 
 local buffer = 1 --TODO: move, rename
 ---@param shift integer
----@param fixedTipPos openmw.util.Vector2?
----@param fixedTipAnchor openmw.util.Vector2?
-function ItemList:shiftHoveredItem(shift, fixedTipPos, fixedTipAnchor)
+function ItemList:shiftHoveredItem(shift)
     if not shift or shift == 0 then return end
     local down = shift > 0
     local state = self.state
@@ -424,7 +418,7 @@ function ItemList:shiftHoveredItem(shift, fixedTipPos, fixedTipAnchor)
         )
     end
     state.lastHoveredPos = nil
-    self:setHovered(tIdx, fixedTipPos, fixedTipAnchor)
+    self:setHovered(tIdx)
 end
 
 ---@param id string

@@ -191,16 +191,22 @@ local function createTooltipLayout(tooltip)
     return layout
 end
 
-local function getMousePosition()
-    if extraParams and extraParams.fixedTipPos then return extraParams.fixedTipPos end
-    return I.UIToolkit.getCursorPos()
-end
-
 local function updatePosition()
     if not currentTooltip then return end
-    local mousePos = getMousePosition()
-    local screenSize = ui.screenSize()
+
     local props = tooltipElement.layout.props
+    if currentTooltip.position then
+        local position, anchor = currentTooltip.position()
+        if position then
+            props.position = position
+            props.anchor = anchor
+            return
+        end
+    end
+
+    local mousePos = I.UIToolkit.getCursorPos()
+    local screenSize = ui.screenSize()
+
     if mousePos then
         -- UI move is active
 
