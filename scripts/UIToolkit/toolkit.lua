@@ -241,6 +241,7 @@ local function getFocusedScrollable()
     return scrollable
 end
 local buttonPressDuration = {}
+local keyPressDuration = {}
 
 ---@param button number
 local function onControllerButtonRepeat(button)
@@ -251,11 +252,27 @@ local function onControllerButtonRepeat(button)
             if callback then callback(button) end
             return
         end
-    end
 
-    local focused = InterfaceP.WindowManager.getFocusedWindowHandler()
-    if not focused then return end
-    focused:onControllerButtonRepeat(button)
+        local focused = InterfaceP.WindowManager.getFocusedWindowHandler()
+        if not focused then return end
+        focused:onControllerButtonRepeat(button)
+    end
+end
+
+---@param key number
+local function onKeyboardButtonRepeat(key)
+    if isPlayer then
+        local popup = InterfaceP.Popups.getActivePopup()
+        if popup then
+            local callback = popup.handler.onKeyboardButtonRepeat
+            if callback then callback(key) end
+            return
+        end
+
+        local focused = InterfaceP.WindowManager.getFocusedWindowHandler()
+        if not focused then return end
+        focused:onKeyboardButtonRepeat(key)
+    end
 end
 
 local function controllerStickMoved()
@@ -313,6 +330,16 @@ local function onFrame()
                 onControllerButtonRepeat(button)
             end
             buttonPressDuration[button] = held
+        end
+
+        --process repeated keyboard buttons
+        for key, held in pairs(keyPressDuration) do
+            held = held + dt
+            if held > cfgPlayer.controller.n_RepeatingButtonsThreshold then
+                held = held - cfgPlayer.controller.n_RepeatingButtonsStep
+                onKeyboardButtonRepeat(key)
+            end
+            keyPressDuration[key] = held
         end
     end
     if isPlayer then
@@ -372,6 +399,34 @@ local function onControllerButtonRelease(button)
     end
 end
 
+---@param evt openmw.input.KeyboardEvent
+local function onKeyPress(evt)
+    local key = evt.code
+    keyPressDuration[key] = 0
+
+    if isPlayer then
+        Controller._setControllerActiveState(false)
+        local popup = InterfaceP.Popups.getActivePopup()
+        if popup then
+            local callback = popup.handler.onKeyboardButtonPress
+            if callback then callback(key) end
+            return
+        end
+
+        local focused = InterfaceP.WindowManager.getFocusedWindowHandler()
+        if not focused then return end
+        focused:onKeyboardButtonPress(key)
+    end
+end
+
+---@param evt openmw.input.KeyboardEvent
+local function onKeyRelease(evt)
+    keyPressDuration[evt.code] = nil
+    if isPlayer then
+        Controller._setControllerActiveState(false)
+    end
+end
+
 local function onUIModeChanged()
     Interface.Layers.closeDropbox()
 end
@@ -383,7 +438,9 @@ return {
         onFrame = onFrame,
         onMouseWheel = onMouseWheel,
         onControllerButtonPress = onControllerButtonPress,
-        onControllerButtonRelease = onControllerButtonRelease
+        onControllerButtonRelease = onControllerButtonRelease,
+        onKeyPress = onKeyPress,
+        onKeyRelease = onKeyRelease,
     },
     eventHandlers = {
         UiModeChanged = onUIModeChanged,

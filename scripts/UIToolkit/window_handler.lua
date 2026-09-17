@@ -42,6 +42,18 @@ function WindowHandler:onControllerButtonRepeat(button)
 
 end
 
+---@param key number
+---@diagnostic disable-next-line: unused-local
+function WindowHandler:onKeyboardButtonPress(key)
+
+end
+
+---@param key number
+---@diagnostic disable-next-line: unused-local
+function WindowHandler:onKeyboardButtonRepeat(key)
+
+end
+
 ---@return UIToolkit.Scrollable?
 function WindowHandler:getFocusedScrollable()
     return nil

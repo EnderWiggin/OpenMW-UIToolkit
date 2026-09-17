@@ -394,6 +394,8 @@ function Components.sortedList(opts) end
 ---@field onFrame fun(self:UIToolkit.WindowHandler, dt:number) called each frame
 ---@field onControllerButtonPress fun(self:UIToolkit.WindowHandler, button:number) called on focused window when controller button is pressed
 ---@field onControllerButtonRepeat fun(self:UIToolkit.WindowHandler, button:number) called on focused window when controller button is held and repeating buttons is on
+---@field onKeyboardButtonPress fun(self:UIToolkit.WindowHandler, key:number) called on focused window when keyboard button is pressed
+---@field onKeyboardButtonRepeat fun(self:UIToolkit.WindowHandler, key:number) called on focused window when keyboard button is held and repeating
 ---@field getFocusedScrollable fun(self:UIToolkit.WindowHandler):UIToolkit.Scrollable? this scrollable will be scrolled by Right Stick if window is focused and no other scrollable is in focus
 
 ---@class UIToolkit.Window:UIToolkit.Component
@@ -432,6 +434,8 @@ function Components.sortedList(opts) end
 ---@class UIToolkit.Popups.Handler
 ---@field onControllerButtonPress? fun(button:number) called on focused window when controller button is pressed
 ---@field onControllerButtonRepeat? fun(button:number) called on focused window when controller button is held and repeating buttons is on
+---@field onKeyboardButtonPress? fun(key:number) called on focused window when keyboard button is pressed
+---@field onKeyboardButtonRepeat? fun(key:number) called on focused window when keyboard button is held and repeating
 ---@field getFocusedScrollable? fun():UIToolkit.Scrollable? this scrollable will be scrolled by Right Stick if window is focused and no other scrollable is in focus
 ---@field onClosed? fun()
 
