@@ -3,6 +3,7 @@
 local core = require 'openmw.core'
 local time = require 'openmw_aux.time'
 local I = require 'openmw.interfaces'
+local U = require 'scripts.UIToolkit.settings.renderer.utils'
 
 ---@param value string
 ---@param set fun(value:string)
@@ -15,13 +16,17 @@ return function(value, set, args)
     local items = {}
     local selected
     for i = 1, #args.items do
-        local item = args.items[i]
+        ---@type UIToolkit.SettingRenderer.DropboxItem
+        local item = U.parseArgData(args.items[i])
         if type(item) == 'string' then
             item = { id = item }
         end
 
         item.text = item.text or item.id
-        if l10n then item.text = l10n(item.text) end
+        if l10n then
+            if item.tooltip then item.tooltip = l10n(item.tooltip) end
+            item.text = l10n(item.text)
+        end
 
         items[#items + 1] = item
 

@@ -576,7 +576,7 @@ function Templates.getBorderSize(style) end
 ---@field items UIToolkit.SettingRenderer.DropboxItem[]
 ---@field disabled boolean? disables changing the setting from the UI
 
----@alias UIToolkit.SettingRenderer.DropboxItem string|{id:string, text:string?}
+---@alias UIToolkit.SettingRenderer.DropboxItem string|{id:string, text:string?, tooltip:string?}
 
 ---@class UIToolkit.SettingRenderer.Number
 ---@field min number?
