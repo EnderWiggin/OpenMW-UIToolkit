@@ -1,17 +1,23 @@
 ---@omw-context menu
-local input = require 'openmw.input'
-local I = require 'openmw.interfaces'
+local input  = require 'openmw.input'
+local I      = require 'openmw.interfaces'
 local BUTTON = input.CONTROLLER_BUTTON
+
+
+local bindCustom = require 'scripts.UIToolkit.settings.renderer.bind_custom'
+
 
 I.Settings.registerRenderer('UIToolkit/Dropbox', require('scripts.UIToolkit.settings.renderer.dropbox'))
 I.Settings.registerRenderer('UIToolkit/Number', require('scripts.UIToolkit.settings.renderer.number'))
 I.Settings.registerRenderer('UIToolkit/Slider', require('scripts.UIToolkit.settings.renderer.slider'))
+I.Settings.registerRenderer('UIToolkit/BindCustom', bindCustom.render)
 
 ---@param key openmw.input.KeyboardEvent
 local function onKeyPress(key)
     if key.code == input.KEY.Escape then
         I.UIToolkit.Layers.closeDropbox()
     end
+    bindCustom.onKeyPress(key)
 end
 
 ---@param button number
@@ -20,6 +26,7 @@ local function onControllerButtonPress(button)
     if button == BUTTON.Start or button == BUTTON.B then
         I.UIToolkit.Layers.closeDropbox()
     end
+    bindCustom.onControllerButtonPress(button)
 end
 
 return {

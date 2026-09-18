@@ -25,6 +25,7 @@
 ---@field Templates UIToolkit.Templates
 ---@field Interactive UIToolkit.Interactive
 ---@field Components UIToolkit.Components
+---@field Controller UIToolkit.ControllerMenu
 
 ---@class openmw.interfaces.UIToolkit.Player : openmw.interfaces.UIToolkit.Menu
 ---@field WindowManager UIToolkit.WindowManager
@@ -455,12 +456,14 @@ function Components.sortedList(opts) end
 ---@field baseColor openmw.util.Color?
 
 
----@class UIToolkit.Controller
+---@class UIToolkit.ControllerMenu
 ---@field getButtonIcon fun(button:number):string
 ---@field getAxisIcon fun(axis:number):string
 ---@field getDPadIcon fun(direction:UIToolkit.Controller.DPAdDirection):string
 ---@field makeButtonLayout fun(button:number, opts:UIToolkit.Controller.IconOpts?)
 ---@field makeAxisLayout fun(axis:number, opts:UIToolkit.Controller.IconOpts?)
+
+---@class UIToolkit.Controller : UIToolkit.ControllerMenu
 ---@field isControllerActive fun():boolean
 
 ---@class UIToolkit.Controller.IconOpts
@@ -629,13 +632,13 @@ function Templates.getBorderSize(style) end
 ---@field notes string[]? (Optional) notes, used by @{#TooltipType.MapMarker}.
 ---@field recipe UTKTooltips.Recipe? (Optional) recipe. If set, this recipe is used directly.
 ---@field layout openmw.ui.Layout? (Optional) layout. If set, this layout is used directly, skipping all builders.
----@field position? fun():openmw.util.Vector2?,openmw.util.Vector2? 
+---@field position? fun():openmw.util.Vector2?,openmw.util.Vector2?
 
 --- Table of information defining a simple menu tooltip. Must have either layout or recipe defined.
 ---@class UTKTooltips.MenuTooltip
 ---@field recipe UTKTooltips.Recipe? (Optional) recipe. If set, this recipe is used directly.
 ---@field layout openmw.ui.Layout? (Optional) layout. If set, this layout is used directly, skipping all builders.
----@field position? fun():openmw.util.Vector2?,openmw.util.Vector2? 
+---@field position? fun():openmw.util.Vector2?,openmw.util.Vector2?
 
 --- Recipe item type. Decides which builder is used to create the layout.
 ---@alias UTKTooltips.RecipeItemBuilder fun(item:UTKTooltips.RecipeItem):openmw.ui.Layout

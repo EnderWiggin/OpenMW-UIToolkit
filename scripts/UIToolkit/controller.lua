@@ -1,4 +1,4 @@
----@omw-context player
+---@omw-context player|menu
 
 local async     = require 'openmw.async'
 local input     = require 'openmw.input'
@@ -13,6 +13,9 @@ local AXIS      = input.CONTROLLER_AXIS
 
 local D         = require 'scripts.UIToolkit.config.defaults'
 local cfgPlayer = require 'scripts.UIToolkit.config.player'
+local context   = require 'scripts.UIToolkit.scriptContext'
+local isPlayer  = context.get() == context.Types.Player
+
 
 ---@class UIToolkit.Controller.HintData
 ---@field source string window or popup
@@ -283,47 +286,53 @@ local function showControllerHint(hints)
     }
 end
 
-function M._onFrame(dt)
-    local hintData
-    local popup = I.UIToolkit.Popups.getActivePopup()
-    if popup then
-        hintData = popup.hints
-    else
-        hintData = I.UIToolkit.WindowManager.getFocusedWindowHintData()
-    end
+if isPlayer then
+    ---@omw-context-begin player
+    local IP = I --[[@as openmw.interfaces.Player]]
+    function M._onFrame(dt)
+        local hintData
+        local popup = IP.UIToolkit.Popups.getActivePopup()
+        if popup then
+            hintData = popup.hints
+        else
+            hintData = IP.UIToolkit.WindowManager.getFocusedWindowHintData()
+        end
 
-    if not hintData then
-        showControllerHint(nil)
-        currentHint = nil
-        return
-    end
-
-    if currentHint then
-        if currentHint.source == hintData.source
-            and currentHint.id == hintData.id
-            and currentHint.ts >= hintData.ts
-        then
+        if not hintData then
+            showControllerHint(nil)
+            currentHint = nil
             return
         end
+
+        if currentHint then
+            if currentHint.source == hintData.source
+                and currentHint.id == hintData.id
+                and currentHint.ts >= hintData.ts
+            then
+                return
+            end
+        end
+        currentHint = hintData
+        showControllerHint(hintData.hints)
     end
-    currentHint = hintData
-    showControllerHint(hintData.hints)
-end
 
-function M._updateHintVisibility()
-    if not element then return end
-    element.layout.props.visible = controllerIsActive or alwaysShowHint
-    I.UIToolkit.update(element)
-end
+    function M._updateHintVisibility()
+        if not element then return end
+        element.layout.props.visible = controllerIsActive or alwaysShowHint
+        IP.UIToolkit.update(element)
+    end
 
-function M._setControllerActiveState(state)
-    if state == controllerIsActive then return end
-    controllerIsActive = state
-    M._updateHintVisibility()
-end
+    function M._setControllerActiveState(state)
+        if state == controllerIsActive then return end
+        controllerIsActive = state
+        M._updateHintVisibility()
+    end
 
-function M.isControllerActive()
-    return controllerIsActive
+    function M.isControllerActive()
+        return controllerIsActive
+    end
+
+    ---@omw-context-end player
 end
 
 local function updateConfig()
@@ -336,7 +345,7 @@ local function updateConfig()
     isSwitch       = style == STYLE.Switch
 
     alwaysShowHint = c.b_AlwaysShowHint
-    M._updateHintVisibility()
+    if isPlayer then M._updateHintVisibility() end
 end
 storage.playerSection(D.Section.Controller):subscribe(async:callback(updateConfig))
 updateConfig()

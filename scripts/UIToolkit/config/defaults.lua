@@ -17,6 +17,12 @@ local M = {
         Controller = section 'Controller',
     },
 
+    Device = {
+        Keyboard   = 0,
+        Controller = 1,
+        --Mouse      = 2,
+    },
+
     Controller = {
         Default = 'ConfigControllerType_Default',
         XBox    = 'ConfigControllerType_XBox',

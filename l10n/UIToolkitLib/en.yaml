@@ -1,3 +1,6 @@
+RendererAddButton: Add
+RendererAddTooltip: Add new binding
+
 # -------------- Menu Settings --------------
 SettingPageName: UI Toolkit
 SettingPageDesc: |-

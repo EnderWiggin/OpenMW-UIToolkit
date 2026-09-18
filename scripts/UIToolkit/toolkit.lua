@@ -4,6 +4,7 @@ local core      = require 'openmw.core'
 local input     = require 'openmw.input'
 local ui        = require 'openmw.ui'
 local util      = require 'openmw.util'
+local I         = require 'openmw.interfaces'
 
 local context   = require 'scripts.UIToolkit.scriptContext'
 local D         = require 'scripts.UIToolkit.config.defaults'
@@ -13,6 +14,7 @@ local Theme     = require 'scripts.UIToolkit.themes.theme'
 
 local theme     = Theme:new()
 local isPlayer  = context.get() == context.Types.Player
+local IP        = I --[[@as openmw.interfaces.Player]]
 
 
 local ctx = {
@@ -27,6 +29,7 @@ local Interface = {
     Interactive = require 'scripts.UIToolkit.templates.interactive',
     Components  = require 'scripts.UIToolkit.components.all_components',
     Layers      = require 'scripts.UIToolkit.layers',
+    Controller  = require 'scripts.UIToolkit.controller' --[[@as UIToolkit.ControllerPrivate]]
 }
 
 local InterfaceP
@@ -35,8 +38,6 @@ if isPlayer then
     InterfaceP               = Interface --[[@as openmw.interfaces.UIToolkit.Player]]
     InterfaceP.WindowManager = require 'scripts.UIToolkit.window_manager'
     InterfaceP.Popups        = require 'scripts.UIToolkit.popups'
-    Controller               = require 'scripts.UIToolkit.controller' --[[@as UIToolkit.ControllerPrivate]]
-    InterfaceP.Controller    = Controller
 end
 
 function Interface.getCtx() return ctx end
