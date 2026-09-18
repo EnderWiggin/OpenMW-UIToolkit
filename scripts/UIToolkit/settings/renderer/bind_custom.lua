@@ -23,6 +23,7 @@ local REVERT_TEX = ui.texture { path = 'icons/UIToolkit/revert.dds' }
 ---@field value UIToolkit.SettingRenderer.CustomBind[]
 ---@field index integer
 ---@field set UIToolkit.SettingRenderer.CustomBind.Set
+---@field args UIToolkit.SettingRenderer.CustomBind.Args
 ---@field state fun(state:boolean)
 
 local M = {}
@@ -47,9 +48,10 @@ end
 ---@param value UIToolkit.SettingRenderer.CustomBind[]
 ---@param index integer
 ---@param set UIToolkit.SettingRenderer.CustomBind.Set
+---@param args UIToolkit.SettingRenderer.CustomBind.Args
 ---@param height number
 ---@return openmw.ui.Element
-local function makeBindingElement(value, index, set, height)
+local function makeBindingElement(value, index, set, args, height)
     local toolkit = I.UIToolkit
     local T = toolkit.Templates
     local theme = toolkit.getTheme()
@@ -116,6 +118,7 @@ local function makeBindingElement(value, index, set, height)
                             value = value,
                             index = index,
                             set = set,
+                            args = args,
                             state = function()
                                 text.props.text = name
                                 text.props.visible = not isController
@@ -164,7 +167,7 @@ function M.render(value, set, args)
     ---@type openmw.ui.LayoutOrElement[]
     local items = {}
     for i = 1, #value do
-        local bind = makeBindingElement(value, i, set, rowHeight)
+        local bind = makeBindingElement(value, i, set, args, rowHeight)
         bind.layout.props.position = v2(0, y)
         y = y + rowHeight + 5
         items[#items + 1] = bind
@@ -199,6 +202,10 @@ function M.onKeyPress(key)
         cancel()
         return
     end
+
+    local allowed = recording and recording.args and recording.args.devices
+    if allowed and not allowed[Device.Keyboard] then return end
+
     local v = recording.value[recording.index]
     v.device = Device.Keyboard
     v.code = key.code
@@ -213,6 +220,9 @@ function M.onControllerButtonPress(button)
         cancel()
         return
     end
+
+    local allowed = recording and recording.args and recording.args.devices
+    if allowed and not allowed[Device.Controller] then return end
 
     local v = recording.value[recording.index]
     v.device = Device.Controller

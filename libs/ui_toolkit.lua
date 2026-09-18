@@ -600,6 +600,9 @@ function Templates.getBorderSize(style) end
 ---@field device number
 ---@field code number?
 
+---@class UIToolkit.SettingRenderer.CustomBind.Args
+---@field devices? table<integer, boolean> Which devices are allowed for this bind. If missing - allow all.
+
 
 ---@class UTKTooltips.ExtraParams
 ---@field isAlive UTKTooltips.CurrentTipIsAlive?
