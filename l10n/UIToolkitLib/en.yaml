@@ -9,10 +9,8 @@ InterfaceSettingsName: Interface Settings
 InterfaceSettingsDesc: Configure how things look.
 
 SettingNumberSeparatorsName: Show thousand separators
-SettingNumberSeparatorsDesc: |-
-  {color_header}None{color_normal}    :   1234567.89
-  {color_header}Space{color_normal}   : 1 234 567.89
-  {color_header}Comma{color_normal} : 1,234,567.89
+SettingNumberSeparatorsDesc: Select how thousand separators are displayed in numbers.
+
 ConfigNumberSeparators_None: None
 ConfigNumberSeparators_Comma: Comma
 ConfigNumberSeparators_Space: Space

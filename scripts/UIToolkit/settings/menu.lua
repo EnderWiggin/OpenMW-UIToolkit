@@ -28,9 +28,14 @@ I.Settings.registerGroup {
             name = 'SettingNumberSeparatorsName',
             description = l10n('SettingNumberSeparatorsDesc', H.TextColorParams),
             default = D.Separators.Space,
+            ---@type UIToolkit.SettingRenderer.Dropbox
             argument = {
                 l10n = D.L10N,
-                items = { D.Separators.None, D.Separators.Space, D.Separators.Comma },
+                items = {
+                    { id = D.Separators.None,  tooltip = '1234567.89' },
+                    { id = D.Separators.Space, tooltip = '1 234 567.89' },
+                    { id = D.Separators.Comma, tooltip = '1,234,567.89' },
+                },
             }
         },
         {
