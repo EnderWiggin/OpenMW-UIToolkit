@@ -92,7 +92,8 @@ local function makeBindingElement(value, index, set, height)
         },
         userData = { colorable = true, disabled = true },
     }
-    local element = ui.create {
+    local element
+    element = ui.create {
         type = ui.TYPE.Container,
         props = {},
         content = ui.content {
@@ -102,6 +103,31 @@ local function makeBindingElement(value, index, set, height)
                     size = v2(100, height),
                 },
                 content = content,
+                events = {
+                    mouseClick = async:callback(function()
+                        if recording ~= nil then return end
+                        text.props.text = '...'
+                        text.props.visible = true
+                        if icon then
+                            icon.props.visible = false
+                        end
+                        element:update()
+                        recording = {
+                            value = value,
+                            index = index,
+                            set = set,
+                            state = function()
+                                text.props.text = name
+                                text.props.visible = not isController
+                                if icon then
+                                    icon.props.visible = isController
+                                end
+                                element:update()
+                                recording = nil
+                            end,
+                        }
+                    end),
+                }
             },
             toolkit.Interactive.makeInteractive({
                 interactiveDisabled = true,
@@ -113,31 +139,6 @@ local function makeBindingElement(value, index, set, height)
                 end
             }, btn)
         },
-    }
-    element.layout.events = {
-        mouseClick = async:callback(function()
-            if recording ~= nil then return end
-            text.props.text = '...'
-            text.props.visible = true
-            if icon then
-                icon.props.visible = false
-            end
-            element:update()
-            recording = {
-                value = value,
-                index = index,
-                set = set,
-                state = function()
-                    text.props.text = name
-                    text.props.visible = not isController
-                    if icon then
-                        icon.props.visible = isController
-                    end
-                    element:update()
-                    recording = nil
-                end,
-            }
-        end),
     }
 
     return element
