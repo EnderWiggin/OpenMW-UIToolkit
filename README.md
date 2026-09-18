@@ -710,25 +710,9 @@ The `type` field is optional in these cases, but it will make the tooltip creati
 The `observer` field is optional, it is used to determine how many effects potions/ingredients will show. If omitted, all info is shown.
 
 # Planned Features
-- [ ] Add controller support
-  - [x] for list scrolling 
-  - [x] send button events to windows
-  - [ ] templates for controller button images?
-  - [ ] methods to check if controller is in use?
-- [x] Add list item provider with columns
-- [x] Add `Column Sorter` component that can display columns with sorting and provide events for List to use
 - [ ] Make `Component` able to subscribe to `onUpdate` event
-- [x] Make `Component` able to subscribe to `elementUpdated` event
-- [x] Make `Component` able to subscribe to `elementDestroyed` event
-- [x] Option to make `Interactives` not react to hovers/clicks when disabled 
-- [x] Add `Checkbox` component
-- [x] Add `Dropbox` component
 - [ ] Add `Tabs`/`Radio group` style component?
-- [ ] Settings menu to customize templates
-- [x] Helper methods to create Tooltip objects for common types of custom tooltips (solved by making `setTooltip` accept simplified objects and new method `convertAnyTooltip`)
-  - [x] Text line
-  - [x] Text paragraph (with optional title)
-- [x] Modal popups?
+- [ ] Theme customization
 
 
 # Credits
