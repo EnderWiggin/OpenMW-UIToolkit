@@ -596,6 +596,10 @@ function Templates.getBorderSize(style) end
 ---@field step number? how much to change value when scrollbar arrows are clicked. Defaults to `1` for integer and `0.1` otherwise
 ---@field disabled boolean? disables changing the setting from the UI
 
+---@class UIToolkit.SettingRenderer.CustomBind
+---@field device number
+---@field code number?
+
 
 ---@class UTKTooltips.ExtraParams
 ---@field isAlive UTKTooltips.CurrentTipIsAlive?

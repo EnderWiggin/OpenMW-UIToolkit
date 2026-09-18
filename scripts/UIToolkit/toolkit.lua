@@ -29,11 +29,11 @@ local Interface = {
     Interactive = require 'scripts.UIToolkit.templates.interactive',
     Components  = require 'scripts.UIToolkit.components.all_components',
     Layers      = require 'scripts.UIToolkit.layers',
-    Controller  = require 'scripts.UIToolkit.controller' --[[@as UIToolkit.ControllerPrivate]]
+    Controller  = require 'scripts.UIToolkit.controller'
 }
 
 local InterfaceP
-local Controller
+local Controller = Interface.Controller --[[@as UIToolkit.ControllerPrivate]]
 if isPlayer then
     InterfaceP               = Interface --[[@as openmw.interfaces.UIToolkit.Player]]
     InterfaceP.WindowManager = require 'scripts.UIToolkit.window_manager'

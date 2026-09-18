@@ -25,10 +25,6 @@ local REVERT_TEX = ui.texture { path = 'icons/UIToolkit/revert.dds' }
 ---@field set UIToolkit.SettingRenderer.CustomBind.Set
 ---@field state fun(state:boolean)
 
----@class UIToolkit.SettingRenderer.CustomBind
----@field device number
----@field code number?
-
 local M = {}
 
 local function keyName(code)
