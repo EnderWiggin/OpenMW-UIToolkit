@@ -12,10 +12,6 @@ local Class = require('scripts.UIToolkit.class')
 local Component = require('scripts.UIToolkit.components.component')
 local Scrollable = require('scripts.UIToolkit.components.scrollable')
 
-local context = require 'scripts.UIToolkit.scriptContext'
-local isPlayer = context.get() == context.Types.Player
-local IP = I --[[@as openmw.interfaces.Player]]
-
 
 ---@generic T : UIToolkit.ListItem.Base
 ---@class UIToolkit.ItemList : UIToolkit.Scrollable
@@ -337,15 +333,11 @@ function ItemList:setHovered(idOrIndex)
     end
     self:setItemHoveredStatus(state.provider, id, true)
 
-    if isPlayer then
-        if item then
-            local tip = state.provider:getTooltip(item)
-            IP.UTKTooltips.setTooltip(tip, {
-                isAlive = function() return not self:isDestroyed() end,
-            })
-        else
-            IP.UTKTooltips.setTooltip(nil)
-        end
+    if item then
+        local tip = state.provider:getTooltip(item)
+        I.UTKTooltips.setTooltip(tip, { isAlive = function() return not self:isDestroyed() end, })
+    else
+        I.UTKTooltips.setTooltip(nil)
     end
 
     state.hovered = idOrIndex

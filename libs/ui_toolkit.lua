@@ -5,6 +5,7 @@
 
 ---@class openmw.interfaces.Menu
 ---@field UIToolkit openmw.interfaces.UIToolkit.Menu
+---@field UTKTooltips openmw.interfaces.UTKMenuTooltips
 
 ---@class openmw.interfaces.Player
 ---@field UIToolkit openmw.interfaces.UIToolkit.Player
@@ -611,6 +612,13 @@ function Templates.getBorderSize(style) end
 ---@field TYPE UTKTooltips.TooltipTypes
 ---@field builders table<UTKTooltips.RecipeItemType, UTKTooltips.RecipeItemBuilder>
 
+---@class openmw.interfaces.UTKMenuTooltips
+---@field version number
+---@field currentTooltip fun():UTKTooltips.Tooltip?
+---@field setTooltip fun(tooltip:UTKTooltips.AnyTooltip?, extra:UTKTooltips.ExtraParams?)
+---@field convertAnyTooltip fun(tip:UTKTooltips.AnyTooltip?):UTKTooltips.Tooltip?
+---@field createTooltipLayout fun(tooltip:UTKTooltips.Tooltip):openmw.ui.Layout?
+
 --- Table of information defining a tooltip
 ---@class UTKTooltips.Tooltip
 ---@field type UTKTooltips.TooltipType? (Optional) Tooltip type. If not set, will be automatically determined based on object or key. Type can only be determined automatically for objects and records in openmw.types. Not needed if tooltip has pre-set recipe or layout.
@@ -619,6 +627,12 @@ function Templates.getBorderSize(style) end
 ---@field observer openmw.Object? (Optional) Actor used to read dynamic values, such as current/max health, skill progression, etc.
 ---@field caption string? (Optional) caption, used by @{#TooltipType.MapMarker} and @{#TooltipType.Caption}
 ---@field notes string[]? (Optional) notes, used by @{#TooltipType.MapMarker}.
+---@field recipe UTKTooltips.Recipe? (Optional) recipe. If set, this recipe is used directly.
+---@field layout openmw.ui.Layout? (Optional) layout. If set, this layout is used directly, skipping all builders.
+---@field position? fun():openmw.util.Vector2?,openmw.util.Vector2? 
+
+--- Table of information defining a simple menu tooltip. Must have either layout or recipe defined.
+---@class UTKTooltips.MenuTooltip
 ---@field recipe UTKTooltips.Recipe? (Optional) recipe. If set, this recipe is used directly.
 ---@field layout openmw.ui.Layout? (Optional) layout. If set, this layout is used directly, skipping all builders.
 ---@field position? fun():openmw.util.Vector2?,openmw.util.Vector2? 
@@ -779,3 +793,4 @@ function Templates.getBorderSize(style) end
 ---@alias UTKTooltips.SimpleTextTooltip string
 ---@alias UTKTooltips.SimpleTooltip {title:string?, body:string?, width:number?}
 ---@alias UTKTooltips.AnyTooltip UTKTooltips.Tooltip|UTKTooltips.SimpleTooltip|UTKTooltips.SimpleTextTooltip
+---@alias UTKTooltips.AnyMenuTooltip UTKTooltips.MenuTooltip|UTKTooltips.SimpleTooltip|UTKTooltips.SimpleTextTooltip

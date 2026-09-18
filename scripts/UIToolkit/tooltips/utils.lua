@@ -1,6 +1,5 @@
 ---@omw-context player
 
-local camera = require('openmw.camera')
 local core = require('openmw.core')
 local util = require('openmw.util')
 local types = require('openmw.types')
@@ -9,6 +8,9 @@ local Creature = types.Creature
 local Item = types.Item
 local Lockable = types.Lockable
 local NPC = types.NPC
+
+local context = require 'scripts.UIToolkit.scriptContext'
+local isPlayer = context.get() == context.Types.Player
 
 local l10n = core.l10n('UTKTooltips')
 local Utils = {}
@@ -234,12 +236,15 @@ function Utils.unknownEffects(effects, max)
     end
 end
 
-function Utils.objectTooltipViewportCoords(object)
-    local bb = object:getBoundingBox()
-    if bb then
-        local worldPos = bb.center + util.vector3(0, 0, bb.halfSize.z)
-        local viewport = camera.worldToViewportVector(worldPos)
-        return viewport
+if isPlayer then
+    local camera = require('openmw.camera')
+    function Utils.objectTooltipViewportCoords(object)
+        local bb = object:getBoundingBox()
+        if bb then
+            local worldPos = bb.center + util.vector3(0, 0, bb.halfSize.z)
+            local viewport = camera.worldToViewportVector(worldPos)
+            return viewport
+        end
     end
 end
 

@@ -4,10 +4,16 @@ local core = require('openmw.core')
 local util = require('openmw.util')
 local ui = require('openmw.ui')
 local I = require('openmw.interfaces')
-local helpers = require('scripts.UIToolkit.tooltips.utils')
+local helpers
 local H = require('scripts.UIToolkit.helpers')
 
 local hasGapAPI = core.API_REVISION >= 132
+
+local context = require 'scripts.UIToolkit.scriptContext'
+local isPlayer = context.get() == context.Types.Player
+if isPlayer then
+    helpers = require('scripts.UIToolkit.tooltips.utils')
+end
 
 -- Short-hands
 local V2 = util.vector2
