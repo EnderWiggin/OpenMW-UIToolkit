@@ -10,6 +10,8 @@ local auxUtil       = require 'openmw_aux.util'
 
 local I             = require 'openmw.interfaces'
 local H             = require 'scripts.UIToolkit.helpers'
+local cfgUtils      = require 'scripts.UIToolkit.config.utils'
+local Device        = require 'scripts.UIToolkit.config.defaults'.Device
 local tipUtils      = require 'scripts.UIToolkit.tooltips.utils'
 
 local Class         = require 'scripts.UIToolkit.class'
@@ -26,8 +28,19 @@ local textSize  = I.UIToolkit.getTheme().Sizes.textNormal
 local rowHeight = 1.5 * (textSize + 2)
 
 
-local SHOW_POPUP_BUTTON  = input.CONTROLLER_BUTTON.Y
-local CLOSE_POPUP_BUTTON = SHOW_POPUP_BUTTON
+local SETTINGS   = 'Settings/UIToolkitDemo/Main'
+local BIND_POPUP = 'c_BindPopup'
+
+
+local async = require 'openmw.async'
+local storage = require 'openmw.storage'
+local section = storage.playerSection(SETTINGS)
+local binds = section:asTable()
+
+local function updateSettings()
+    binds = section:asTable()
+end
+section:subscribe(async:callback(updateSettings))
 
 
 ---@type UIToolkit.SortedList?
@@ -107,9 +120,9 @@ local function onShowPopupClicked()
         title = 'THE POPUP',
         body =
         'This is a very cool popup. It has a long text on it. Very good, very long text.\nIt probably takes up several lines on this popup, wow!',
-        controllerHints = { { text = 'Close Popup', input = { id = CLOSE_POPUP_BUTTON } } },
+        controllerHints = { { text = 'Close Popup', input = cfgUtils.getControllerInputs(binds[BIND_POPUP]) } },
         onControllerButtonPress = function(button)
-            if button == CLOSE_POPUP_BUTTON then
+            if cfgUtils.controllerMatches(button, binds[BIND_POPUP]) then
                 closePopup()
             end
         end,
@@ -207,7 +220,7 @@ function Handler:onOpened(wnd, _, saved)
     I.UI.setMode(I.UI.MODE.Interface, { windows = {} })
 
     wnd:setControllerHints {
-        { text = 'Show Popup', input = { id = SHOW_POPUP_BUTTON } },
+        { text = 'Show Popup', input = cfgUtils.getControllerInputs(binds[BIND_POPUP]) },
     }
 
     list = I.UIToolkit.Components.sortedList {
@@ -521,7 +534,8 @@ end
 
 ---@param button number
 function Handler:onControllerButtonPress(button)
-    if button == SHOW_POPUP_BUTTON then
+    local bind = cfgUtils.findMatchingController(button, binds)
+    if bind == BIND_POPUP then
         onShowPopupClicked()
     end
 end
@@ -546,6 +560,33 @@ local function onKeyRelease(key)
         I.UIToolkit.WindowManager.open(WND_NAME)
     end
 end
+
+I.Settings.registerPage {
+    key = 'UIToolkit-Demo',
+    l10n = 'UIToolkitLib',
+    name = 'UI Toolkit Demo',
+}
+
+I.Settings.registerGroup {
+    key = SETTINGS,
+    page = 'UIToolkit-Demo',
+    l10n = 'UIToolkitLib',
+    name = 'Main',
+    order = 1,
+    permanentStorage = true,
+    settings = {
+        {
+            key = BIND_POPUP,
+            renderer = 'UIToolkit/BindCustom',
+            name = 'Toggle Popup',
+            description = 'Pressing this button will open or close the popup.\nOnly controller buttons allowed.',
+            default = {
+                { device = Device.Controller, code = input.CONTROLLER_BUTTON.Y },
+            },
+            argument = { devices = { [Device.Controller] = true } },
+        },
+    },
+}
 
 return {
     engineHandlers = {
