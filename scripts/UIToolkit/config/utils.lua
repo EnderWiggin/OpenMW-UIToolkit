@@ -75,4 +75,19 @@ function M.getControllerInputs(bind)
     return inputs
 end
 
+---@param bind UIToolkit.SettingRenderer.CustomBind[]
+---@return UIToolkit.Controller.Input
+function M.getFirstControllerInput(bind)
+    ---@type UIToolkit.Controller.Input[]
+    local inputs = {}
+    if not bind then return inputs end
+    for i = 1, #bind do
+        local tmp = bind[i]
+        if tmp.device == Device.Controller and tmp.code then
+            return { id = tmp.code }
+        end
+    end
+    return inputs
+end
+
 return M
