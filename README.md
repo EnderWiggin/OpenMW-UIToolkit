@@ -1,5 +1,5 @@
 # OpenMW UI Toolkit
-Library to make creating LUA UI for OpenMW easier. Contains basic templates, interactivity, components and tooltip support.
+Library to make creating LUA UI for OpenMW easier. Contains basic templates, interactivity, components, windows, popups, tooltips, settings renderers and controller support.
 
 `libs/ui-toolkit.lua` - meta file for the [Cod3x](https://www.nexusmods.com/morrowind/mods/59122) LLS plugin. You can copy it to your projects that use Cod3x to get code completion for the public API of the UI Toolkit.
 
@@ -711,6 +711,7 @@ The `observer` field is optional, it is used to determine how many effects potio
 
 # Planned Features
 - [ ] Make `Component` able to subscribe to `onUpdate` event
+- [ ] Progress bar component
 - [ ] Add `Tabs`/`Radio group` style component?
 - [ ] Theme customization
 
