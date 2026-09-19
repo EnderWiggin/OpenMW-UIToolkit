@@ -18,6 +18,7 @@ local windows = {}
 
 ---@type string[]
 local windowFocusQueue = {}
+local focusChangedThisFrame = false
 
 ---@type table<string, UIToolkit.Controller.HintData>
 local controllerHints = {}
@@ -147,15 +148,74 @@ function M._queueFocusedWindow(id)
     if windowFocusQueue[1] == id then return end
     H.removeFromArray(windowFocusQueue, id)
     table.insert(windowFocusQueue, 1, id)
+    focusChangedThisFrame = true
+end
+
+local function getOrderedWindows()
+    return windowFocusQueue
+    --[[ This block will make sense when https://gitlab.com/OpenMW/openmw/-/merge_requests/5627 is merged
+    if not ui.getElements then
+        return windowFocusQueue
+    end
+    local ids = {}
+    local elements = ui.getElements('Windows')
+    for i = 1, #elements do
+        local element = elements[i]
+        local layout = element.layout
+        if layout then
+            local data = layout.userData
+            if data then
+                local component = data._component
+                if component then
+                    local id = component.id
+                    if id then ids[#ids + 1] = id end
+                end
+            end
+        end
+    end
+    return ids
+    ]]
+end
+
+local function updateFocusedWindow()
+    if focusChangedThisFrame or #windowFocusQueue < 2 then return end
+
+    local toolkit = I.UIToolkit
+    if not toolkit.cursorMovedThisFrame() then return end
+
+    local p = toolkit.getCursorPos()
+    if not p then return end
+
+    local found = nil
+    local windowIds = getOrderedWindows()
+    for i = 1, #windowIds do
+        local id = windowIds[i]
+        local data = windows[id]
+        local wnd = data and data.wnd
+        if wnd then
+            local tl = wnd:getPosition()
+            local br = tl + wnd:getSize()
+            if p.x >= tl.x and p.x <= br.x and p.y >= tl.y and p.y <= br.y then
+                found = id
+                break
+            end
+        end
+    end
+    if found then
+        M._queueFocusedWindow(found)
+    end
 end
 
 function M._onFrame(dt)
+    updateFocusedWindow()
+
     --call onFrame for open windows
     for i = 1, #windowFocusQueue do
         local data = windows[windowFocusQueue[i]]
         local handler = data and data.handler
         if handler then handler:onFrame(dt) end
     end
+    focusChangedThisFrame = false
 end
 
 ---@param id string
