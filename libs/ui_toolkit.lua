@@ -607,8 +607,6 @@ function Templates.getBorderSize(style) end
 
 ---@class UTKTooltips.ExtraParams
 ---@field isAlive UTKTooltips.CurrentTipIsAlive?
----@field fixedTipPos openmw.util.Vector2?
----@field fixedTipAnchor openmw.util.Vector2?
 
 ---@class openmw.interfaces.UTKTooltips
 ---@field version number
