@@ -14,6 +14,8 @@
             <element id="dir-copy" path="$PROJECT_DIR$/icons" />
           </element>
           <element id="file-copy" path="$PROJECT_DIR$/UIToolkit.omwscripts" />
+          <element id="file-copy" path="$PROJECT_DIR$/CHANGELOG" />
+          <element id="file-copy" path="$PROJECT_DIR$/LICENSE" />
         </element>
       </element>
     </root>
