@@ -21,6 +21,7 @@
 ---@field queueDestroy fun(element:openmw.ui.Element, deep:boolean?) queues element to be destroyed on next frame, calling destructors on components. If `deep` is `true` will also delete all descendant elements.
 ---@field getCursorPos fun():openmw.util.Vector2? returns last seen mouse position, or nil if not in UI mode
 ---@field cursorPosIsFresh fun():boolean returns true if mouse position was updated recently
+---@field cursorMovedThisFrame fun():boolean returns true if we in UI mode and mouse was moved
 ---@field texture fun(path:string, size:openmw.util.Vector2?, offset:openmw.util.Vector2?):openmw.ui.TextureResource
 ---@field Templates UIToolkit.Templates
 ---@field Interactive UIToolkit.Interactive

@@ -46,6 +46,7 @@ function Interface.getTheme() return theme end
 
 local lastMousePos = util.vector2(0, 0)
 local framesSinceMousePosChanged = 0
+local mouseMovedThisFrame = false
 
 ---@return openmw.util.Vector2?
 function Interface.getCursorPos()
@@ -66,6 +67,10 @@ function Interface.cursorPosIsFresh()
     if ui.mousePosition then return true end
 
     return framesSinceMousePosChanged < 3
+end
+
+function Interface.cursorMovedThisFrame()
+    return mouseMovedThisFrame
 end
 
 ---@type openmw.ui.Element[]
@@ -300,6 +305,12 @@ local function onFrame()
     if needInit then doInit() end
 
     local dt = core.getRealFrameDuration()
+    mouseMovedThisFrame = false
+    if not isPlayer or IP.UI.getMode() ~= nil then
+        if input.getMouseMoveX() ~= 0 or input.getMouseMoveY() ~= 0 then
+            mouseMovedThisFrame = true
+        end
+    end
 
     local scrollable = getFocusedScrollable()
     if not scrollable and isPlayer then
