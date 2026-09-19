@@ -711,10 +711,12 @@ Tooltips.weaponRecipe = function(tooltip)
             name = CONTENT.Damage
         }
     elseif isMarksman[record.type] then
+        --Thrown weapons have 2x real damage applied as they're both the weapon and the ammo
+        local multiplier = record.type == Weapon.TYPE.MarksmanThrown and 2 or 1
         items[#items + 1] = {
             text = l10n('Attack'),
-            min = record.chopMinDamage,
-            max = record.chopMaxDamage,
+            min = record.chopMinDamage * multiplier,
+            max = record.chopMaxDamage * multiplier,
             name = CONTENT.Damage
         }
     end
