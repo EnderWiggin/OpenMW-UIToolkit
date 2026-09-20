@@ -1,2 +1,9 @@
+Version 1.0.1 (2026-09-20)
+- tooltips: fixed thrown weapon damage not being doubled
+- API: added `cursorMovedThisFrame` method to I.UIToolkit
+- API: added new `getCenterPositionForSize` helper method to I.UIToolkit.WindowManager
+- windows: improved detection of focused window
+- readme: tweaked some tooltip descriptions
+
 Version 1.0.0 (2026-09-19)
 - initial release
