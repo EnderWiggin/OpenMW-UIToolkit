@@ -3,6 +3,7 @@ Version 1.0.1 (2026-09-20)
 - API: added `cursorMovedThisFrame` method to I.UIToolkit
 - API: added new `getCenterPositionForSize` helper method to I.UIToolkit.WindowManager
 - windows: improved detection of focused window
+- windows: make sure window is not out of bounds on open
 - readme: tweaked some tooltip descriptions
 
 Version 1.0.0 (2026-09-19)
