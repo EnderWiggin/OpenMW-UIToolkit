@@ -7,6 +7,7 @@ local I = require('openmw.interfaces')
 local section = require('openmw.storage').playerSection('UIToolkit:WindowData')
 local H = require('scripts.UIToolkit.helpers')
 
+local v2 = util.vector2
 local Window = require('scripts.UIToolkit.components.window')
 
 
@@ -40,9 +41,9 @@ end
 ---@param c openmw.util.Vector2
 ---@return openmw.util.Vector2
 local function toAbsolute(c)
-    if not c then return util.vector2(0, 0) end
+    if not c then return v2(0, 0) end
     local layerSize = ui.layers[ui.layers.indexOf('Windows')].size
-    return util.vector2(
+    return v2(
         util.round(c.x * layerSize.x),
         util.round(c.y * layerSize.y)
     )
@@ -54,13 +55,14 @@ end
 function M.open(id, data)
     local cfg = assert(windows[id])
     if cfg.wnd ~= nil then return cfg.wnd end
+    ---@type UIToolkit.WindowOpts
     local opts = H.shallowCopy(assert(cfg.opts))
     local handler = opts.handler
     if type(handler) == 'function' then handler = handler() end
     windows[id].handler = handler
     opts.handler = handler
 
-    ---@type UIToolkit.WindowSaveData
+    ---@type UIToolkit.WindowSaveData?
     local saved = section:getCopy(getStorageKey(id, handler))
     local wnd = Window:new()
     wnd:init(opts, id, saved and {
@@ -80,7 +82,7 @@ end
 ---@return openmw.util.Vector2
 local function toRelative(c)
     local layerSize = ui.layers[ui.layers.indexOf('Windows')].size
-    return util.vector2(
+    return v2(
         c.x / layerSize.x,
         c.y / layerSize.y
     )
@@ -231,6 +233,16 @@ function M.getHandler(id)
     local data = windows[id]
     if not data or not data.handler then return nil end
     return data.handler
+end
+
+---@param size openmw.util.Vector2
+---@return openmw.util.Vector2
+function M.getCenterPositionForSize(size)
+    local layerSize = ui.layers[ui.layers.indexOf('Windows')].size
+    return v2(
+        math.max(0, (layerSize.x - size.x) / 2),
+        math.max(0, (layerSize.y - size.y) / 2)
+    )
 end
 
 return M

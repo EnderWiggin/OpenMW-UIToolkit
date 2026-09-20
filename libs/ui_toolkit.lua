@@ -374,6 +374,7 @@ function Components.sortedList(opts) end
 ---@field isOpen fun(id: string):boolean
 ---@field getHandler fun(id: string):UIToolkit.WindowHandler?
 ---@field getFocusedWindowHandler fun():UIToolkit.WindowHandler?, string?
+---@field getCenterPositionForSize fun(size:openmw.util.Vector2):openmw.util.Vector2
 
 ---@class UIToolkit.WindowOpts
 ---@field title string
