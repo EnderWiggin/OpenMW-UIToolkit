@@ -9,6 +9,7 @@ local ambient = require('openmw.ambient')
 local I = require('openmw.interfaces')
 local Class = require('scripts.UIToolkit.class')
 local Component = require('scripts.UIToolkit.components.component')
+local H = require('scripts.UIToolkit.helpers')
 
 local v2 = util.vector2
 
@@ -342,6 +343,19 @@ local function makeDraggable(borderTemplate, onDragTypeChanged, noResize)
     return template
 end
 
+---@param pos openmw.util.Vector2
+---@param size openmw.util.Vector2
+---@return openmw.util.Vector2
+local function validatePosition(pos, size)
+    local layerSize = ui.layers[ui.layers.indexOf('Windows')].size
+    local maxX = math.max(0, layerSize.x - size.x / 2)
+    local maxY = math.max(0, layerSize.y - size.y / 2)
+    return v2(
+        util.clamp(pos.x, 0, maxX),
+        util.clamp(pos.y, 0, maxY)
+    )
+end
+
 ---@param opts UIToolkit.WindowOpts
 ---@param id string
 ---@param saved? UIToolkit.WindowSaveData
@@ -362,6 +376,7 @@ function Window:init(opts, id, saved)
     local minSize = opts.minSize or MIN_SZ
     local position = saved and saved.position or opts.position or v2(0, 0)
     local size = saved and saved.size or opts.size or minSize
+    position = validatePosition(position, size)
 
     self._borderThickness = I.UIToolkit.getTheme().Sizes.thickBorder
     ---@type openmw.ui.Template
@@ -535,10 +550,7 @@ function Window:init(opts, id, saved)
                     -- Moving
                     if data.dragType == DragType.Move then
                         newPos = data.dragStartPos + delta
-                        newPos = util.vector2(
-                            util.clamp(newPos.x, 0, layerSize.x - newSize.x),
-                            util.clamp(newPos.y, 0, layerSize.y - newSize.y)
-                        )
+                        newPos = validatePosition(newPos, newSize)
                     end
 
                     layout.props.size = newSize
