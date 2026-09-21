@@ -114,12 +114,12 @@ function M.close(id)
     H.removeFromArray(windowFocusQueue, id)
 end
 
----@return UIToolkit.Controller.HintData?
-function M.getFocusedWindowHintData()
+---@return string?
+function M.getFocusedWindowId()
     for i = 1, #windowFocusQueue do
         local id = windowFocusQueue[i]
         local data = windows[id]
-        if data and data.handler then return controllerHints[id] end
+        if data and data.handler then return id end
     end
     return nil
 end
@@ -133,6 +133,12 @@ function M.setControllerHints(id, hints)
         ts = core.getRealTime(),
         hints = hints,
     }
+end
+
+---@param id string
+---@return UIToolkit.Controller.HintData?
+function M.getControllerHints(id)
+    return controllerHints[id]
 end
 
 ---@return UIToolkit.WindowHandler? handler, string? id

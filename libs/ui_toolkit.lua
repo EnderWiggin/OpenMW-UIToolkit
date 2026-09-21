@@ -466,6 +466,7 @@ function Components.sortedList(opts) end
 ---@field makeAxisLayout fun(axis:number, opts:UIToolkit.Controller.IconOpts?)
 
 ---@class UIToolkit.Controller : UIToolkit.ControllerMenu
+---@field setHints fun(hints?:(UIToolkit.Controller.Hint|'separator')[])
 ---@field isControllerActive fun():boolean
 
 ---@class UIToolkit.Controller.IconOpts

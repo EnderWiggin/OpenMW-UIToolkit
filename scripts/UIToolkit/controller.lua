@@ -1,6 +1,7 @@
 ---@omw-context player|menu
 
 local async     = require 'openmw.async'
+local core      = require 'openmw.core'
 local input     = require 'openmw.input'
 local ui        = require 'openmw.ui'
 local util      = require 'openmw.util'
@@ -288,14 +289,37 @@ end
 
 if isPlayer then
     ---@omw-context-begin player
+
+    ---@type UIToolkit.Controller.HintData|nil
+    local defaultHintData = nil
+    ---@param hints? (UIToolkit.Controller.Hint|'separator')[]
+    function M.setHints(hints)
+        if not hints then
+            defaultHintData = nil
+        else
+            defaultHintData = {
+                source = 'default',
+                id = 0,
+                ts = core.getRealTime(),
+                hints = hints,
+            }
+        end
+    end
+
     local IP = I --[[@as openmw.interfaces.Player]]
     function M._onFrame(dt)
+        local toolkit = IP.UIToolkit
         local hintData
-        local popup = IP.UIToolkit.Popups.getActivePopup()
+        local popup = toolkit.Popups.getActivePopup()
         if popup then
             hintData = popup.hints
         else
-            hintData = IP.UIToolkit.WindowManager.getFocusedWindowHintData()
+            local window = toolkit.WindowManager.getFocusedWindowId()
+            if window then
+                hintData = toolkit.WindowManager.getControllerHints(window)
+            else
+                hintData = defaultHintData
+            end
         end
 
         if not hintData then
