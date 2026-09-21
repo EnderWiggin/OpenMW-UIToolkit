@@ -76,7 +76,7 @@ function M.getButtonIcon(button)
     if button == BUTTON.RightShoulder then
         if isXbox then return 'textures/omw_xbox_button_rb.dds' end
         if isSwitch then return 'textures/omw_switch_button_r.dds' end
-        return 'textures/omw_steam_button_r3.dds'
+        return 'textures/omw_steam_button_r1.dds'
     end
     return 'icons/UIToolkit/unknown-effect.dds'
 end
