@@ -22,7 +22,7 @@ local isPlayer  = context.get() == context.Types.Player
 ---@field source string window or popup
 ---@field id string|number id of the window or popup
 ---@field ts number time this hint was updated at
----@field hints? (UIToolkit.Controller.Hint|'separator')[]
+---@field hints? UIToolkit.Controller.HintList
 
 
 ---@type UIToolkit.Controller.HintData|nil
@@ -176,7 +176,7 @@ function M.makeAxisLayout(axis, opts)
     return makeIconLayout(M.getAxisIcon(axis), opts)
 end
 
----@param hints (UIToolkit.Controller.Hint|'separator')[]
+---@param hints UIToolkit.Controller.HintList
 ---@return openmw.ui.Layout[]
 local function makeLayouts(hints)
     local toolkit = I.UIToolkit
@@ -246,7 +246,7 @@ local function makeLayouts(hints)
     return layouts
 end
 
----@param hints? (UIToolkit.Controller.Hint|'separator')[]
+---@param hints? UIToolkit.Controller.HintList
 local function showControllerHint(hints)
     if element then
         I.UIToolkit.destroy(element)
@@ -292,7 +292,7 @@ if isPlayer then
 
     ---@type UIToolkit.Controller.HintData|nil
     local defaultHintData = nil
-    ---@param hints? (UIToolkit.Controller.Hint|'separator')[]
+    ---@param hints? UIToolkit.Controller.HintList
     function M.setHints(hints)
         if not hints then
             defaultHintData = nil

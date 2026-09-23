@@ -415,7 +415,7 @@ function Components.sortedList(opts) end
 ---@field isPinned fun(self:UIToolkit.Window):boolean
 ---@field setPinnable fun(self:UIToolkit.Window, pinnable:boolean)
 ---@field setMinSize fun(self:UIToolkit.Window, minSz: openmw.util.Vector2)
----@field setControllerHints fun(self:UIToolkit.Window, hints?: (UIToolkit.Controller.Hint|'separator')[])
+---@field setControllerHints fun(self:UIToolkit.Window, hints?: UIToolkit.Controller.HintList)
 
 
 ---@class UIToolkit.Popups
@@ -428,7 +428,7 @@ function Components.sortedList(opts) end
 ---@field body string|openmw.ui.Layout|openmw.ui.Element|UIToolkit.Component
 ---@field borderStyle UIToolkit.BoxStyle?
 ---@field buttons? UIToolkit.PopupButtonOpts[]
----@field controllerHints? (UIToolkit.Controller.Hint|'separator')[]
+---@field controllerHints? UIToolkit.Controller.HintList
 
 ---@class UIToolkit.PopupButtonOpts
 ---@field text string text on the button
@@ -466,7 +466,7 @@ function Components.sortedList(opts) end
 ---@field makeAxisLayout fun(axis:number, opts:UIToolkit.Controller.IconOpts?)
 
 ---@class UIToolkit.Controller : UIToolkit.ControllerMenu
----@field setHints fun(hints?:(UIToolkit.Controller.Hint|'separator')[])
+---@field setHints fun(hints?:UIToolkit.Controller.HintList)
 ---@field isControllerActive fun():boolean
 
 ---@class UIToolkit.Controller.IconOpts
@@ -482,6 +482,7 @@ function Components.sortedList(opts) end
 ---@field input UIToolkit.Controller.Input|UIToolkit.Controller.Input[]
 ---@field combo boolean?
 
+---@alias UIToolkit.Controller.HintList (UIToolkit.Controller.Hint|'separator')[]
 ---@alias UIToolkit.Controller.DPAdDirection 'left'|'right'|'up'|'down'|'horizontal'|'vertical'|'all'
 
 

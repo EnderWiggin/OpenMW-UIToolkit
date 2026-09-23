@@ -644,7 +644,7 @@ function Window:init(opts, id, saved)
     Component.init(self, window)
 end
 
----@param hints? (UIToolkit.Controller.Hint|'separator')[]
+---@param hints? UIToolkit.Controller.HintList
 function Window:setControllerHints(hints)
     I.UIToolkit.WindowManager.setControllerHints(self.id, hints)
 end

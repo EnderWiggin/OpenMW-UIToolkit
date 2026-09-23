@@ -125,7 +125,7 @@ function M.getFocusedWindowId()
 end
 
 ---@param id string
----@param hints? (UIToolkit.Controller.Hint|'separator')[]
+---@param hints? UIToolkit.Controller.HintList
 function M.setControllerHints(id, hints)
     controllerHints[id] = {
         id = id,
