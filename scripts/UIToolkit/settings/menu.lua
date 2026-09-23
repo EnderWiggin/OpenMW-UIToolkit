@@ -39,6 +39,22 @@ I.Settings.registerGroup {
             }
         },
         {
+            key = 's_IntRe',
+            renderer = 'UIToolkit/Dropbox',
+            name = 'SettingInterfaceReimaginedName',
+            description = 'SettingInterfaceReimaginedDesc',
+            default = D.InterfaceReimagined.Auto,
+            ---@type UIToolkit.SettingRenderer.Dropbox
+            argument = {
+                l10n = D.L10N,
+                items = {
+                    { id = D.InterfaceReimagined.Off },
+                    { id = D.InterfaceReimagined.Auto },
+                    { id = D.InterfaceReimagined.On },
+                },
+            }
+        },
+        {
             key = 'b_CompactWeightValue',
             renderer = 'checkbox',
             name = 'SettingCompactWeightValueName',

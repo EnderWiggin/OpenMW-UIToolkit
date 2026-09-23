@@ -15,13 +15,15 @@ local TextButton = Class(Component)
 
 ---@param opts UIToolkit.TextButtonOpts
 function TextButton:init(opts)
+    local intRe = I.UIToolkit.getTheme().IntRe
     local T = I.UIToolkit.Templates
     local txt = {
         template = T.text(),
         props = { text = opts.text, },
         userData = { colorable = true },
     }
-    local style = opts.style or 'button'
+    ---@type UIToolkit.BoxStyle
+    local style = opts.style or (intRe and 'IntRe' or 'button')
     local padding
     if type(opts.padding) == 'number' then
         padding = v2(1, 1) * opts.padding
@@ -33,7 +35,7 @@ function TextButton:init(opts)
         txt.props.autoSize = false
         txt.props.textAlignH = ui.ALIGNMENT.Center
     else
-        padding = padding or v2(8, 0)
+        padding = padding or (style =='IntRe' and v2(0, 0) or v2(8, 0))
     end
 
     local box = T.box {

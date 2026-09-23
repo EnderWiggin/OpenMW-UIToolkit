@@ -201,6 +201,16 @@ local headerSection = {
     }
 }
 
+local emptyHeaderSection = {
+    props = {
+        size = util.vector2(0, 20),
+    },
+    external = {
+        grow = 1,
+        stretch = 1,
+    }
+}
+
 local function makePinButton(pinned, onPinChanged)
     local textures = {
         pinned = function(part, pos, size)
@@ -363,6 +373,7 @@ function Window:init(opts, id, saved)
     local T = I.UIToolkit.Templates
     self.id = id
     local theme = I.UIToolkit.getTheme()
+    local intRe = theme.IntRe
 
     local noResize = not opts.resizing
     local draggable = opts.draggable or not noResize
@@ -399,7 +410,7 @@ function Window:init(opts, id, saved)
     end
     local title = {
         name = 'title',
-        template = T.text(),
+        template = intRe and T.header() or T.text(),
         props = {
             text = opts.title,
             textSize = theme.Sizes.textHeader,
@@ -415,11 +426,11 @@ function Window:init(opts, id, saved)
             stretch = 1,
         },
         content = ui.content {
-            headerSection,
+            intRe and emptyHeaderSection or headerSection,
             T.intervalH(8),
             title,
             T.intervalH(8),
-            headerSection,
+            intRe and emptyHeaderSection or headerSection,
         },
         events = {
             focusGain = async:callback(function()
@@ -437,7 +448,7 @@ function Window:init(opts, id, saved)
 
     local body = ui.create {
         name = 'body',
-        template = baseTemplate,
+        template = not intRe and baseTemplate or nil,
         props = {},
         external = {
             grow = 1,
@@ -611,7 +622,8 @@ function Window:init(opts, id, saved)
 
     self.getInnerSize = function(_)
         local sz = window.layout.props.size
-        local borders = 4 * self._borderThickness
+        local borderCount = intRe and 2 or 4
+        local borders = borderCount * self._borderThickness
         return util.vector2(sz.x - borders, sz.y - borders - HEADER_HEIGHT)
     end
 

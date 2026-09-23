@@ -7,6 +7,7 @@ local D = require 'scripts.UIToolkit.config.defaults'
 
 ---@class UIToolkit.Config.Player.Interface
 ---@field s_NumberSeparators string
+---@field s_IntRe string
 ---@field b_SoulGemValueRebalance boolean
 ---@field b_CompactWeightValue boolean
 ---@field b_ConditionAsBar boolean

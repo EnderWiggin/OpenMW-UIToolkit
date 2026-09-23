@@ -42,6 +42,12 @@ local M = {
         max = 0.5,
     },
 
+    InterfaceReimagined = {
+        Off = 'ConfigInterfaceReimagined_Off',
+        Auto = 'ConfigInterfaceReimagined_Auto',
+        On = 'ConfigInterfaceReimagined_On',
+    },
+
     Separators = {
         None = 'ConfigNumberSeparators_None',
         Comma = 'ConfigNumberSeparators_Comma',

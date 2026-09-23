@@ -43,8 +43,9 @@ local ScrollBar = Class(Component)
 ---@param opts UIToolkit.ScrollBarOpts
 function ScrollBar:init(opts)
     local T = I.UIToolkit.Templates
+    local theme = I.UIToolkit.getTheme()
     local width = opts.width or getDefaultWidth()
-    self.slim = opts.slim == true
+    self.slim = opts.slim == true or opts.slim == nil and theme.IntRe
     self.width = width
     self.horizontal = opts.horizontal == true
     self.scrollStep = opts.scrollStep

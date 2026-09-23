@@ -2,6 +2,7 @@
 
 local ui = require('openmw.ui')
 local util = require('openmw.util')
+local vfs = require('openmw.vfs')
 local I = require('openmw.interfaces')
 
 local v2 = util.vector2
@@ -229,8 +230,15 @@ for k in pairs(cornerParts) do
     buttonBorderResources[k] = ui.texture { path = buttonBorderCornerPattern:format(k) }
 end
 
+borderResources['empty'] = {}
+
+borderResources['IntRe'] = {
+    top = borderResources['thin']['top'],
+    bottom = borderResources['thin']['bottom'],
+}
+
 ---@param style UIToolkit.BoxStyle
----@return table<string,openmw.ui.Layout>
+---@return table<string,openmw.ui.Template>
 local function _borderPieces(style)
     local pieces = {}
     for k in pairs(sideParts) do
@@ -256,7 +264,7 @@ local function _borderPieces(style)
 end
 
 ---@param style UIToolkit.BoxStyle
----@return table<string,openmw.ui.Layout>
+---@return table<string,openmw.ui.Template>
 local function borderPieces(style)
     return GetCachedOrCalculate('borderPieces', _borderPieces, style)
 end
@@ -266,7 +274,9 @@ end
 function M.getBorderSize(style)
     local sizes = I.UIToolkit.getTheme().Sizes
     if not style then return 0 end
-    return style == 'thin' and sizes.border or sizes.thickBorder
+    if style == 'thin' then return sizes.border end
+    if style == 'IntRe' then return sizes.border end
+    return sizes.thickBorder
 end
 
 ---@class UIToolkit.Templates._BoxOpts
@@ -413,6 +423,12 @@ local function box(opts)
     local thickness = opts.thickness
     local borderV = v2(1, 1) * thickness
     local padding = opts.padding
+    local intRe = style == 'IntRe'
+    local hasCorners = not intRe
+    if intRe then
+        padding = v2(padding.x, padding.y + M.getBorderSize('button') - thickness)
+    end
+
 
     local result = {
         type = ui.TYPE.Container,
@@ -447,15 +463,17 @@ local function box(opts)
             }
         }
     end
-    for k, v in pairs(cornerParts) do
-        result.content:add {
-            template = pieces[k],
-            props = {
-                position = v * thickness + v:emul(padding) * 2,
-                relativePosition = v,
-                size = borderV,
-            },
-        }
+    if hasCorners then
+        for k, v in pairs(cornerParts) do
+            result.content:add {
+                template = pieces[k],
+                props = {
+                    position = v * thickness + v:emul(padding) * 2,
+                    relativePosition = v,
+                    size = borderV,
+                },
+            }
+        end
     end
     result.content:add {
         external = { slot = true },

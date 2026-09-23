@@ -793,7 +793,7 @@ function Templates.getBorderSize(style) end
 ---@field WeaponType string
 ---@field Weight string
 
----@alias UIToolkit.BoxStyle 'thin' | 'thick' | 'button'
+---@alias UIToolkit.BoxStyle 'thin' | 'thick' | 'button' | 'empty' | 'IntRe'
 ---@alias UIToolkit.BackgroundOpacity 'solid'|'transparent'|number
 ---@alias UIToolkit.BoxBackground {opacity:UIToolkit.BackgroundOpacity, color:openmw.util.Color?}|UIToolkit.BackgroundOpacity
 ---@alias UIToolkit.ColumnComparator fun(a:UIToolkit.ListData.Column, b:UIToolkit.ListData.Column, col: string?):number

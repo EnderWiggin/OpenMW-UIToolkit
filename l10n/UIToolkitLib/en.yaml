@@ -18,6 +18,13 @@ ConfigNumberSeparators_None: None
 ConfigNumberSeparators_Comma: Comma
 ConfigNumberSeparators_Space: Space
 
+SettingInterfaceReimaginedName: Interface Reimagined support
+SettingInterfaceReimaginedDesc: Adjust appearance to better fit the style of Interface Reimagined.
+
+ConfigInterfaceReimagined_Off: Off
+ConfigInterfaceReimagined_Auto: Auto
+ConfigInterfaceReimagined_On: On
+
 SettingCompactWeightValueName: Condensed weight/value
 SettingCompactWeightValueDesc: |-
   Moves weight and value information in item tooltips to the footer.
