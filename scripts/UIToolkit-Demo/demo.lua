@@ -370,6 +370,32 @@ function Handler:onOpened(wnd, _, saved)
     }
     if state.dropbox then dropbox:selectById(state.dropbox) end
 
+    local progressBar
+    progressBar = I.UIToolkit.Components.progressBar {
+        value = 50,
+        onClick = function()
+            if input.isShiftPressed() then
+                local max = progressBar:getMax()
+                if max < 150 then
+                    progressBar:setMax(max + 5)
+                end
+            else
+                progressBar:setValue(progressBar:getValue() + 10)
+            end
+        end,
+        onRClick = function()
+            if input.isShiftPressed() then
+                local max = progressBar:getMax()
+                if max > 50 then
+                    progressBar:setMax(max - 5)
+                end
+            else
+                progressBar:setValue(progressBar:getValue() - 10)
+            end
+        end,
+        tooltip = { body = 'Lift-click to increase progress.\nRight click to decrease progress.\nHold shift when clicking to change max.', width = 200 },
+    }
+
     wnd:setContent(ui.content {
         {
             type = ui.TYPE.Flex,
@@ -434,6 +460,8 @@ function Handler:onOpened(wnd, _, saved)
                                         }
                                     },
                                 },
+                                I.UIToolkit.Templates.intervalH(5),
+                                progressBar.element,
                             },
                         },
                         I.UIToolkit.Templates.intervalV(5),
