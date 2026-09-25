@@ -54,6 +54,7 @@ return function(value, set, args)
         width = BAR_WIDTH,
         scrollStep = step,
         horizontal = true,
+        slim = false,
         onScroll = sliderValueChanged,
         onDragStopped = sliderValueChanged,
     }
