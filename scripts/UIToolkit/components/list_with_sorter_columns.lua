@@ -98,6 +98,8 @@ function SortedList:init(opts)
         size = self:getListSize(),
         provider = self.provider,
         onItemClicked = opts.onItemClicked,
+        onItemRClicked = opts.onItemRClicked,
+        onItemClickedAny = opts.onItemClickedAny,
         scrollWidth = opts.scrollWidth,
         slimScroll = opts.slimScroll,
         noBorder = opts.noBorder,

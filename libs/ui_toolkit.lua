@@ -274,7 +274,9 @@ function Components.sortedList(opts) end
 ---@class UIToolkit.ItemListOpts<T>
 ---@field size openmw.util.Vector2
 ---@field provider T
----@field onItemClicked? fun(data:T, idx:integer)
+---@field onItemClicked? fun(data:UIToolkit.ListData.Base, idx:integer) called when item is clicked with left mouse button
+---@field onItemRClicked? fun(data:UIToolkit.ListData.Base, idx:integer) called when item is clicked with right mouse button
+---@field onItemClickedAny? fun(data:UIToolkit.ListData.Base, idx:integer, button: number) called when item is clicked with any mouse button
 ---@field scrollWidth number?
 ---@field slimScroll boolean? scrollbar will have no borders around arrows or handle
 ---@field noBorder boolean?
@@ -337,7 +339,9 @@ function Components.sortedList(opts) end
 ---@field columns UIToolkit.SortedList.Column[]
 ---@field hiddenColumns? table<string, boolean>
 ---@field rowHeight number? Defaults to 1.5 * (textNormal + 2)
----@field onItemClicked? fun(data:UIToolkit.ListData.Base, idx:integer)
+---@field onItemClicked? fun(data:UIToolkit.ListData.Base, idx:integer) called when item is clicked with left mouse button
+---@field onItemRClicked? fun(data:UIToolkit.ListData.Base, idx:integer) called when item is clicked with right mouse button
+---@field onItemClickedAny? fun(data:UIToolkit.ListData.Base, idx:integer, button: number) called when item is clicked with any mouse button
 ---@field scrollWidth number?
 ---@field slimScroll boolean? scrollbar will have no borders around arrows or handle
 ---@field noBorder boolean?

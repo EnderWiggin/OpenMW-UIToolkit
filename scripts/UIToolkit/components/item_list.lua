@@ -22,6 +22,8 @@ function ItemList:init(opts)
     local t = I.UIToolkit.getTheme()
     local size = opts.size
     local onClicked = opts.onItemClicked
+    local onRClicked = opts.onItemRClicked
+    local onAnyClicked = opts.onItemClickedAny
     ---@type UIToolkit.ListItem.Base
     local provider = opts.provider
     local state = {
@@ -60,15 +62,21 @@ function ItemList:init(opts)
         events = {
             ---@param e openmw.ui.MouseEvent
             mousePress = async:callback(function(e)
-                if onClicked then
-                    local idx = self:getIndexByYPos(e.offset.y)
-                    local item = self.state.items[idx]
-                    if item then
-                        ambient.playSound('menu click', { scale = false })
-                        onClicked(item, idx)
-                    end
-                end
                 self.state.lastHoveredPos = e.offset.y - self._scrollBar:getPosition()
+                local callback
+                if e.button == 1 then
+                    callback = onClicked
+                elseif e.button == 3 then
+                    callback = onRClicked
+                end
+
+                if not callback and not onAnyClicked then return end
+                local idx = self:getIndexByYPos(e.offset.y)
+                local item = self.state.items[idx]
+                if not item then return end
+                ambient.playSound('menu click', { scale = false })
+                if callback then callback(item, idx) end
+                if onAnyClicked then onAnyClicked(item, idx, e.button) end
             end),
             mouseRelease = async:callback(function(e)
                 self.state.lastHoveredPos = e.offset.y - self._scrollBar:getPosition()
