@@ -99,6 +99,10 @@ function Components.textEdit(opts) end
 ---@return UIToolkit.Dropbox
 function Components.dropbox(opts) end
 
+---@param opts UIToolkit.ProgressBarOpts
+---@return UIToolkit.ProgressBar
+function Components.progressBar(opts) end
+
 ---@param opts UIToolkit.ScrollBarOpts
 ---@return UIToolkit.ScrollBar
 function Components.scrollBar(opts) end
@@ -199,6 +203,21 @@ function Components.sortedList(opts) end
 ---@field selectItem fun(self:UIToolkit.Dropbox, item:UIToolkit.ListData.Text)
 ---@field selectById fun(self:UIToolkit.Dropbox, id:string)
 ---@field selectByIndex fun(self:UIToolkit.Dropbox, idx:integer)
+
+---@class UIToolkit.ProgressBarOpts: UIToolkit.InteractiveOpts
+---@field max number? Size of the text. Defaults to 100.
+---@field value number? Size of the text. Defaults to 0.
+---@field color openmw.util.Color? Bar color. Defaults to HEALTH color.
+---@field textSize number? Size of the text. Defaults to normal text size.
+---@field textStyle? 'full'|'value'|'none' How to show value text. 'full': 'value/max', 'value' - just value, 'none' - no text. Defaults to 'full'.
+
+---@class UIToolkit.ProgressBar: UIToolkit.Component
+---@field new fun(self:UIToolkit.ProgressBar):UIToolkit.ProgressBar
+---@field init fun(self:UIToolkit.ProgressBar, opts:UIToolkit.ProgressBarOpts)
+---@field getValue fun(self:UIToolkit.ProgressBar):number
+---@field setValue fun(self:UIToolkit.ProgressBar, value:number)
+---@field getMax fun(self:UIToolkit.ProgressBar):number
+---@field setMax fun(self:UIToolkit.ProgressBar, max:number)
 
 ---@class UIToolkit.ScrollBarOpts
 ---@field horizontal boolean?

@@ -7,6 +7,7 @@ local ItemList = require('scripts.UIToolkit.components.item_list')
 local ColumnSorter = require('scripts.UIToolkit.components.column_sorter')
 local SortedList = require('scripts.UIToolkit.components.list_with_sorter_columns')
 local Dropbox = require('scripts.UIToolkit.components.dropbox')
+local ProgressBar = require('scripts.UIToolkit.components.progress_bar')
 local Checkbox = require('scripts.UIToolkit.components.checkbox')
 
 local M = {}
@@ -35,6 +36,14 @@ function M.dropbox(opts)
     local dropbox = Dropbox:new()
     dropbox:init(opts)
     return dropbox
+end
+
+---@param opts UIToolkit.ProgressBarOpts
+---@return UIToolkit.ProgressBar
+function M.progressBar(opts)
+    local bar = ProgressBar:new()
+    bar:init(opts)
+    return bar
 end
 
 ---@param opts UIToolkit.ScrollBarOpts
