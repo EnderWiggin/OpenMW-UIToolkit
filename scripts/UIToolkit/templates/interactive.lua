@@ -34,31 +34,36 @@ function M.makeInteractive(opts, layoutOrElement)
     element.layout.events.mousePress = async:callback(function(e)
         --TODO: this is temporary, until 0.52, where `ui.mousePosition` would hopefully exist
         I.UIToolkit.setCursorPos(e.position)
-        if e.button ~= 1 then return end
-        if nonInteractiveDisabled and element.layout.userData.disabled then return end
-        if opts.onClick then
-            if opts.canClick and not opts.canClick() then
-                return false
-            end
-            ambient.playSound('menu click', { scale = false })
-            M.updateState(element.layout, { pressed = true })
-            toolkit.queueUpdate(element)
+        local onClick
+        if e.button == 1 then
+            onClick = opts.onClick
+        elseif e.button == 3 then
+            onClick = opts.onRClick
         end
+        if not onClick or nonInteractiveDisabled and element.layout.userData.disabled then return end
+        if opts.canClick and not opts.canClick() then
+            return false
+        end
+        ambient.playSound('menu click', { scale = false })
+        M.updateState(element.layout, { pressed = true })
+        toolkit.queueUpdate(element)
     end)
     element.layout.events.mouseRelease = async:callback(function(e)
         --TODO: this is temporary, until 0.52, where `ui.mousePosition` would hopefully exist
         I.UIToolkit.setCursorPos(e.position)
-        if e.button ~= 1 then return end
-        if nonInteractiveDisabled and element.layout.userData.disabled then return end
-        if opts.onClick then
-            if not element.layout.userData.pressed then
-                return false
-            end
-            M.updateState(element.layout, { pressed = false })
-            toolkit.queueUpdate(element)
-            return opts.onClick(e)
+        local onClick
+        if e.button == 1 then
+            onClick = opts.onClick
+        elseif e.button == 3 then
+            onClick = opts.onRClick
         end
-        return false
+        if not onClick or nonInteractiveDisabled and element.layout.userData.disabled then return end
+        if not element.layout.userData.pressed then
+            return false
+        end
+        M.updateState(element.layout, { pressed = false })
+        toolkit.queueUpdate(element)
+        return onClick(e)
     end)
     local isAlive = function() return element.layout ~= nil end
     element.layout.events.focusLoss = async:callback(function()
