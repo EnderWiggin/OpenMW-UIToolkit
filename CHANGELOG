@@ -1,3 +1,17 @@
+Version 1.1.0 (2026-09-25)
+- bumped API version to 2
+- added option to (set to Auto by default) to make UI look in style of Interface Reimagined
+- controller: 
+  - fixed wrong icon for default/PSX Right Shoulder
+  - fixed rare case where controller hints can remain on screen indefinitely
+  - added `setExternalHints` method to allow other mods to show controller hints
+- interactive: added `onRClick` callback. Applies also to buttons and checkboxes
+- item list/column list:
+  - `onItemClicked` will be called only for left-click
+  - added `onItemRClicked` that will be called on right-click
+  - added `onItemClickedAny` that will be called when any mouse button is clicked on item, receives button in addition to item info
+- added ProgressBar component
+
 Version 1.0.1 (2026-09-20)
 - tooltips: fixed thrown weapon damage not being doubled
 - API: added `cursorMovedThisFrame` method to I.UIToolkit
