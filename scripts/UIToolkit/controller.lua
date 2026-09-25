@@ -249,7 +249,7 @@ end
 ---@param hints? UIToolkit.Controller.HintList
 local function showControllerHint(hints)
     if element then
-        I.UIToolkit.destroy(element)
+        I.UIToolkit.queueDestroy(element)
         element = nil
     end
 
@@ -343,7 +343,7 @@ if isPlayer then
     function M._updateHintVisibility()
         if not element then return end
         element.layout.props.visible = controllerIsActive or alwaysShowHint
-        IP.UIToolkit.update(element)
+        IP.UIToolkit.queueUpdate(element)
     end
 
     function M._setControllerActiveState(state)
