@@ -12,6 +12,7 @@ local v2        = util.vector2
 local BUTTON    = input.CONTROLLER_BUTTON
 local AXIS      = input.CONTROLLER_AXIS
 
+local H         = require 'scripts.UIToolkit.helpers'
 local D         = require 'scripts.UIToolkit.config.defaults'
 local cfgPlayer = require 'scripts.UIToolkit.config.player'
 local context   = require 'scripts.UIToolkit.scriptContext'
@@ -292,20 +293,33 @@ end
 if isPlayer then
     ---@omw-context-begin player
 
-    ---@type UIToolkit.Controller.HintData|nil
-    local externalHintData = nil
+    ---@type table<string, UIToolkit.Controller.HintData>
+    local externalHintData = {}
+    ---@type string[]
+    local externalHintSources = {}
+
+    ---@param source string
     ---@param hints? UIToolkit.Controller.HintList
-    function M.setExternalHints(hints)
+    function M.setExternalHints(source, hints)
+        H.removeFromArray(externalHintSources, source)
         if not hints then
-            externalHintData = nil
+            externalHintData[source] = nil
         else
-            externalHintData = {
-                source = 'default',
+            externalHintData[source] = {
+                source = source,
                 id = 0,
                 ts = core.getRealTime(),
                 hints = hints,
             }
+            table.insert(externalHintSources, source)
         end
+    end
+
+    ---@return UIToolkit.Controller.HintData|nil
+    function P.getExternalHintData()
+        local n = #externalHintSources
+        if n <= 0 then return nil end
+        return externalHintData[externalHintSources[n]]
     end
 
     local IP = I --[[@as openmw.interfaces.Player]]
@@ -321,7 +335,7 @@ if isPlayer then
             if window then
                 hintData = toolkit.WindowManager.getControllerHints(window)
             else
-                hintData = externalHintData
+                hintData = P.getExternalHintData()
             end
         end
 
