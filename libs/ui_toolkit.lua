@@ -466,7 +466,7 @@ function Components.sortedList(opts) end
 ---@field makeAxisLayout fun(axis:number, opts:UIToolkit.Controller.IconOpts?)
 
 ---@class UIToolkit.Controller : UIToolkit.ControllerMenu
----@field setHints fun(hints?:UIToolkit.Controller.HintList)
+---@field setExternalHints fun(hints?:UIToolkit.Controller.HintList)
 ---@field isControllerActive fun():boolean
 
 ---@class UIToolkit.Controller.IconOpts

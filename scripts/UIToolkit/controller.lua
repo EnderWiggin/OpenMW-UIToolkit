@@ -293,13 +293,13 @@ if isPlayer then
     ---@omw-context-begin player
 
     ---@type UIToolkit.Controller.HintData|nil
-    local defaultHintData = nil
+    local externalHintData = nil
     ---@param hints? UIToolkit.Controller.HintList
-    function M.setHints(hints)
+    function M.setExternalHints(hints)
         if not hints then
-            defaultHintData = nil
+            externalHintData = nil
         else
-            defaultHintData = {
+            externalHintData = {
                 source = 'default',
                 id = 0,
                 ts = core.getRealTime(),
@@ -321,7 +321,7 @@ if isPlayer then
             if window then
                 hintData = toolkit.WindowManager.getControllerHints(window)
             else
-                hintData = defaultHintData
+                hintData = externalHintData
             end
         end
 
