@@ -22,9 +22,12 @@ local ColumnItem    = require 'scripts.UIToolkit.components.list_items.column_it
 local v2            = util.vector2
 local WND_NAME      = 'uitoolkit-demo'
 local BUTTON        = input.CONTROLLER_BUTTON
+local Toolkit       = I.UIToolkit
+local C             = Toolkit.Components
+local T             = Toolkit.Templates
 
 
-local textSize  = I.UIToolkit.getTheme().Sizes.textNormal
+local textSize  = Toolkit.getTheme().Sizes.textNormal
 local rowHeight = 1.5 * (textSize + 2)
 
 
@@ -93,17 +96,17 @@ local function makeSpellList()
             local cached = spellList.provider:getCachedComponent(selected.id)
             if cached then
                 cached:setActive(false)
-                I.UIToolkit.queueUpdate(cached.element, true)
+                Toolkit.queueUpdate(cached.element, true)
             end
         end
         types.Actor.setSelectedSpell(player, data.id)
         local cached = spellList.provider:getCachedComponent(data.id)
         if cached then
             cached:setActive(true)
-            I.UIToolkit.queueUpdate(cached.element, true)
+            Toolkit.queueUpdate(cached.element, true)
         end
     end
-    spellList = I.UIToolkit.Components.sortedList {
+    spellList = C.sortedList {
         size = v2(400, 300),
         onItemClicked = onClicked,
         columns = spellColumns,
@@ -116,7 +119,7 @@ end
 
 local function onShowPopupClicked()
     local closePopup
-    closePopup = I.UIToolkit.Popups.show {
+    closePopup = Toolkit.Popups.show {
         title = 'THE POPUP',
         body =
         'This is a very cool popup. It has a long text on it. Very good, very long text.\nIt probably takes up several lines on this popup, wow!',
@@ -142,7 +145,7 @@ local function onShowPopupClicked()
                         end
                     end
 
-                    I.UIToolkit.Popups.show {
+                    Toolkit.Popups.show {
                         title = 'Select the spell',
                         body = spellList,
                         buttons = { { text = 'Close' } },
@@ -170,20 +173,20 @@ local function onShowPopupClicked()
                         }
                     end
 
-                    I.UIToolkit.Popups.show {
+                    Toolkit.Popups.show {
                         body = {
                             type = ui.TYPE.Flex,
                             props = {},
                             content = ui.content {
                                 {
-                                    template = I.UIToolkit.Templates.paragraph(),
+                                    template = T.paragraph(),
                                     props = {
                                         size = v2(300, 0),
                                         text = 'Press OK to close this popup an return to the previous one!\nOr select attribute for some fun:',
                                     },
                                 },
-                                I.UIToolkit.Templates.intervalV(5),
-                                I.UIToolkit.Components.dropbox {
+                                T.intervalV(5),
+                                C.dropbox {
                                     width = 150,
                                     items = attrs,
                                     onItemSelected = function(item, idx)
@@ -216,14 +219,14 @@ local state
 ---@param wnd UIToolkit.Window
 function Handler:onOpened(wnd, _, saved)
     state = saved or {}
-    local theme = I.UIToolkit.getTheme()
+    local theme = Toolkit.getTheme()
     I.UI.setMode(I.UI.MODE.Interface, { windows = {} })
 
     wnd:setControllerHints {
         { text = 'Show Popup', input = cfgUtils.getControllerInputs(binds[BIND_POPUP]) },
     }
 
-    list = I.UIToolkit.Components.sortedList {
+    list = C.sortedList {
         size = v2(200, 300),
         onItemClicked = function(data)
             if not list then return end
@@ -281,26 +284,26 @@ function Handler:onOpened(wnd, _, saved)
             arrange = ui.ALIGNMENT.Center,
         },
         content = ui.content {
-            I.UIToolkit.Templates.intervalH(5),
-            I.UIToolkit.Components.textButton { text = 'All', onClick = function()
+            T.intervalH(5),
+            C.textButton { text = 'All', onClick = function()
                 selectedType = nil
                 list:setHiddenColumns { damage = true, ['V/W'] = true }
                 list:filter()
             end, style = 'thin' }.element,
-            I.UIToolkit.Templates.intervalH(5),
-            I.UIToolkit.Components.textButton { text = 'Weapons', onClick = function()
+            T.intervalH(5),
+            C.textButton { text = 'Weapons', onClick = function()
                 selectedType = types.Weapon
                 list:setHiddenColumns { ['V/W'] = true }
                 list:filter()
             end, style = 'thin' }.element,
-            I.UIToolkit.Templates.intervalH(5),
-            I.UIToolkit.Components.textButton { text = 'Misc', onClick = function()
+            T.intervalH(5),
+            C.textButton { text = 'Misc', onClick = function()
                 selectedType = types.Miscellaneous
                 list:setHiddenColumns { damage = true }
                 list:filter()
             end, style = 'thin' }.element,
-            I.UIToolkit.Templates.intervalH(10),
-            I.UIToolkit.Components.checkbox {
+            T.intervalH(10),
+            C.checkbox {
                 text = 'No Weightless',
                 default = state.hideWeightless == true,
                 onValueChanged = function(value)
@@ -316,7 +319,7 @@ function Handler:onOpened(wnd, _, saved)
     local slider
     local edit
 
-    slider = I.UIToolkit.Components.scrollBar {
+    slider = C.scrollBar {
         horizontal = true,
         length = 250,
         handleSize = 20,
@@ -329,7 +332,7 @@ function Handler:onOpened(wnd, _, saved)
         end,
     }
 
-    edit = I.UIToolkit.Components.textEdit {
+    edit = C.textEdit {
         default = 1,
         width = 55,
         textAlignH = ui.ALIGNMENT.Center,
@@ -359,7 +362,7 @@ function Handler:onOpened(wnd, _, saved)
     end
     table.sort(skills, function(a, b) return a.text < b.text end)
 
-    local dropbox = I.UIToolkit.Components.dropbox {
+    local dropbox = C.dropbox {
         width = 150,
         items = skills,
         maxVisibleItems = 10,
@@ -371,7 +374,7 @@ function Handler:onOpened(wnd, _, saved)
     if state.dropbox then dropbox:selectById(state.dropbox) end
 
     local progressBar
-    progressBar = I.UIToolkit.Components.progressBar {
+    progressBar = C.progressBar {
         value = 50,
         onClick = function()
             if input.isShiftPressed() then
@@ -401,13 +404,13 @@ function Handler:onOpened(wnd, _, saved)
             type = ui.TYPE.Flex,
             props = {},
             content = ui.content {
-                I.UIToolkit.Templates.intervalV(5),
+                T.intervalV(5),
                 tabs,
                 list.element,
             },
         },
         {
-            template = I.UIToolkit.Templates.border { padding = 5 },
+            template = T.border { padding = 5 },
             props = {
                 size = v2(330, -10),
                 position = v2(-5, 5),
@@ -421,10 +424,10 @@ function Handler:onOpened(wnd, _, saved)
                     props = {},
                     content = ui.content {
                         {
-                            template = I.UIToolkit.Templates.text(),
+                            template = T.text(),
                             props = { text = "Examples:" },
                         },
-                        I.UIToolkit.Templates.intervalV(15),
+                        T.intervalV(15),
                         {
                             type = ui.TYPE.Flex,
                             props = {
@@ -432,7 +435,7 @@ function Handler:onOpened(wnd, _, saved)
                             },
                             content = ui.content {
                                 {
-                                    template = I.UIToolkit.Templates.box { padding = v2(10, 5), background = { color = theme.Colors.DAMAGED, opacity = 'transparent' } },
+                                    template = T.box { padding = v2(10, 5), background = { color = theme.Colors.DAMAGED, opacity = 'transparent' } },
                                     props = {},
                                     content = ui.content {
                                         {
@@ -445,9 +448,9 @@ function Handler:onOpened(wnd, _, saved)
                                         }
                                     },
                                 },
-                                I.UIToolkit.Templates.intervalH(5),
+                                T.intervalH(5),
                                 {
-                                    template = I.UIToolkit.Templates.box { padding = 5, background = { color = theme.Colors.MAGICK, opacity = 'transparent' } },
+                                    template = T.box { padding = 5, background = { color = theme.Colors.MAGICK, opacity = 'transparent' } },
                                     props = {},
                                     content = ui.content {
                                         {
@@ -460,39 +463,39 @@ function Handler:onOpened(wnd, _, saved)
                                         }
                                     },
                                 },
-                                I.UIToolkit.Templates.intervalH(5),
+                                T.intervalH(5),
                                 progressBar.element,
                             },
                         },
-                        I.UIToolkit.Templates.intervalV(5),
-                        I.UIToolkit.Components.textButton { text = 'Show Popup', onClick = onShowPopupClicked }.element,
-                        I.UIToolkit.Templates.intervalV(5),
-                        I.UIToolkit.Components.textButton { text = 'Width=110', width = 110 }.element,
-                        I.UIToolkit.Templates.intervalV(5),
+                        T.intervalV(5),
+                        C.textButton { text = 'Show Popup', onClick = onShowPopupClicked }.element,
+                        T.intervalV(5),
+                        C.textButton { text = 'Width=110', width = 110 }.element,
+                        T.intervalV(5),
                         {
                             type = ui.TYPE.Flex,
                             props = { horizontal = true },
                             content = ui.content {
-                                I.UIToolkit.Components.textButton { text = 'Disabled' }:setDisabled(true).element,
-                                I.UIToolkit.Templates.intervalH(5),
-                                I.UIToolkit.Components.textButton { text = 'Active' }:setActive(true).element,
+                                C.textButton { text = 'Disabled' }:setDisabled(true).element,
+                                T.intervalH(5),
+                                C.textButton { text = 'Active' }:setActive(true).element,
                             },
                         },
-                        I.UIToolkit.Templates.intervalV(5),
+                        T.intervalV(5),
                         {
                             type = ui.TYPE.Flex,
                             props = { horizontal = true },
                             content = ui.content {
-                                I.UIToolkit.Components.textButton { text = 'Thin', style = 'thin' }.element,
-                                I.UIToolkit.Templates.intervalH(5),
-                                I.UIToolkit.Components.textButton { text = 'Thick', style = 'thick' }.element,
-                                I.UIToolkit.Templates.intervalH(5),
-                                I.UIToolkit.Components.textButton { text = 'Colored', background = { opacity = 0.5, color = theme.Colors.FATIGUE } }.element,
+                                C.textButton { text = 'Thin', style = 'thin' }.element,
+                                T.intervalH(5),
+                                C.textButton { text = 'Thick', style = 'thick' }.element,
+                                T.intervalH(5),
+                                C.textButton { text = 'Colored', background = { opacity = 0.5, color = theme.Colors.FATIGUE } }.element,
                             },
                         },
-                        I.UIToolkit.Templates.intervalV(5),
+                        T.intervalV(5),
                         {
-                            template = I.UIToolkit.Templates.paragraph(),
+                            template = T.paragraph(),
                             props = {
                                 text = "slider+text combo that allows entering value in range [1 - 100]:",
                                 size = v2(300, 0),
@@ -503,18 +506,18 @@ function Handler:onOpened(wnd, _, saved)
                             props = { horizontal = true, arrange = ui.ALIGNMENT.Center },
                             content = ui.content {
                                 slider.element,
-                                I.UIToolkit.Templates.intervalH(5),
+                                T.intervalH(5),
                                 edit.element,
                             },
                         },
-                        I.UIToolkit.Templates.intervalV(5),
+                        T.intervalV(5),
                         dropbox.element,
-                        I.UIToolkit.Templates.intervalV(5),
+                        T.intervalV(5),
                         {
                             type = ui.TYPE.Flex,
                             props = { horizontal = true, arrange = ui.ALIGNMENT.Center },
                             content = ui.content {
-                                I.UIToolkit.Components.checkbox {
+                                C.checkbox {
                                     text = 'Checkbox',
                                     default = state.chbox1,
                                     onValueChanged = function(value)
@@ -522,8 +525,8 @@ function Handler:onOpened(wnd, _, saved)
                                         state.chbox1 = value
                                     end,
                                 }.element,
-                                I.UIToolkit.Templates.intervalH(5),
-                                I.UIToolkit.Components.checkbox {
+                                T.intervalH(5),
+                                C.checkbox {
                                     text = 'Accented',
                                     default = state.chbox2,
                                     accentedCheckmark = true,
@@ -531,8 +534,8 @@ function Handler:onOpened(wnd, _, saved)
                                         state.chbox2 = value
                                     end,
                                 }.element,
-                                I.UIToolkit.Templates.intervalH(5),
-                                I.UIToolkit.Components.checkbox {
+                                T.intervalH(5),
+                                C.checkbox {
                                     text = 'Disabled',
                                     default = true,
                                 }:setDisabled(true).element,
@@ -568,7 +571,7 @@ function Handler:onControllerButtonPress(button)
     end
 end
 
-I.UIToolkit.WindowManager.register(WND_NAME, {
+Toolkit.WindowManager.register(WND_NAME, {
     title = 'UI Toolkit Demo',
     handler = Handler,
     draggable = true,
@@ -582,10 +585,10 @@ I.UIToolkit.WindowManager.register(WND_NAME, {
 local function onKeyRelease(key)
     if key.code ~= input.KEY.ScrollLock then return end
 
-    if I.UIToolkit.WindowManager.isOpen(WND_NAME) then
-        I.UIToolkit.WindowManager.close(WND_NAME)
+    if Toolkit.WindowManager.isOpen(WND_NAME) then
+        Toolkit.WindowManager.close(WND_NAME)
     else
-        I.UIToolkit.WindowManager.open(WND_NAME)
+        Toolkit.WindowManager.open(WND_NAME)
     end
 end
 
