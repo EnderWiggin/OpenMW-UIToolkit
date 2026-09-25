@@ -33,6 +33,7 @@ local element = nil
 
 ---@class UIToolkit.ControllerPrivate : UIToolkit.Controller
 local M = {}
+local P = {}
 
 
 local controllerIsActive = false
@@ -40,6 +41,7 @@ local isPsx              = false
 local isXbox             = false
 local isSwitch           = false
 local alwaysShowHint     = false
+local showHint           = controllerIsActive or alwaysShowHint
 
 ---@param button number
 ---@return string
@@ -307,7 +309,8 @@ if isPlayer then
     end
 
     local IP = I --[[@as openmw.interfaces.Player]]
-    function M._onFrame(dt)
+    function P.updateControllerHints()
+        if not showHint then return end
         local toolkit = IP.UIToolkit
         local hintData
         local popup = toolkit.Popups.getActivePopup()
@@ -340,16 +343,23 @@ if isPlayer then
         showControllerHint(hintData.hints)
     end
 
-    function M._updateHintVisibility()
+    function M._onFrame()
+        if isPlayer then
+            P.updateControllerHints()
+        end
+    end
+
+    function P.updateHintVisibility()
+        showHint = controllerIsActive or alwaysShowHint
         if not element then return end
-        element.layout.props.visible = controllerIsActive or alwaysShowHint
+        element.layout.props.visible = showHint
         IP.UIToolkit.queueUpdate(element)
     end
 
     function M._setControllerActiveState(state)
         if state == controllerIsActive then return end
         controllerIsActive = state
-        M._updateHintVisibility()
+        P.updateHintVisibility()
     end
 
     function M.isControllerActive()
@@ -369,7 +379,7 @@ local function updateConfig()
     isSwitch       = style == STYLE.Switch
 
     alwaysShowHint = c.b_AlwaysShowHint
-    if isPlayer then M._updateHintVisibility() end
+    if isPlayer then P.updateHintVisibility() end
 end
 storage.playerSection(D.Section.Controller):subscribe(async:callback(updateConfig))
 updateConfig()
