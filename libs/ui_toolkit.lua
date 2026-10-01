@@ -207,6 +207,7 @@ function Components.sortedList(opts) end
 ---@class UIToolkit.ProgressBarOpts: UIToolkit.InteractiveOpts
 ---@field max number? Size of the text. Defaults to 100.
 ---@field value number? Size of the text. Defaults to 0.
+---@field clamp boolean? If not false, will clamp value to the range of [0, max]. Defaults to true.
 ---@field color openmw.util.Color? Bar color. Defaults to HEALTH color.
 ---@field textSize number? Size of the text. Defaults to normal text size.
 ---@field textStyle? 'full'|'value'|'none' How to show value text. 'full': 'value/max', 'value' - just value, 'none' - no text. Defaults to 'full'.

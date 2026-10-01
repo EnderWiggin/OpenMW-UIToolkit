@@ -19,6 +19,7 @@ local ProgressBar = Class(Component)
 local function getProgress(value, max)
     if max <= 0 then return 1 end
     if value <= 0 then return 0 end
+    if value >= max then return 1 end
     return value / max
 end
 
@@ -34,6 +35,7 @@ function ProgressBar:init(opts)
     self.textStyle = opts.textStyle or 'full'
     self.max = opts.max or 100
     self.value = opts.value or 0
+    self.clamp = opts.clamp ~= false
 
     self._barProps = {
         relativeSize = v2(getProgress(self.value, self.max), 1),
@@ -89,12 +91,18 @@ end
 
 function ProgressBar:setMax(max)
     self.max = math.max(0, max)
-    self.value = util.clamp(self.value, 0, self.max)
+    if self.clamp then
+        self.value = util.clamp(self.value, 0, self.max)
+    end
     self:update()
 end
 
 function ProgressBar:setValue(value)
-    self.value = util.clamp(value, 0, self.max)
+    if self.clamp then
+        self.value = util.clamp(value, 0, self.max)
+    else
+        self.value = value
+    end
     self:update()
 end
 
