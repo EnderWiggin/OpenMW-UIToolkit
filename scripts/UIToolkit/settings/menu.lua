@@ -66,6 +66,7 @@ I.Settings.registerGroup {
                 max = D.ListRowScale.max,
                 default = D.ListRowScale.default,
                 step = 0.05,
+                roundToStep = true,
             }
         },
         {
@@ -139,6 +140,7 @@ I.Settings.registerGroup {
                 max = D.RepeatThreshold.max,
                 default = D.RepeatThreshold.default,
                 step = 0.005,
+                roundToStep = true,
             }
         },
         {
@@ -154,6 +156,7 @@ I.Settings.registerGroup {
                 max = D.RepeatStep.max,
                 default = D.RepeatStep.default,
                 step = 0.005,
+                roundToStep = true,
             }
         },
     },
