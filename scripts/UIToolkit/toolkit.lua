@@ -15,6 +15,7 @@ local Theme     = require 'scripts.UIToolkit.themes.theme'
 local theme     = Theme:new()
 local isPlayer  = context.get() == context.Types.Player
 local IP        = I --[[@as openmw.interfaces.Player]]
+local AXIS      = input.CONTROLLER_AXIS
 
 
 local ctx = {
@@ -46,7 +47,7 @@ function Interface.getTheme() return theme end
 
 local lastMousePos = util.vector2(0, 0)
 local framesSinceMousePosChanged = 0
-local mouseMovedThisFrame = false
+local _cursorMovedThisFrame = false
 
 ---@return openmw.util.Vector2?
 function Interface.getCursorPos()
@@ -70,7 +71,7 @@ function Interface.cursorPosIsFresh()
 end
 
 function Interface.cursorMovedThisFrame()
-    return mouseMovedThisFrame
+    return _cursorMovedThisFrame
 end
 
 ---@type openmw.ui.Element[]
@@ -282,14 +283,14 @@ local function onKeyboardButtonRepeat(key)
     end
 end
 
-local function controllerStickMoved()
+local function controllerAxisMoved()
     return math.max(
-        math.abs(input.getAxisValue(input.CONTROLLER_AXIS.RightY)),
-        math.abs(input.getAxisValue(input.CONTROLLER_AXIS.RightX)),
-        math.abs(input.getAxisValue(input.CONTROLLER_AXIS.LeftX)),
-        math.abs(input.getAxisValue(input.CONTROLLER_AXIS.LeftY)),
-        math.abs(input.getAxisValue(input.CONTROLLER_AXIS.TriggerLeft)),
-        math.abs(input.getAxisValue(input.CONTROLLER_AXIS.TriggerRight))
+        math.abs(input.getAxisValue(AXIS.RightY)),
+        math.abs(input.getAxisValue(AXIS.RightX)),
+        math.abs(input.getAxisValue(AXIS.LeftX)),
+        math.abs(input.getAxisValue(AXIS.LeftY)),
+        math.abs(input.getAxisValue(AXIS.TriggerLeft)),
+        math.abs(input.getAxisValue(AXIS.TriggerRight))
     ) > 0.25
 end
 
@@ -305,10 +306,13 @@ local function onFrame()
     if needInit then doInit() end
 
     local dt = core.getRealFrameDuration()
-    mouseMovedThisFrame = false
+    _cursorMovedThisFrame = false
     if not isPlayer or IP.UI.getMode() ~= nil then
-        if input.getMouseMoveX() ~= 0 or input.getMouseMoveY() ~= 0 then
-            mouseMovedThisFrame = true
+        if input.getMouseMoveX() ~= 0 or input.getMouseMoveY() ~= 0
+            or math.abs(input.getAxisValue(AXIS.LeftX)) > 0.15
+            or math.abs(input.getAxisValue(AXIS.LeftY)) > 0.15
+        then
+            _cursorMovedThisFrame = true
         end
     end
 
@@ -328,7 +332,7 @@ local function onFrame()
 
 
     if scrollable then
-        local rightStick = input.getAxisValue(input.CONTROLLER_AXIS.RightY)
+        local rightStick = input.getAxisValue(AXIS.RightY)
         if math.abs(rightStick) > 0.1 then
             scrollable:onMouseScrolled(-20 * rightStick * dt)
         end
@@ -360,7 +364,7 @@ local function onFrame()
         Controller._onFrame(dt)
         if input.getMouseMoveX() ~= 0 or input.getMouseMoveY() ~= 0 then
             Controller._setControllerActiveState(false)
-        elseif controllerStickMoved() then
+        elseif controllerAxisMoved() then
             Controller._setControllerActiveState(true)
         end
     end
