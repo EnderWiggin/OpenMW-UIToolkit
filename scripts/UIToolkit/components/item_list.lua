@@ -297,7 +297,7 @@ function ItemList:setItemHoveredStatus(provider, id, hovered)
     local view = provider:getCachedView(id)
     if not view then return end
     I.UIToolkit.Interactive.updateState(view, { hovering = hovered })
-    I.UIToolkit.update(view, self.itemDeepUpdate)
+    I.UIToolkit.queueUpdate(view, self.itemDeepUpdate)
 end
 
 ---@return UIToolkit.ListData.Base[]
@@ -354,6 +354,7 @@ end
 
 ---@param idOrIndex string|integer|nil
 function ItemList:setHovered(idOrIndex)
+    if self:isDestroyed() then return end
     local state = self.state
     ---@type string?
     local id
