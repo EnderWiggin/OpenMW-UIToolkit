@@ -100,6 +100,7 @@ function SortedList:init(opts)
         onItemClicked = opts.onItemClicked,
         onItemRClicked = opts.onItemRClicked,
         onItemClickedAny = opts.onItemClickedAny,
+        onListClicked = opts.onListClicked,
         scrollWidth = opts.scrollWidth,
         slimScroll = opts.slimScroll,
         noBorder = opts.noBorder,

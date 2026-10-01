@@ -24,6 +24,7 @@ function ItemList:init(opts)
     local onClicked = opts.onItemClicked
     local onRClicked = opts.onItemRClicked
     local onAnyClicked = opts.onItemClickedAny
+    local onListClicked = opts.onListClicked
     ---@type UIToolkit.ListItem.Base
     local provider = opts.provider
     local state = {
@@ -59,6 +60,28 @@ function ItemList:init(opts)
         return nil
     end
 
+    ---@param btn number
+    ---@param offset openmw.util.Vector2
+    local function processItemClick(btn, offset)
+        local wasPressed = mousePressed[btn]
+        mousePressed[btn] = nil
+        if not wasPressed then return end
+
+        local _size = self._scrollable.layout.props.size
+        if offset.x < 0 or offset.y < 0 or offset.x >= _size.x or offset.y >= _size.y then return end
+
+        local callback = getCallback(btn)
+        if not callback and not onAnyClicked then return end
+
+        local idx = self:getIndexByYPos(offset.y)
+        if idx ~= wasPressed then return end --released over another item
+        local item = self.state.items[idx]
+        if not item then return end
+
+        if callback then callback(item, idx) end
+        if onAnyClicked then onAnyClicked(item, idx, btn) end
+    end
+
     ---@type openmw.ui.Element
     local scrollable = ui.create {
         name = 'scrollable',
@@ -84,23 +107,9 @@ function ItemList:init(opts)
                 local offset = e.offset
                 self.state.lastHoveredPos = offset.y - self._scrollBar:getPosition()
                 local btn = e.button
-                local wasPressed = mousePressed[btn]
-                mousePressed[btn] = nil
-                if not wasPressed then return end
 
-                local _size = self._scrollable.layout.props.size
-                if offset.x < 0 or offset.y < 0 or offset.x >= _size.x or offset.y >= _size.y then return end
-
-                local callback = getCallback(btn)
-                if not callback and not onAnyClicked then return end
-
-                local idx = self:getIndexByYPos(e.offset.y)
-                if idx ~= wasPressed then return end --released over another item
-                local item = self.state.items[idx]
-                if not item then return end
-
-                if callback then callback(item, idx) end
-                if onAnyClicked then onAnyClicked(item, idx, btn) end
+                processItemClick(btn, offset)
+                if onListClicked then onListClicked(btn) end
             end),
             ---@param e openmw.ui.MouseEvent
             mouseMove = async:callback(function(e)
@@ -158,6 +167,11 @@ function ItemList:init(opts)
         events = {
             focusGain = async:callback(function() I.UIToolkit.getCtx().focusedScrollable = self end),
             focusLoss = async:callback(function() I.UIToolkit.getCtx().focusedScrollable = nil end),
+            mouseRelease = async:callback(function(e) if onListClicked then onListClicked(e.button) end end),
+            mouseMove = async:callback(function(e)
+                I.UIToolkit.setCursorPos(e.position)
+                return true
+            end),
         },
     }
     Component.init(self, ui.create(layout))
