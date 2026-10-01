@@ -20,12 +20,16 @@ return function(value, set, args)
     local range = max - min
     local step = args.step or (isInteger and 1 or 0.1)
     local maxScroll = util.round(10000 * range)
-    step = maxScroll * step / range
+    local scrollStep = maxScroll * step / range
+    local roundToStep = args.roundToStep == true
 
     ---@param p number
     ---@return number
     local function progressToValue(p)
         local v = min + p * range
+        if roundToStep then
+            v = step * util.round(v / step)
+        end
         if args.integer then
             return util.round(v)
         end
@@ -52,7 +56,7 @@ return function(value, set, args)
         length = LENGTH,
         maxScroll = maxScroll,
         width = BAR_WIDTH,
-        scrollStep = step,
+        scrollStep = scrollStep,
         horizontal = true,
         slim = false,
         onScroll = sliderValueChanged,
