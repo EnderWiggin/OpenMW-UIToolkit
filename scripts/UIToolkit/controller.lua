@@ -186,7 +186,7 @@ local function makeLayouts(hints)
     local T = toolkit.Templates
     local theme = toolkit.getTheme()
     local textSize = theme.Sizes.textNormal
-    local rowHeight = util.round((textSize + 2) * 1.5)
+    local rowHeight = util.round(theme.Sizes.lineHeight * 1.5)
 
     ---@type openmw.ui.Layout
     local separator = {
@@ -201,7 +201,7 @@ local function makeLayouts(hints)
             },
         } }
     }
-    local gap = T.intervalH(util.round((textSize + 2) / 2))
+    local gap = T.intervalH(util.round(theme.Sizes.lineHeight / 2))
 
     local layouts = {}
 

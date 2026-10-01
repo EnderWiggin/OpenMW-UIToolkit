@@ -59,7 +59,7 @@ function SortedList:init(opts)
     self._filter = nil
 
     local theme = I.UIToolkit.getTheme()
-    local rowHeight = opts.rowHeight or util.round(1.5 * (theme.Sizes.textNormal + 2))
+    local rowHeight = opts.rowHeight or util.round(theme.Sizes.listRowScale * theme.Sizes.lineHeight)
 
     self.provider = ColumnItemProvider:new()
 

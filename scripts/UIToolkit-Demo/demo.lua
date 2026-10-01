@@ -27,8 +27,9 @@ local C             = Toolkit.Components
 local T             = Toolkit.Templates
 
 
-local textSize  = Toolkit.getTheme().Sizes.textNormal
-local rowHeight = 1.5 * (textSize + 2)
+local Sizes     = Toolkit.getTheme().Sizes
+local textSize  = Sizes.textNormal
+local rowHeight = util.round(Sizes.listRowScale * Sizes.lineHeight)
 
 
 local SETTINGS   = 'Settings/UIToolkitDemo/Main'
@@ -50,18 +51,18 @@ section:subscribe(async:callback(updateSettings))
 local list
 ---@type UIToolkit.SortedList.Column[]
 local columns = {
-    { id = 'icon',   name = nil,    sort = { col = 'id' },     render = ColumnItem.renderIcon, width = rowHeight + 5,   arg = { sz = 1.5 * textSize } },
+    { id = 'icon',   name = nil,    sort = { col = 'id' },     render = ColumnItem.renderIcon, width = rowHeight + 5,   arg = { sz = Sizes.listRowScale * textSize } },
     { id = 'name',   name = 'Name', sort = {},                 render = ColumnItem.renderText, },
-    { id = 'damage', name = 'Dmg.', sort = { numeric = true }, render = ColumnItem.renderText, width = 2 * rowHeight,   arg = { textAlignH = ui.ALIGNMENT.End }, align = ui.ALIGNMENT.End },
-    { id = 'weight', name = 'Wgt.', sort = { numeric = true }, render = ColumnItem.renderText, width = 2 * rowHeight,   arg = { textAlignH = ui.ALIGNMENT.End }, align = ui.ALIGNMENT.End },
-    { id = 'value',  name = 'Val.', sort = { numeric = true }, render = ColumnItem.renderText, width = 2.7 * rowHeight, arg = { textAlignH = ui.ALIGNMENT.End }, align = ui.ALIGNMENT.End },
-    { id = 'V/W',    name = 'V/W',  sort = { numeric = true }, render = ColumnItem.renderText, width = 2.7 * rowHeight, arg = { textAlignH = ui.ALIGNMENT.End }, align = ui.ALIGNMENT.End },
+    { id = 'damage', name = 'Dmg.', sort = { numeric = true }, render = ColumnItem.renderText, width = 2 * rowHeight,   arg = { textAlignH = ui.ALIGNMENT.End },     align = ui.ALIGNMENT.End },
+    { id = 'weight', name = 'Wgt.', sort = { numeric = true }, render = ColumnItem.renderText, width = 2 * rowHeight,   arg = { textAlignH = ui.ALIGNMENT.End },     align = ui.ALIGNMENT.End },
+    { id = 'value',  name = 'Val.', sort = { numeric = true }, render = ColumnItem.renderText, width = 2.7 * rowHeight, arg = { textAlignH = ui.ALIGNMENT.End },     align = ui.ALIGNMENT.End },
+    { id = 'V/W',    name = 'V/W',  sort = { numeric = true }, render = ColumnItem.renderText, width = 2.7 * rowHeight, arg = { textAlignH = ui.ALIGNMENT.End },     align = ui.ALIGNMENT.End },
 }
 
 
 ---@type UIToolkit.SortedList.Column[]
 local spellColumns = {
-    { id = 'icon',   name = nil,      sort = nil, render = ColumnItem.renderIcon, width = rowHeight + 5,                      arg = { sz = 1.5 * textSize } },
+    { id = 'icon',   name = nil,      sort = nil, render = ColumnItem.renderIcon, width = rowHeight + 5,                      arg = { sz = Sizes.listRowScale * textSize } },
     { id = 'name',   name = 'Name',   sort = {},  render = ColumnItem.renderText, auto = 2.5 },
     { id = 'school', name = 'School', sort = {},  render = ColumnItem.renderText, arg = { textAlignH = ui.ALIGNMENT.Center }, align = ui.ALIGNMENT.Center },
 }

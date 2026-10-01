@@ -357,7 +357,7 @@ function Components.sortedList(opts) end
 ---@field defaultSort? UIToolkit.ColumnComparator|UIToolkit.SimpleColumnComparatorConfig
 ---@field columns UIToolkit.SortedList.Column[]
 ---@field hiddenColumns? table<string, boolean>
----@field rowHeight number? Defaults to 1.5 * (textNormal + 2)
+---@field rowHeight number? Defaults to `listRowScale * (textNormal + 2)`
 ---@field onItemClicked? fun(data:UIToolkit.ListData.Base, idx:integer) called when item is clicked with left mouse button
 ---@field onItemRClicked? fun(data:UIToolkit.ListData.Base, idx:integer) called when item is clicked with right mouse button
 ---@field onItemClickedAny? fun(data:UIToolkit.ListData.Base, idx:integer, button: number) called when item is clicked with any mouse button
@@ -600,6 +600,8 @@ function Templates.getBorderSize(style) end
 ---@field smallGap number
 ---@field standardGap number
 ---@field padding number
+---@field lineHeight number Used as a basis for default height of list row. Equals `2 + textNormal`.
+---@field listRowScale number Scales default height of list row.
 
 --- Setting Renderers
 ---@class UIToolkit.SettingRenderer.Dropbox

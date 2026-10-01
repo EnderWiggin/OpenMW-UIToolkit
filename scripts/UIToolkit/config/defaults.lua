@@ -17,6 +17,12 @@ local M = {
         Controller = section 'Controller',
     },
 
+    ListRowScale = {
+        default = 1.25,
+        min = 1,
+        max = 3,
+    },
+
     Device = {
         Keyboard   = 0,
         Controller = 1,

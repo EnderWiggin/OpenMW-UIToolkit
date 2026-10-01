@@ -55,6 +55,20 @@ I.Settings.registerGroup {
             }
         },
         {
+            key = 'f_ListRowScale',
+            renderer = 'UIToolkit/Slider',
+            name = 'SettingListRowScaleName',
+            description = 'SettingListRowScaleDesc',
+            default = D.ListRowScale.default,
+            ---@type UIToolkit.SettingRenderer.Slider
+            argument = {
+                min = D.ListRowScale.min,
+                max = D.ListRowScale.max,
+                default = D.ListRowScale.default,
+                step = 0.05,
+            }
+        },
+        {
             key = 'b_CompactWeightValue',
             renderer = 'checkbox',
             name = 'SettingCompactWeightValueName',

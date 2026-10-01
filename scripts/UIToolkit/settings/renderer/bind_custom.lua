@@ -156,8 +156,7 @@ function M.render(value, set, args)
     local toolkit = I.UIToolkit
     local C = toolkit.Components
     local theme = toolkit.getTheme()
-    local textSize = theme.Sizes.textNormal
-    local rowHeight = util.round((textSize + 2) * 1.5)
+    local rowHeight = util.round(1.5 * theme.Sizes.lineHeight)
 
     value = U.parseArgData(value)
     args = U.parseArgData(args)
