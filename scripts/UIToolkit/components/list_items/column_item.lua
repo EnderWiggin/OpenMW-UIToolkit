@@ -74,19 +74,23 @@ function Item:refreshColumns(idOrData, ...)
     assert(data)
     local content = cached.element.layout.content
     if not content then return end
-    for i = 1, #self.columns do
-        local part = content[i] --[[@as openmw.ui.Element]]
-        local layout = H.toLayout(part)
-        local isElement = part ~= layout
-        if layout and H.findInArray(args, layout.name) then
-            local cfg = self.columns[i]
-            --TODO: add possibility to update instead of re-render?
-            if isElement and part then I.UIToolkit.queueDestroy(part, true) end
-            if not self.hidden[cfg.id] then
-                content[i] = cfg.render(data, cfg, self.rowHeight)
+    local i = 1
+    for k = 1, #self.columns do
+        local cfg = self.columns[k]
+        if not self.hidden[cfg.id] then
+            local part = content[i] --[[@as openmw.ui.Element]]
+            local layout = H.toLayout(part)
+            local isElement = part ~= layout
+            if layout and H.findInArray(args, layout.name) then
+                --TODO: add possibility to update instead of re-render?
+                if isElement and part then I.UIToolkit.queueDestroy(part, true) end
+                if not self.hidden[cfg.id] then
+                    content[i] = cfg.render(data, cfg, self.rowHeight)
+                end
+                I.UIToolkit.Interactive.updateState(cached.element)
+                I.UIToolkit.queueUpdate(cached.element)
             end
-            I.UIToolkit.Interactive.updateState(cached.element)
-            I.UIToolkit.queueUpdate(cached.element)
+            i = i + 1
         end
     end
 end
