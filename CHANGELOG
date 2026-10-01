@@ -1,3 +1,18 @@
+Version 1.2.0 (2026-10-01)
+- bumped API version to 3
+- list and sorted list: added onListClicked callback
+- column list item: fixed error when refreshing columns while some of them are hidden
+- cursorMovedThisFrame: fixed detection of whether cursor has moved when using controller
+- fixed error that can sometimes occur when list is destroyed
+- changed click behavior for lists:
+  - triggers on release, not on press
+  - does not trigger if released outside of list bounds
+  - does not trigger if released over different item than pressed on
+- added `lineHeight` and `listRowScale` to Theme.Sizes
+- added setting to change `listRowScale` that will affect default line height in sorted lists
+- Slider renderer: added roundToStep option
+- progress bar: made value clamping optional
+
 Version 1.1.0 (2026-09-25)
 - bumped API version to 2
 - added option to (set to Auto by default) to make UI look in style of Interface Reimagined
