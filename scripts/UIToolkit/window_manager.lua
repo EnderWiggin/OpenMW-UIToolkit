@@ -242,6 +242,14 @@ function M.getHandler(id)
     return data.handler
 end
 
+---@param id string
+---@return UIToolkit.Window?
+function M.getWindow(id)
+    local data = windows[id]
+    if not data or not data.wnd then return nil end
+    return data.wnd
+end
+
 ---@param size openmw.util.Vector2
 ---@return openmw.util.Vector2
 function M.getCenterPositionForSize(size)

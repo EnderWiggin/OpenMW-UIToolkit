@@ -400,6 +400,7 @@ function Components.sortedList(opts) end
 ---@field close fun(id: string)
 ---@field isOpen fun(id: string):boolean
 ---@field getHandler fun(id: string):UIToolkit.WindowHandler?
+---@field getWindow fun(id: string):UIToolkit.Window? returns window component if it is open, otherwise returns nil
 ---@field getFocusedWindowHandler fun():UIToolkit.WindowHandler?, string?
 ---@field getCenterPositionForSize fun(size:openmw.util.Vector2):openmw.util.Vector2
 ---@field toAbsolute fun(c:openmw.util.Vector2?):openmw.util.Vector2? converts vector relative to Windows layer into absolute values. If nil is passed - returns nil.
