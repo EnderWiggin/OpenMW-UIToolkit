@@ -29,6 +29,7 @@ local Interface = {
     Templates   = require 'scripts.UIToolkit.templates.base',
     Interactive = require 'scripts.UIToolkit.templates.interactive',
     Components  = require 'scripts.UIToolkit.components.all_components',
+    Cursors     = require 'scripts.UIToolkit.cursors',
     Layers      = require 'scripts.UIToolkit.layers',
     Controller  = require 'scripts.UIToolkit.controller'
 }

@@ -328,7 +328,7 @@ local function makeDraggable(borderTemplate, onDragTypeChanged, noResize)
         local borderPiece = content[index]
         if borderPiece.userData and borderPiece.userData.dragType then
             local dragType = noResize and DragType.Move or borderPiece.userData.dragType
-            borderPiece.props.pointer = dragTypePointers[dragType] or 'arrow'
+            I.UIToolkit.Cursors.applyCursor(borderPiece.props, dragTypePointers[dragType] or 'arrow')
             borderPiece.events = {
                 focusGain = async:callback(function()
                     if onDragTypeChanged then
