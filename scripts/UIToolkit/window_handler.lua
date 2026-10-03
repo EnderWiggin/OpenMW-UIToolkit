@@ -64,4 +64,9 @@ function WindowHandler:getStorageSuffix()
     return nil
 end
 
+---@return UIToolkit.WindowSaveData?
+function WindowHandler:getDefaultStorage()
+    return nil
+end
+
 return WindowHandler

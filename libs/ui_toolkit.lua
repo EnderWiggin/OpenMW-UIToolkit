@@ -432,6 +432,8 @@ function Components.sortedList(opts) end
 ---@field onKeyboardButtonPress fun(self:UIToolkit.WindowHandler, key:number) called on focused window when keyboard button is pressed
 ---@field onKeyboardButtonRepeat fun(self:UIToolkit.WindowHandler, key:number) called on focused window when keyboard button is held and repeating
 ---@field getFocusedScrollable fun(self:UIToolkit.WindowHandler):UIToolkit.Scrollable? this scrollable will be scrolled by Right Stick if window is focused and no other scrollable is in focus
+---@field getStorageSuffix fun(self:UIToolkit.WindowHandler):string? optional suffix for window storage - for cases where same window id might have need for separate saved state
+---@field getDefaultStorage fun(self:UIToolkit.WindowHandler):UIToolkit.WindowSaveData? will be called if there's no saved data for the window to provide defaults 
 
 ---@class UIToolkit.Window:UIToolkit.Component
 ---@field new fun():UIToolkit.Window
