@@ -634,7 +634,7 @@ function Window:init(opts, id, saved)
     end
 
     self.isPinned = function()
-        return data.pinned == true
+        return data.pinnable and data.pinned == true
     end
 
     self.setPinnable = function(_, pinnable)

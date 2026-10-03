@@ -397,7 +397,7 @@ function Components.sortedList(opts) end
 ---@class UIToolkit.WindowManager
 ---@field register fun(id: string, opts: UIToolkit.WindowOpts)
 ---@field open fun(id: string, data:any?):UIToolkit.Window
----@field close fun(id: string)
+---@field close fun(id: string, force:boolean?) won't close pinned window, unless force is true
 ---@field isOpen fun(id: string):boolean
 ---@field getHandler fun(id: string):UIToolkit.WindowHandler?
 ---@field getWindow fun(id: string):UIToolkit.Window? returns window component if it is open, otherwise returns nil
@@ -436,6 +436,7 @@ function Components.sortedList(opts) end
 ---@field getFocusedScrollable fun(self:UIToolkit.WindowHandler):UIToolkit.Scrollable? this scrollable will be scrolled by Right Stick if window is focused and no other scrollable is in focus
 ---@field getStorageSuffix fun(self:UIToolkit.WindowHandler):string? optional suffix for window storage - for cases where same window id might have need for separate saved state
 ---@field getDefaultStorage fun(self:UIToolkit.WindowHandler):UIToolkit.WindowSaveData? will be called if there's no saved data for the window to provide defaults
+---@field getCustomSaveData fun(self:UIToolkit.WindowHandler):table? will be called when trying to close pinned window or if onClosed returned nil.
 
 ---@class UIToolkit.Window:UIToolkit.Component
 ---@field new fun():UIToolkit.Window

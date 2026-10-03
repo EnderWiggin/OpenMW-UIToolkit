@@ -90,15 +90,29 @@ function M.toRelative(c)
 end
 
 ---@param id string
-function M.close(id)
+---@param force boolean?
+function M.close(id, force)
     local data = assert(windows[id])
     local wnd = data.wnd
     if not wnd then return end
 
     local handler = data.handler
+
+    if wnd:isPinned() and not force then
+        if handler then
+            M.updateSavedData(id, handler:getCustomSaveData())
+        else
+            M.updateSavedData(id)
+        end
+        return
+    end
+
     local custom
     local key = getStorageKey(id, handler)
-    if handler then custom = handler:onClosed() end
+    if handler then
+        custom = handler:onClosed()
+        if custom == nil then custom = handler:getCustomSaveData() end
+    end
 
     ---@type UIToolkit.WindowSaveData
     local saved = {

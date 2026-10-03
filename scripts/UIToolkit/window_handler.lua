@@ -69,4 +69,9 @@ function WindowHandler:getDefaultStorage()
     return nil
 end
 
+---@return table?
+function WindowHandler:getCustomSaveData()
+    return nil
+end
+
 return WindowHandler
