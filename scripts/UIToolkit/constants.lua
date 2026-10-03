@@ -11,6 +11,9 @@ C.API = {
 
     -- `padding` prop in Widgets/Images/Flexes
     PADDING = core.API_REVISION >= 143,
+
+    --ui.cursor and removal of props.pointer
+    CURSOR = core.API_REVISION >= 161,
 }
 
 C.Layers = {

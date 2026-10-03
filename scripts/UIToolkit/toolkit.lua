@@ -8,6 +8,7 @@ local I         = require 'openmw.interfaces'
 
 local context   = require 'scripts.UIToolkit.scriptContext'
 local D         = require 'scripts.UIToolkit.config.defaults'
+local C         = require 'scripts.UIToolkit.constants'
 local cfgPlayer = require 'scripts.UIToolkit.config.player'
 
 local Theme     = require 'scripts.UIToolkit.themes.theme'
@@ -17,6 +18,8 @@ local isPlayer  = context.get() == context.Types.Player
 local IP        = I --[[@as openmw.interfaces.Player]]
 local AXIS      = input.CONTROLLER_AXIS
 
+
+local HAS_CURSOR_API = C.API.CURSOR
 
 local ctx = {
     ---@type UIToolkit.Scrollable?
@@ -49,12 +52,12 @@ function Interface.getTheme() return theme end
 local lastMousePos = util.vector2(0, 0)
 local framesSinceMousePosChanged = 0
 local _cursorMovedThisFrame = false
+local _lastCursorPos = nil
 
 ---@return openmw.util.Vector2?
 function Interface.getCursorPos()
-    ---@diagnostic disable-next-line: undefined-field
-    if ui.mousePosition then return ui.mousePosition() end
     if isPlayer and IP.UI.getMode() == nil then return nil end
+    if HAS_CURSOR_API then return ui.getCursorPosition() end
     return lastMousePos
 end
 
@@ -65,8 +68,7 @@ function Interface.setCursorPos(p)
 end
 
 function Interface.cursorPosIsFresh()
-    ---@diagnostic disable-next-line: undefined-field
-    if ui.mousePosition then return true end
+    if HAS_CURSOR_API then return true end
 
     return framesSinceMousePosChanged < 3
 end
@@ -309,11 +311,17 @@ local function onFrame()
     local dt = core.getRealFrameDuration()
     _cursorMovedThisFrame = false
     if not isPlayer or IP.UI.getMode() ~= nil then
-        if input.getMouseMoveX() ~= 0 or input.getMouseMoveY() ~= 0
-            or math.abs(input.getAxisValue(AXIS.LeftX)) > 0.15
-            or math.abs(input.getAxisValue(AXIS.LeftY)) > 0.15
-        then
-            _cursorMovedThisFrame = true
+        if HAS_CURSOR_API then
+            local cursorPos = ui.getCursorPosition()
+            _cursorMovedThisFrame = cursorPos ~= _lastCursorPos
+            _lastCursorPos = cursorPos
+        else
+            if input.getMouseMoveX() ~= 0 or input.getMouseMoveY() ~= 0
+                or math.abs(input.getAxisValue(AXIS.LeftX)) > 0.15
+                or math.abs(input.getAxisValue(AXIS.LeftY)) > 0.15
+            then
+                _cursorMovedThisFrame = true
+            end
         end
     end
 
@@ -371,12 +379,8 @@ local function onFrame()
     end
 
     processUpdateAndDestroyQueues()
-    local mouseMoved
-    if input.getMouseMoveX() ~= 0 or input.getMouseMoveY() ~= 0 then
-        mouseMoved = true
-    end
 
-    if mouseMoved and framesSinceMousePosChanged < 10 then
+    if _cursorMovedThisFrame and framesSinceMousePosChanged < 10 then
         framesSinceMousePosChanged = framesSinceMousePosChanged + 1
     end
 end
