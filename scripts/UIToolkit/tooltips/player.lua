@@ -348,10 +348,16 @@ local function setTooltip(newTooltip, extra)
     end
 end
 
+local function onUIModeChanged()
+    clear()
+end
 
 return {
     engineHandlers = {
         onFrame = update,
+    },
+    eventHandlers = {
+        UiModeChanged = onUIModeChanged,
     },
     interfaceName = 'UTKTooltips',
     interface = {
