@@ -630,6 +630,7 @@ function Window:init(opts, id, saved)
     self.setTitle = function(_, newTitle)
         title.props.text = newTitle
         header:update()
+        pinButton:update()
     end
 
     self.isPinned = function()
