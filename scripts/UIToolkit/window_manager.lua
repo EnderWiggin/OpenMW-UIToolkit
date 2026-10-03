@@ -153,6 +153,26 @@ function M.getFocusedWindowHandler()
 end
 
 ---@param id string
+---@param custom table?
+function M.updateSavedData(id, custom)
+    local data = assert(windows[id])
+    local wnd = data.wnd
+    local handler = data.handler
+    local key = getStorageKey(id, handler)
+
+    local saved = section:getCopy(key)
+    if wnd then
+        saved.pinned = wnd:isPinned()
+        saved.position = M.toRelative(wnd:getPosition())
+        saved.size = M.toRelative(wnd:getSize())
+    end
+    if custom then
+        saved.custom = custom
+    end
+    section:set(key, saved)
+end
+
+---@param id string
 function M._queueFocusedWindow(id)
     if windowFocusQueue[1] == id then return end
     H.removeFromArray(windowFocusQueue, id)
