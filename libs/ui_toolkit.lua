@@ -402,6 +402,8 @@ function Components.sortedList(opts) end
 ---@field getHandler fun(id: string):UIToolkit.WindowHandler?
 ---@field getFocusedWindowHandler fun():UIToolkit.WindowHandler?, string?
 ---@field getCenterPositionForSize fun(size:openmw.util.Vector2):openmw.util.Vector2
+---@field toAbsolute fun(c:openmw.util.Vector2?):openmw.util.Vector2? converts vector relative to Windows layer into absolute values. If nil is passed - returns nil.
+---@field toRelative fun(c:openmw.util.Vector2?):openmw.util.Vector2? converts vector into values relative to Windows layer. If nil is passed - returns nil.
 
 ---@class UIToolkit.WindowOpts
 ---@field title string
@@ -415,9 +417,9 @@ function Components.sortedList(opts) end
 ---@field minSize openmw.util.Vector2?
 
 ---@class UIToolkit.WindowSaveData
----@field pinned boolean
----@field position openmw.util.Vector2
----@field size openmw.util.Vector2
+---@field pinned boolean?
+---@field position openmw.util.Vector2?
+---@field size openmw.util.Vector2?
 ---@field custom table?
 
 ---@class UIToolkit.WindowHandler

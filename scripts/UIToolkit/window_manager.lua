@@ -38,10 +38,10 @@ local function getStorageKey(id, handler)
     return id .. suffix
 end
 
----@param c openmw.util.Vector2
----@return openmw.util.Vector2
-local function toAbsolute(c)
-    if not c then return v2(0, 0) end
+---@param c openmw.util.Vector2?
+---@return openmw.util.Vector2?
+function M.toAbsolute(c)
+    if not c then return nil end
     local layerSize = ui.layers[ui.layers.indexOf('Windows')].size
     return v2(
         util.round(c.x * layerSize.x),
@@ -67,8 +67,8 @@ function M.open(id, data)
     local wnd = Window:new()
     wnd:init(opts, id, saved and {
         pinned = saved.pinned == true,
-        position = toAbsolute(saved.position),
-        size = toAbsolute(saved.size),
+        position = M.toAbsolute(saved.position),
+        size = M.toAbsolute(saved.size),
     } or nil)
     windows[id].wnd = wnd
     if handler then
@@ -78,9 +78,10 @@ function M.open(id, data)
     return wnd
 end
 
----@param c openmw.util.Vector2
----@return openmw.util.Vector2
-local function toRelative(c)
+---@param c openmw.util.Vector2?
+---@return openmw.util.Vector2?
+function M.toRelative(c)
+    if not c then return nil end
     local layerSize = ui.layers[ui.layers.indexOf('Windows')].size
     return v2(
         c.x / layerSize.x,
@@ -102,8 +103,8 @@ function M.close(id)
     ---@type UIToolkit.WindowSaveData
     local saved = {
         pinned = wnd:isPinned(),
-        position = toRelative(wnd:getPosition()),
-        size = toRelative(wnd:getSize()),
+        position = M.toRelative(wnd:getPosition()),
+        size = M.toRelative(wnd:getSize()),
         custom = custom,
     }
     section:set(key, saved)
