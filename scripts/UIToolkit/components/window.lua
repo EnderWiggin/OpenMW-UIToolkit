@@ -572,6 +572,7 @@ function Window:init(opts, id, saved)
                     if resized then
                         header:update()
                         body:update()
+                        pinButton:update()
                         if handler then handler:onResized(self:getInnerSize()) end
                     end
                 end
