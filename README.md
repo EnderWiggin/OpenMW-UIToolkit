@@ -192,6 +192,38 @@ I.UIToolkit.Components.textButton { text = "Hello", tooltip = 'World!', onClick 
 end}
 ```
 
+## Image Button
+
+`imageButton(opts)` - creates a button with an image icon. Supports all interactive options (tooltips, click callbacks, hover states). The button has a fixed size determined by the `size` option. Assumes that the icon is white (or greyscale) texture to be colored depending on the button state.
+
+Options:
+
+- `icon` - path to the image texture to display on the button.
+- `size` - size of the button as a `Vector2`.
+- `name` - optional name assigned to the button layout.
+- `style` - optional box style. Defaults to `'button'` (or `'empty'` in IntRe theme).
+- `thickness` - optional border thickness.
+- `background` - optional box background. Defaults to `'solid'`.
+- `padding` - optional padding as a number or `Vector2`.
+- `tooltip` - optional tooltip or tooltip provider.
+- `onClick` - optional callback called when the button is clicked.
+- `canClick` - optional function that determines whether the button can be clicked.
+- `onMouseMove` - optional callback called when the mouse moves over the button.
+- `interactiveDisabled` - optional flag that allows interactivity while disabled. Defaults to `false`.
+
+### Example
+
+create a close button with an icon that prints when clicked:
+```lua
+I.UIToolkit.Components.imageButton {
+    icon = 'textures/close_button.dds',
+    size = util.vector2(20, 20),
+    onClick = function()
+        print('Close clicked')
+    end,
+}
+```
+
 ## Checkbox
 
 `checkbox(opts)` - creates a boolean checkbox with an optional text label.
