@@ -13,6 +13,7 @@ local Checkbox = require('scripts.UIToolkit.components.checkbox')
 local M = {}
 
 M.textButton = Buttons.textButton
+M.imageButton = Buttons.imageButton
 
 ---@param opts UIToolkit.CheckboxOpts
 ---@return UIToolkit.Checkbox

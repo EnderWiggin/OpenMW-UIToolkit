@@ -35,7 +35,7 @@ function TextButton:init(opts)
         txt.props.autoSize = false
         txt.props.textAlignH = ui.ALIGNMENT.Center
     else
-        padding = padding or (style =='IntRe' and v2(0, 0) or v2(8, 0))
+        padding = padding or (style == 'IntRe' and v2(0, 0) or v2(8, 0))
     end
 
     local box = T.box {
@@ -63,10 +63,69 @@ function TextButton:setText(text)
     I.UIToolkit.queueUpdate(self.element)
 end
 
+---@class UIToolkit.ImageButton : UIToolkit.Component
+local ImageButton = Class(Component)
+
+---@param opts UIToolkit.ImageButtonOpts
+function ImageButton:init(opts)
+    local intRe = I.UIToolkit.getTheme().IntRe
+    local T = I.UIToolkit.Templates
+    local img = {
+        type = ui.TYPE.Image,
+        props = {
+            resource = I.UIToolkit.texture(opts.icon),
+            relativeSize = v2(1, 1),
+        },
+        userData = { colorable = true },
+    }
+    ---@type UIToolkit.BoxStyle
+    local style = opts.style or (intRe and 'empty' or 'button')
+    local padding
+    if type(opts.padding) == 'number' then
+        padding = v2(1, 1) * opts.padding
+    else
+        padding = opts.padding
+    end
+
+    local box = T.border {
+        style = style,
+        thickness = opts.thickness,
+        background = opts.background or 'solid',
+        padding = padding,
+    }
+
+    local element = I.UIToolkit.Interactive.makeInteractive(opts, {
+        name = opts.name or 'button',
+        template = box,
+        props = {
+            size = opts.size,
+        },
+        content = ui.content { img },
+        events = {},
+        userData = {},
+    })
+
+    self._img = img
+    Component.init(self, element)
+end
+
+function ImageButton:setIcon(icon)
+    self._img.props.resource = I.UIToolkit.texture(icon)
+    I.UIToolkit.queueUpdate(self.element)
+end
+
 ---@param opts UIToolkit.TextButtonOpts
 ---@return UIToolkit.TextButton
 function M.textButton(opts)
     local btn = TextButton:new()
+    btn:init(opts)
+    return btn
+end
+
+---@param opts UIToolkit.ImageButtonOpts
+---@return UIToolkit.ImageButton
+function M.imageButton(opts)
+    local btn = ImageButton:new()
     btn:init(opts)
     return btn
 end

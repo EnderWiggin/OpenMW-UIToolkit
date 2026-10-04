@@ -87,6 +87,10 @@ local Components = {}
 ---@return UIToolkit.TextButton
 function Components.textButton(opts) end
 
+---@param opts UIToolkit.ImageButtonOpts
+---@return UIToolkit.ImageButton
+function Components.imageButton(opts) end
+
 ---@param opts UIToolkit.CheckboxOpts
 ---@return UIToolkit.Checkbox
 function Components.checkbox(opts) end
@@ -151,6 +155,15 @@ function Components.sortedList(opts) end
 ---@field new fun():UIToolkit.TextButton
 ---@field init fun(self:UIToolkit.TextButton, opts:UIToolkit.TextButtonOpts)
 ---@field setText fun(self:UIToolkit.TextButton, text:string)
+
+---@class UIToolkit.ImageButtonOpts : UIToolkit.ButtonOpts
+---@field icon string image on the button
+---@field size openmw.util.Vector2 size of the button
+
+---@class UIToolkit.ImageButton : UIToolkit.Component
+---@field new fun():UIToolkit.ImageButton
+---@field init fun(self:UIToolkit.ImageButton, opts:UIToolkit.ImageButtonOpts)
+---@field setIcon fun(self:UIToolkit.ImageButton, icon:string)
 
 ---@class UIToolkit.CheckboxOpts : UIToolkit.InteractiveOpts
 ---@field text? string optional label displayed beside the checkbox
