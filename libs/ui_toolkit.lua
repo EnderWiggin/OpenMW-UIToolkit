@@ -168,6 +168,7 @@ function Components.sortedList(opts) end
 ---@class UIToolkit.CheckboxOpts : UIToolkit.InteractiveOpts
 ---@field text? string optional label displayed beside the checkbox
 ---@field default? boolean|fun():boolean initial value; defaults to false
+---@field width number? if set, checkbox will be fixed-width, not scale with text length. Ignored if text is not set.
 ---@field onValueChanged? fun(value:boolean) called when the value is changed by a click
 ---@field name? string name assigned to the checkbox layout
 ---@field boxSize? number defaults to the theme's normal text size

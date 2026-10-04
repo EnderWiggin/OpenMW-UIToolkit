@@ -55,13 +55,21 @@ function Checkbox:init(opts)
 
     if opts.text then
         content:add(T.intervalH(theme.Sizes.smallGap))
+        local props = {
+            text = opts.text,
+            textAlignV = ui.ALIGNMENT.Center,
+        }
+
+        local width = opts.width
+        if width then
+            props.autoSize = false
+            props.size = v2(width - boxSize - theme.Sizes.smallGap, theme.Sizes.textNormal)
+        end
+
         content:add {
             name = 'checkbox-label',
             template = T.text(),
-            props = {
-                text = opts.text,
-                textAlignV = ui.ALIGNMENT.Center,
-            },
+            props = props,
             userData = { colorable = true },
         }
     end
