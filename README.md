@@ -353,6 +353,55 @@ slider = I.UIToolkit.Components.scrollBar {
 ```
 The scrollbar uses a `maxScroll` of 198 because we have 100 values \[1 - 100] and position goes from 0 to `maxScroll`, so it must be equal to `scrollStep * (range - 1)` for each step to map exactly onto value.
 
+## Progress Bar
+`progressBar(opts)` - creates a progress bar with optional text display and interactive options. The bar fills horizontally based on the ratio of current value to maximum.
+
+Options:
+
+- `max` - optional maximum value. Defaults to `100`.
+- `value` - optional initial value. Defaults to `0`.
+- `clamp` - optional flag that clamps value to `[0, max]`. Defaults to `true`.
+- `color` - optional bar color as a `Color`. Defaults to the theme's `HEALTH` color.
+- `textSize` - optional text size. Defaults to normal text size.
+- `textStyle` - optional text display mode: `'full'` shows `value/max`, `'value'` shows only the current value, `'none'` hides text. Defaults to `'full'`.
+- `tooltip`, `canClick`, `onClick`, `onMouseMove`, `interactiveDisabled` - standard interactive options.
+
+Methods:
+
+```lua
+-- returns current value
+progressBar:getValue()
+-- sets current value (clamped if clamp is true), returns `self`
+progressBar:setValue(value)
+-- returns maximum value
+progressBar:getMax()
+-- sets maximum value, clamps current value if clamp is true, returns `self`
+progressBar:setMax(max)
+```
+
+### Example
+Create a progress bar that updates every second and reports completion:
+```lua
+local progressBar = I.UIToolkit.Components.progressBar {
+    max = 100,
+    value = 0,
+    color = I.UIToolkit.getTheme().Colors.HEALTH,
+    textStyle = 'full',
+}
+
+local function updateProgress()
+    local current = progressBar:getValue()
+    if current >= progressBar:getMax() then
+        print('Complete!')
+        return
+    end
+    progressBar:setValue(current + 1)
+    timer.perform(1000, updateProgress)
+end
+
+timer.perform(1000, updateProgress)
+```
+
 ## Item List
 `itemList(opts)` - creates a list of items. Uses item provider to get Components representing items. Items can have tooltips.
 
@@ -743,7 +792,6 @@ The `observer` field is optional, it is used to determine how many effects potio
 
 # Planned Features
 - [ ] Make `Component` able to subscribe to `onUpdate` event
-- [ ] Progress bar component
 - [ ] Add `Tabs`/`Radio group` style component?
 - [ ] Theme customization
 
