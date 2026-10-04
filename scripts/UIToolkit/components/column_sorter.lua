@@ -29,7 +29,8 @@ local ColumnSorter = Class(Component)
 function ColumnSorter:init(opts)
     self.onChanged = opts.onChanged
     self.columns = opts.columns --[[@as  UIToolkit.ColumnSorter.Column[] ]]
-    self.activeColumn = opts.default
+    self.defaultColumn = opts.default
+    self.activeColumn = self.defaultColumn
     self.ascending = true
     self.hidden = opts.hidden or {}
 
@@ -61,7 +62,13 @@ function ColumnSorter:updateColumnVisibility()
     local content = self.element.layout.content
     for i = 1, #self.columns do
         local cfg = self.columns[i]
-        M.applySizeAndVisibility(content[i], cfg, self.hidden[cfg.id])
+        local hidden = self.hidden[cfg.id]
+        M.applySizeAndVisibility(content[i], cfg, hidden)
+        if hidden and cfg.id == self.activeColumn then
+            if self.defaultColumn and not self.hidden[self.defaultColumn] and cfg.id ~= self.defaultColumn then
+                self:toggleColumn(self.defaultColumn)
+            end
+        end
     end
     I.UIToolkit.queueUpdate(self.element, true)
 end
