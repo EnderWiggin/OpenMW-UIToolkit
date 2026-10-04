@@ -4,6 +4,7 @@ local Buttons = require('scripts.UIToolkit.components.buttons')
 local TextEdit = require('scripts.UIToolkit.components.text_edit')
 local ScrollBar = require('scripts.UIToolkit.components.scroll_bar')
 local ItemList = require('scripts.UIToolkit.components.item_list')
+local ItemGrid = require('scripts.UIToolkit.components.item_grid')
 local ColumnSorter = require('scripts.UIToolkit.components.column_sorter')
 local SortedList = require('scripts.UIToolkit.components.list_with_sorter_columns')
 local Dropbox = require('scripts.UIToolkit.components.dropbox')
@@ -61,6 +62,14 @@ M.itemList = function(opts)
     local list = ItemList:new()
     list:init(opts)
     return list
+end
+
+---@param opts UIToolkit.ItemGridOpts
+---@return UIToolkit.ItemGrid
+M.itemGrid = function(opts)
+    local grid = ItemGrid:new()
+    grid:init(opts)
+    return grid
 end
 
 ---@param opts UIToolkit.ColumnSorterOpts

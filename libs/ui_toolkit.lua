@@ -115,6 +115,10 @@ function Components.scrollBar(opts) end
 ---@return UIToolkit.ItemList
 function Components.itemList(opts) end
 
+---@param opts UIToolkit.ItemGridOpts
+---@return UIToolkit.ItemGrid
+function Components.itemGrid(opts) end
+
 ---@param opts UIToolkit.ColumnSorterOpts
 ---@return UIToolkit.ColumnSorter
 function Components.columnSorter(opts) end
@@ -336,6 +340,51 @@ function Components.sortedList(opts) end
 ---@field getVisibleItemCount fun(self:UIToolkit.ItemList):integer
 ---@field setHovered fun(self:UIToolkit.ItemList, idOrIndex:string|integer|nil)
 ---@field shiftHoveredItem fun(self:UIToolkit.ItemList, shift:integer)
+
+---@generic T: UIToolkit.ListData.Base
+---@class UIToolkit.GridItem.Base<T>
+---@field getItemSize fun(self:UIToolkit.ListItem.Base<T>):openmw.util.Vector2
+---@field getComponent fun(self:UIToolkit.ListItem.Base<T>, data:T):UIToolkit.Component
+---@field getCachedComponent fun(self:UIToolkit.ListItem.Base<T>, id:string):UIToolkit.Component?
+---@field makeComponent fun(self:UIToolkit.ListItem.Base<T>, data:T):UIToolkit.Component
+---@field getTooltip fun(self:UIToolkit.ListItem.Base<T>, data:T):UTKTooltips.AnyTooltip?
+---@field getView fun(self:UIToolkit.ListItem.Base<T>, data:T):openmw.ui.Element
+---@field refreshState fun(self:UIToolkit.ListItem.Base<T>, idOrData:string|UIToolkit.ListData.Base)
+---@field getCachedView fun(self:UIToolkit.ListItem.Base<T>, id:string):openmw.ui.Element?
+---@field remove fun(self:UIToolkit.ListItem.Base<T>, id:string) removes cached item
+---@field clear fun(self:UIToolkit.ListItem.Base<T>) removes all cached items
+
+---@class UIToolkit.ItemGridOpts<T>
+---@field size openmw.util.Vector2
+---@field provider UIToolkit.GridItem.Base
+---@field onItemClicked? fun(data:UIToolkit.ListData.Base, idx:integer) called when item is clicked with left mouse button
+---@field onItemRClicked? fun(data:UIToolkit.ListData.Base, idx:integer) called when item is clicked with right mouse button
+---@field onItemClickedAny? fun(data:UIToolkit.ListData.Base, idx:integer, button: number) called when item is clicked with any mouse button
+---@field onListClicked? fun(button: number) called when list is clicked with any mouse button
+---@field scrollWidth number?
+---@field slimScroll boolean? scrollbar will have no borders around arrows or handle
+---@field noBorder boolean?
+---@field itemDeepUpdate boolean?
+
+---@class UIToolkit.ItemGrid : UIToolkit.Scrollable
+---@field new fun():UIToolkit.ItemGrid
+---@field init fun(self:UIToolkit.ItemGrid, opts:UIToolkit.ItemGridOpts)
+---@field getItems fun(self:UIToolkit.ItemGrid):UIToolkit.ListData.Base[]
+---@field setItems fun(self:UIToolkit.ItemGrid, items:UIToolkit.ListData.Base[])
+---@field setSize fun(self:UIToolkit.ItemGrid, size:openmw.util.Vector2)
+---@field getContentSize fun(self:UIToolkit.ItemGrid):openmw.util.Vector2
+---@field getIndexByPos fun(self:UIToolkit.ItemGrid, p:openmw.util.Vector2):integer
+---@field updateHoveredItem fun(self:UIToolkit.ItemGrid)
+---@field getHovered fun(self:UIToolkit.ItemGrid):UIToolkit.ListData.Base?, integer?
+---@field getItemById fun(self:UIToolkit.ItemGrid, id:string):UIToolkit.ListData.Base?, integer?
+---@field getPosition fun(self:UIToolkit.ItemGrid):number actual position of the scroll
+---@field setPosition fun(self:UIToolkit.ItemGrid, position:number) set scroll position
+---@field getProgress fun(self:UIToolkit.ItemGrid):number [0-1] progress of the scroll
+---@field setProgress fun(self:UIToolkit.ItemGrid, progress:number) set [0-1] progress of the scroll
+---@field getVisibleItemRange fun(self:UIToolkit.ItemGrid, strict:boolean?):integer, integer
+---@field getVisibleItemCount fun(self:UIToolkit.ItemGrid):integer
+---@field setHovered fun(self:UIToolkit.ItemGrid, idOrIndex:string|integer|nil)
+---@field shiftHoveredItem fun(self:UIToolkit.ItemGrid, shift:integer)
 
 ---@class UIToolkit.ColumnSorter.Column
 ---@field id string?
