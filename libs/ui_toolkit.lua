@@ -329,6 +329,7 @@ function Components.sortedList(opts) end
 ---@field width number?
 ---@field auto number?
 ---@field align? openmw.ui.Alignment
+---@field descending? boolean if true - starts in descending mode
 ---@field inactive boolean? if true - can't be clicked
 
 ---@class UIToolkit.ColumnSorterOpts
@@ -352,6 +353,7 @@ function Components.sortedList(opts) end
 ---@field render UIToolkit.ListItem.Column.Renderer
 ---@field arg any? additional info for renderer
 ---@field align? openmw.ui.Alignment
+---@field descending? boolean if true - starts in descending mode
 ---@field sort? UIToolkit.ColumnComparator|UIToolkit.SimpleColumnComparatorConfig comparator function to use for sorting by this column
 
 ---@class UIToolkit.SortedListOpts

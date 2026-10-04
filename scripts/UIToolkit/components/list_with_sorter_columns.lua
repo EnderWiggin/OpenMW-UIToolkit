@@ -86,6 +86,7 @@ function SortedList:init(opts)
             auto = cfg.auto,
             align = cfg.align,
             inactive = not cfg.sort,
+            descending = cfg.descending,
         }
 
         self.comparators[cfg.id] = convertSort(cfg.sort)

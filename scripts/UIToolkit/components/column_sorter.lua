@@ -85,7 +85,7 @@ function ColumnSorter:toggleColumn(id, asc)
         if self.activeColumn == id then
             asc = not self.ascending
         else
-            asc = true
+            asc = cfg.descending ~= true
         end
     end
 
