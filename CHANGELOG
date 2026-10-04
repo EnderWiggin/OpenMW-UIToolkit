@@ -1,3 +1,21 @@
+Version 1.3.0 (2026-10-04)
+- bumped API version to 4
+- implemented new (0.52) cursor API
+- added image button component
+- tooltips: clear tooltip on UI mode change
+- window manager: publicized toAbsolute/toRelative methods
+- window handler: added getDefaultStorage method
+- window manager: added method to update saved data of a window
+- window manager: do not close pinned window unless force flag is passed
+- window manager: added getWindow method
+- window: fixed pin button disappearing when title changes or window is resized
+- compound filter: added a method that filters a list
+- sorted list: added defaultColumn option
+- column sorter: try selecting default column when currently active column becomes hidden
+- column sorter and sorted list: added option for column to start in descending order
+- checkbox: added fixed width option
+- updated readme a bit
+
 Version 1.2.0 (2026-10-01)
 - bumped API version to 3
 - list and sorted list: added onListClicked callback
