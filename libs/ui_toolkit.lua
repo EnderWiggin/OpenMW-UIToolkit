@@ -390,6 +390,7 @@ function Components.sortedList(opts) end
 ---@field remove fun(self:UIToolkit.CompoundFilter, name:string) removes filter by name
 ---@field disable fun(self:UIToolkit.CompoundFilter, name:string, value:boolean?) disables filter by name, unless value is `false`
 ---@field match fun(self:UIToolkit.CompoundFilter, item:T):boolean returns `true` if item matches all not disabled filters
+---@field filter fun(self:UIToolkit.CompoundFilter, items:T[]):T[] returns all matching items from the supplied list
 ---@overload fun(item:T):boolean
 ---@operator call(T):boolean
 

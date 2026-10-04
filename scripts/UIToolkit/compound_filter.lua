@@ -44,6 +44,25 @@ function Filter:match(item)
     return true
 end
 
+---@param items T[]
+---@return T[]
+function Filter:filter(items)
+    local filters = self:_getFilters()
+    local result = {}
+    for i = 1, #items do
+        local item = items[i]
+        local matching = true
+        for j = 1, #filters do
+            if not filters[j](item) then
+                matching = false
+                break
+            end
+        end
+        if matching then result[#result + 1] = item end
+    end
+    return result
+end
+
 function Filter:_getFilters()
     if self._filters then return self._filters end
     local filters = {}
