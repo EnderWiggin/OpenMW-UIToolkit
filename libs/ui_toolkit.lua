@@ -358,6 +358,7 @@ function Components.sortedList(opts) end
 ---@field size openmw.util.Vector2
 ---@field defaultSort? UIToolkit.ColumnComparator|UIToolkit.SimpleColumnComparatorConfig
 ---@field columns UIToolkit.SortedList.Column[]
+---@field defaultColumn? string
 ---@field hiddenColumns? table<string, boolean>
 ---@field rowHeight number? Defaults to `listRowScale * (textNormal + 2)`
 ---@field onItemClicked? fun(data:UIToolkit.ListData.Base, idx:integer) called when item is clicked with left mouse button

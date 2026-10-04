@@ -108,6 +108,7 @@ function SortedList:init(opts)
 
     self.header = I.UIToolkit.Components.columnSorter {
         columns = headerColumns,
+        default = opts.defaultColumn,
         hidden = opts.hiddenColumns,
         onChanged = function() self:sort() end,
     }
