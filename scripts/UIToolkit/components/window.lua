@@ -564,6 +564,7 @@ function Window:init(opts, id, saved)
                         newPos = validatePosition(newPos, newSize)
                     end
 
+                    resized = layout.props.size ~= newSize
                     layout.props.size = newSize
                     layout.props.position = newPos
 

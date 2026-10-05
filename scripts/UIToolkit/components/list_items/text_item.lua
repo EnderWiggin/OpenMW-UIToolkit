@@ -14,7 +14,7 @@ local Component = require('scripts.UIToolkit.components.component')
 local ListItemText = Class(ListItemBase)
 
 ---@return number
-function ListItemBase:getItemHeight()
+function ListItemText:getItemHeight()
     return util.round(1.1 * I.UIToolkit.getTheme().Sizes.textNormal)
 end
 
