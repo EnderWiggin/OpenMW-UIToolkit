@@ -357,6 +357,7 @@ function Components.sortedList(opts) end
 ---@class UIToolkit.ItemGridOpts<T>
 ---@field size openmw.util.Vector2
 ---@field provider UIToolkit.GridItem.Base
+---@field horizontal boolean? If true, then scrolling would be horizontal and items laid out down first, then to the right
 ---@field onItemClicked? fun(data:UIToolkit.ListData.Base, idx:integer) called when item is clicked with left mouse button
 ---@field onItemRClicked? fun(data:UIToolkit.ListData.Base, idx:integer) called when item is clicked with right mouse button
 ---@field onItemClickedAny? fun(data:UIToolkit.ListData.Base, idx:integer, button: number) called when item is clicked with any mouse button

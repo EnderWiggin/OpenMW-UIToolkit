@@ -28,7 +28,7 @@ function ItemGrid:init(opts)
     ---@type UIToolkit.GridItem.Base
     local provider = opts.provider
     local state = {
-        horizontal = true,
+        horizontal = opts.horizontal == true,
         ---@type UIToolkit.ListData.Base[]
         items = {},
         ---@type UIToolkit.GridItem.Base
@@ -220,25 +220,28 @@ end
 ---@param n integer
 ---@param id string
 ---@param view openmw.ui.Element
----@return openmw.ui.Element
-function ItemGrid:_getHolder(n, id, view)
+---@return openmw.ui.Element, boolean
+function ItemGrid:_getHolder(n, id, view, visible)
     local state = self.state
     local holder = self._holders[n]
     local element = holder and holder.element
     local layout = element and element.layout
+    local viewUserData = H.userData(view)
     if layout then
+        local props = layout.props
         holder.id = id
         local old = layout.content and layout.content[1]
         local pos = self:getPosByIndex(n)
-        local needUpdate = pos ~= layout.props.position
+        local needUpdate = pos ~= props.position or props.visible ~= visible
         if needUpdate then
-            layout.props.position = pos
+            props.position = pos
+            props.visible = visible
         end
-        local viewUserData = H.userData(view)
+
         -- In some cases view might have been re-parented to another holder
         -- check its stored index to see if that's the case
         local viewIdx = viewUserData._index
-        if viewIdx ~= n or old ~= view then
+        if visible and viewIdx ~= n or old ~= view then
             if viewIdx and viewIdx ~= n then
                 --index is present and does not match current = remove this view from previous parent
                 local parent = self._holders[viewIdx]
@@ -253,14 +256,12 @@ function ItemGrid:_getHolder(n, id, view)
             viewUserData._index = n
             layout.content = ui.content { view }
             I.UIToolkit.queueUpdate(element, true)
-            self._deeps = self._deeps + 1
         elseif needUpdate then
-            self._updates = self._updates + 1
             I.UIToolkit.queueUpdate(element)
         end
-        return holder.element
+        return holder.element, false
     end
-    self._creates = self._creates + 1
+    viewUserData._index = n
     element = ui.create {
         props = {
             position = self:getPosByIndex(n),
@@ -269,7 +270,7 @@ function ItemGrid:_getHolder(n, id, view)
         content = ui.content { view },
     }
     self._holders[n] = { id = id, element = element }
-    return element
+    return element, true
 end
 
 ---@param strict boolean? if true, range will be strict - only fully visible items are included
@@ -308,11 +309,8 @@ function ItemGrid:getVisibleItemCount()
     return math.floor(state.currentSize.y / state.itemHeight)
 end
 
+--TODO: for 0.52 try implementing it using Flex with wrapping
 function ItemGrid:_updateScrollable()
-    self._updates = 0
-    self._deeps = 0
-    self._creates = 0
-    local processed = 0
     local state = self.state
     local itemSize = state.itemSize
     local scrollerSize = self:getContentSize()
@@ -328,15 +326,18 @@ function ItemGrid:_updateScrollable()
     ---@type openmw.ui.Layout
     local layout = self._scrollable.layout
     local from, to = self:getVisibleItemRange()
-    for i = from, to do
+    local updateContent = false
+    local created
+    for i = 1, itemCount do
         local item = state.items[i]
         local view = state.provider:getView(item)
-        items[#items + 1] = self:_getHolder(i, item.id, view)
-        processed = processed + 1
+        items[#items + 1], created = self:_getHolder(i, item.id, view, i >= from and i <= to)
+        updateContent = updateContent or created
     end
-    --TODO: update content only when necessary
     layout.props.size = scrollerSize
-    layout.content = ui.content(items)
+    if updateContent then
+        layout.content = ui.content(items)
+    end
     I.UIToolkit.queueUpdate(self._scrollable)
 end
 
