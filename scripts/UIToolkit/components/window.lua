@@ -358,8 +358,8 @@ end
 ---@return openmw.util.Vector2
 local function validatePosition(pos, size)
     local layerSize = ui.layers[ui.layers.indexOf('Windows')].size
-    local maxX = math.max(0, layerSize.x - size.x / 2)
-    local maxY = math.max(0, layerSize.y - size.y / 2)
+    local maxX = math.max(0, layerSize.x - size.x)
+    local maxY = math.max(0, layerSize.y - size.y)
     return v2(
         util.clamp(pos.x, 0, maxX),
         util.clamp(pos.y, 0, maxY)
