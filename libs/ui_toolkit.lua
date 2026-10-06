@@ -351,6 +351,7 @@ function Components.sortedList(opts) end
 ---@field getView fun(self:UIToolkit.ListItem.Base<T>, data:T):openmw.ui.Element
 ---@field refreshState fun(self:UIToolkit.ListItem.Base<T>, idOrData:string|UIToolkit.ListData.Base)
 ---@field getCachedView fun(self:UIToolkit.ListItem.Base<T>, id:string):openmw.ui.Element?
+---@field getHighlightView fun(self:UIToolkit.ListItem.Base<T>):openmw.ui.Element? used below the hovered item if it was set as hovered manually (controller input, not cursor movement)
 ---@field remove fun(self:UIToolkit.ListItem.Base<T>, id:string) removes cached item
 ---@field clear fun(self:UIToolkit.ListItem.Base<T>) removes all cached items
 
@@ -384,7 +385,7 @@ function Components.sortedList(opts) end
 ---@field setProgress fun(self:UIToolkit.ItemGrid, progress:number) set [0-1] progress of the scroll
 ---@field getVisibleItemRange fun(self:UIToolkit.ItemGrid, strict:boolean?):integer, integer
 ---@field getVisibleItemCount fun(self:UIToolkit.ItemGrid):integer
----@field setHovered fun(self:UIToolkit.ItemGrid, idOrIndex:string|integer|nil)
+---@field setHovered fun(self:UIToolkit.ItemGrid, idOrIndex:string|integer|nil, highlight:boolean?)
 ---@field shiftHoveredItem fun(self:UIToolkit.ItemGrid, shift:openmw.util.Vector2)
 
 ---@class UIToolkit.ColumnSorter.Column

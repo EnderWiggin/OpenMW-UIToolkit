@@ -53,6 +53,11 @@ function GridItemBase:getTooltip(data)
     return nil
 end
 
+---@return openmw.ui.Element?
+function GridItemBase:getHighlightView()
+    return nil
+end
+
 ---@param data UIToolkit.ListData.Base
 ---@return openmw.ui.Element
 function GridItemBase:getView(data)

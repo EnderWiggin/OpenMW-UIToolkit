@@ -4,6 +4,7 @@ local ui = require('openmw.ui')
 local util = require('openmw.util')
 local async = require('openmw.async')
 local ambient = require('openmw.ambient')
+local async = require('openmw.async')
 local I = require('openmw.interfaces')
 
 local v2 = util.vector2
@@ -40,6 +41,8 @@ function ItemGrid:init(opts)
         hovered = nil,
         ---@type openmw.util.Vector2|nil
         lastHoveredPos = nil,
+        highlightElement = provider:getHighlightView(),
+        needHighlight = false,
     }
     self.itemDeepUpdate = opts.itemDeepUpdate == true
     self.state = state
@@ -338,9 +341,12 @@ function ItemGrid:_updateScrollable()
     end
     layout.props.size = scrollerSize
     if updateContent then
+        if state.highlightElement then table.insert(items, 1, state.highlightElement) end
+        --if state.highlightElement then table.insert(items, state.highlightElement) end
         layout.content = ui.content(items)
     end
     I.UIToolkit.queueUpdate(self._scrollable)
+    self:_updateItemHighlight()
 end
 
 ---@private
@@ -461,19 +467,35 @@ function ItemGrid:_updateLastHoveredPos(offset)
     end
 end
 
+---@param visible boolean?
+function ItemGrid:_updateItemHighlight(visible)
+    local state = self.state
+    if not state.highlightElement then return end
+    local props = H.props(state.highlightElement)
+    if state.hovered then
+        props.position = self:getPosByIndex(state.hovered)
+    else
+        visible = false
+    end
+    if visible ~= nil then
+        props.visible = visible
+    end
+    I.UIToolkit.update(state.highlightElement)
+end
+
 function ItemGrid:updateHoveredItem()
+    local state = self.state
     local lastPos = self.state.lastHoveredPos
     if not lastPos then return end
     local scrollPos = self._scrollBar:getPosition()
-    if self.state.horizontal then
-        self:setHovered(self:getIndexByPos(lastPos + v2(scrollPos, 0)))
-    else
-        self:setHovered(self:getIndexByPos(lastPos + v2(0, scrollPos)))
-    end
+    local p = lastPos + (self.state.horizontal and v2(scrollPos, 0) or v2(0, scrollPos))
+
+    self:setHovered(self:getIndexByPos(p), state.needHighlight)
 end
 
 ---@param idOrIndex string|integer|nil
-function ItemGrid:setHovered(idOrIndex)
+---@param highlight boolean?
+function ItemGrid:setHovered(idOrIndex, highlight)
     if self:isDestroyed() then return end
     local state = self.state
     ---@type string?
@@ -503,9 +525,12 @@ function ItemGrid:setHovered(idOrIndex)
         I.UTKTooltips.setTooltip(tip, { isAlive = function() return not self:isDestroyed() end, })
     else
         I.UTKTooltips.setTooltip(nil)
+        highlight = false
     end
 
     state.hovered = idOrIndex
+    state.needHighlight = highlight
+    self:_updateItemHighlight(highlight)
 end
 
 ---@return UIToolkit.ListData.Base? item, integer? index
@@ -587,7 +612,7 @@ function ItemGrid:shiftHoveredItem(shift)
         )
     end
     state.lastHoveredPos = nil
-    self:setHovered(tIdx)
+    self:setHovered(tIdx, true)
 end
 
 ---@param id string
