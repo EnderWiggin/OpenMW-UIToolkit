@@ -385,7 +385,7 @@ function Components.sortedList(opts) end
 ---@field getVisibleItemRange fun(self:UIToolkit.ItemGrid, strict:boolean?):integer, integer
 ---@field getVisibleItemCount fun(self:UIToolkit.ItemGrid):integer
 ---@field setHovered fun(self:UIToolkit.ItemGrid, idOrIndex:string|integer|nil)
----@field shiftHoveredItem fun(self:UIToolkit.ItemGrid, shift:integer)
+---@field shiftHoveredItem fun(self:UIToolkit.ItemGrid, shift:openmw.util.Vector2)
 
 ---@class UIToolkit.ColumnSorter.Column
 ---@field id string?

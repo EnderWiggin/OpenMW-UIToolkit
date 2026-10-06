@@ -90,11 +90,12 @@ function ItemGrid:init(opts)
         events = {
             ---@param e openmw.ui.MouseEvent
             mousePress = async:callback(function(e)
-                self.state.lastHoveredPos = e.offset.y - self._scrollBar:getPosition()
+                local offset = e.offset
+                self:_updateLastHoveredPos(offset)
 
                 if not getCallback(e.button) and not onAnyClicked then return end
 
-                local idx = self:getIndexByPos(e.offset)
+                local idx = self:getIndexByPos(offset)
                 local item = self.state.items[idx]
                 mousePressed[e.button] = item ~= nil and idx or nil
                 if not item then return end
@@ -102,7 +103,7 @@ function ItemGrid:init(opts)
             end),
             mouseRelease = async:callback(function(e)
                 local offset = e.offset
-                self.state.lastHoveredPos = offset.y - self._scrollBar:getPosition()
+                self:_updateLastHoveredPos(offset)
                 local btn = e.button
 
                 processItemClick(btn, offset)
@@ -111,13 +112,14 @@ function ItemGrid:init(opts)
             ---@param e openmw.ui.MouseEvent
             mouseMove = async:callback(function(e)
                 I.UIToolkit.setCursorPos(e.position)
-                self.state.lastHoveredPos = e.offset.y - self._scrollBar:getPosition()
-                self:setHovered(self:getIndexByPos(e.offset))
+                local offset = e.offset
+                self:_updateLastHoveredPos(offset)
+                self:setHovered(self:getIndexByPos(offset))
                 return true
             end),
             focusLoss = async:callback(function()
                 self:setHovered(nil)
-                self.state.lastHoveredPos = nil
+                state.lastHoveredPos = nil
                 return true
             end),
         },
@@ -448,11 +450,26 @@ function ItemGrid:getPosByIndex(idx)
     end
 end
 
+---@param offset openmw.util.Vector2
+function ItemGrid:_updateLastHoveredPos(offset)
+    local state = self.state
+    local p = self._scrollBar:getPosition()
+    if state.horizontal then
+        state.lastHoveredPos = v2(offset.x - p, offset.y)
+    else
+        state.lastHoveredPos = v2(offset.x, offset.y - p)
+    end
+end
+
 function ItemGrid:updateHoveredItem()
-    local p = self.state.lastHoveredPos
-    if not p then return end
-    --TODO: implement
-    --self:setHovered(self:getIndexByYPos(p + self._scrollBar:getPosition()))
+    local lastPos = self.state.lastHoveredPos
+    if not lastPos then return end
+    local scrollPos = self._scrollBar:getPosition()
+    if self.state.horizontal then
+        self:setHovered(self:getIndexByPos(lastPos + v2(scrollPos, 0)))
+    else
+        self:setHovered(self:getIndexByPos(lastPos + v2(0, scrollPos)))
+    end
 end
 
 ---@param idOrIndex string|integer|nil
@@ -518,39 +535,50 @@ function ItemGrid:setProgress(progress)
     self._scrollBar:setProgress(progress)
 end
 
-local buffer = 1 --TODO: move, rename
----@param shift integer
+---@param shift openmw.util.Vector2
 function ItemGrid:shiftHoveredItem(shift)
-    --TODO: rework to accept vector2 of movement
-    if not shift or shift == 0 then return end
-    local down = shift > 0
     local state = self.state
+    local itemSize = state.itemSize
+    local contentSize = self:getContentSize()
+    local itemLength, delta
+    if state.horizontal then
+        local height = math.floor(contentSize.y / itemSize.y)
+        itemLength = itemSize.x
+        delta = shift.x * height + shift.y
+    else
+        local width = math.floor(contentSize.x / itemSize.x)
+        itemLength = itemSize.y
+        delta = shift.x + shift.y * width
+    end
+
+    if not delta or delta == 0 then return end
+    local down = delta > 0
     local rows = state.items
     local from, to = self:getVisibleItemRange(true)
     local rIdx = state.hovered
     local tIdx = down and from or to
     if rIdx then
         util.clamp(rIdx, from, to)
-        tIdx = rIdx + shift
+        tIdx = rIdx + delta
         if down then
             if rIdx == #rows then
                 down = false
                 tIdx = 1
             end
-            to = to - buffer
+            to = to - 1
         else
             if rIdx == 1 then
                 down = true
                 tIdx = #rows
             end
-            from = from + buffer
+            from = from + 1
         end
     end
     tIdx = util.clamp(tIdx, 1, #rows)
 
     if tIdx < from or tIdx > to then
         local tPos = tIdx + (down and 0 or from - to)
-        tPos = (tPos - 1) * state.itemHeight
+        tPos = (tPos - 1) * itemLength
         local pos = self:getPosition()
 
         self:setPosition(down
