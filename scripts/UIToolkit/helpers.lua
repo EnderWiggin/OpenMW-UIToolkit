@@ -257,7 +257,8 @@ end
 function H.props(layoutOrElement)
     local layout = H.toLayout(layoutOrElement)
     if not layout then return {} end
-    layout.props = layout.props or {}
+    if layout.props then return layout.props end
+    layout.props = {}
     return layout.props
 end
 

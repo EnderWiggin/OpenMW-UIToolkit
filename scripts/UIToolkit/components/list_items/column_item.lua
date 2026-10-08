@@ -287,7 +287,6 @@ function Item.updateText(part, data, cfg)
     local props = H.props(part)
     if props.text == new then return false end
     props.text = new
-    part.props = props
     return true
 end
 
@@ -301,7 +300,6 @@ function Item.updateIcon(part, data, cfg)
     local props = H.props(icon)
     if props.resource == new then return false end
     props.resource = new
-    icon.props = props
     return true
 end
 
@@ -321,9 +319,8 @@ function Item.applySize(layout, cfg, height)
     local width = cfg.width or 0
     local auto = (width == 0 and (cfg.auto or 1)) or nil
 
-    local props = layout.props or {}
+    local props = H.props(layout)
     props.size = v2(width, height)
-    layout.props = props
 
     local external = layout.external or {}
     external.grow = auto
