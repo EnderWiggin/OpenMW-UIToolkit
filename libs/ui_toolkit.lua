@@ -291,12 +291,14 @@ function Components.sortedList(opts) end
 ---@field getTooltip fun(self:UIToolkit.ListItem.Text, data:UIToolkit.ListData.Text):UTKTooltips.AnyTooltip?
 
 ---@alias UIToolkit.ListItem.Column.Renderer fun(data:UIToolkit.ListData.Column, cfg:UIToolkit.ListData.ColumnConfig, height:number):openmw.ui.Layout|openmw.ui.Element
+---@alias UIToolkit.ListItem.Column.Updater fun(part:openmw.ui.LayoutOrElement, data:UIToolkit.ListData.Column, cfg:UIToolkit.ListData.ColumnConfig, height:number):boolean returns true if the value was changed
 
 ---@class UIToolkit.ListData.ColumnConfig
 ---@field id string
 ---@field width number?
 ---@field auto number?
 ---@field render UIToolkit.ListItem.Column.Renderer
+---@field update? UIToolkit.ListItem.Column.Updater optional in-place update of an already rendered column element; if absent, refreshColumns re-renders the column. Must return whether the value changed.
 ---@field arg any? additional info for renderer
 
 ---@class UIToolkit.ListData.Column: UIToolkit.ListData.Base
@@ -307,6 +309,8 @@ function Components.sortedList(opts) end
 ---@field refreshColumns fun(self:UIToolkit.ListItem.Column, idOrData:string|UIToolkit.ListData.Column, ...:string)
 ---@field renderText UIToolkit.ListItem.Column.Renderer
 ---@field renderIcon UIToolkit.ListItem.Column.Renderer
+---@field updateText UIToolkit.ListItem.Column.Updater
+---@field updateIcon UIToolkit.ListItem.Column.Updater
 
 ---@generic T : UIToolkit.ListItem.Base
 ---@class UIToolkit.ItemListOpts<T>
@@ -416,6 +420,7 @@ function Components.sortedList(opts) end
 ---@field width number?
 ---@field auto number?
 ---@field render UIToolkit.ListItem.Column.Renderer
+---@field update? UIToolkit.ListItem.Column.Updater optional in-place update of an already rendered column element; if absent, refreshColumns re-renders the column. Must return whether the value changed.
 ---@field arg any? additional info for renderer
 ---@field align? openmw.ui.Alignment
 ---@field descending? boolean if true - starts in descending mode

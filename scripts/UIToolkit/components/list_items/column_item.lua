@@ -57,6 +57,18 @@ function Item:makeComponent(data)
     return component
 end
 
+---@param cfg UIToolkit.ListData.ColumnConfig
+---@return UIToolkit.ListItem.Column.Updater?
+local function getUpdater(cfg)
+    if cfg.update then return cfg.update end
+    if cfg.render == Item.renderText then
+        return Item.updateText
+    elseif cfg.render == Item.renderIcon then
+        return Item.updateIcon
+    end
+    return nil
+end
+
 ---@param idOrData string|UIToolkit.ListData.Column
 ---@param ... string
 function Item:refreshColumns(idOrData, ...)
@@ -74,6 +86,10 @@ function Item:refreshColumns(idOrData, ...)
     assert(data)
     local content = cached.element.layout.content
     if not content then return end
+
+    -- at least one column was updated or re-rendered
+    local changed = false
+
     local i = 1
     for k = 1, #self.columns do
         local cfg = self.columns[k]
@@ -82,16 +98,26 @@ function Item:refreshColumns(idOrData, ...)
             local layout = H.toLayout(part)
             local isElement = part ~= layout
             if layout and H.findInArray(args, layout.name) then
-                --TODO: add possibility to update instead of re-render?
-                if isElement and part then I.UIToolkit.queueDestroy(part, true) end
-                if not self.hidden[cfg.id] then
+                local updater = getUpdater(cfg)
+                if updater then
+                    --update in-place, never re-render; update returns whether the value changed
+                    if updater(part, data, cfg, self.rowHeight) then
+                        changed = true
+                    end
+                else
+                    --no update method - full re-creation
+                    if isElement and part then I.UIToolkit.queueDestroy(part, true) end
                     content[i] = cfg.render(data, cfg, self.rowHeight)
+                    changed = true
                 end
-                I.UIToolkit.Interactive.updateState(cached.element)
-                I.UIToolkit.queueUpdate(cached.element)
             end
             i = i + 1
         end
+    end
+
+    if changed then
+        I.UIToolkit.Interactive.updateState(cached.element)
+        I.UIToolkit.queueUpdate(cached.element)
     end
 end
 
@@ -113,8 +139,10 @@ function Item:setHiddenColumns(hidden)
     self:clear()
 end
 
----@type UIToolkit.ListItem.Column.Renderer
-function Item.renderText(data, cfg, height)
+---@param data UIToolkit.ListData.Column
+---@param cfg UIToolkit.ListData.ColumnConfig
+---@return string|number
+local function formatColumnValue(data, cfg)
     local value = data[cfg.id] or ''
     if type(value) == 'function' then
         value = value()
@@ -122,6 +150,12 @@ function Item.renderText(data, cfg, height)
     if type(value) == 'number' then
         value = H.addSeparators(H.roundToPlaces(value, 2))
     end
+    return value
+end
+
+---@type UIToolkit.ListItem.Column.Renderer
+function Item.renderText(data, cfg, height)
+    local value = formatColumnValue(data, cfg)
     local textSize = cfg.arg and cfg.arg.textSize or nil
     local textAlignH = cfg.arg and cfg.arg.textAlignH or nil
     ---@type openmw.ui.Layout
@@ -164,6 +198,33 @@ function Item.renderIcon(data, cfg, height)
 
     Item.applySize(layout, cfg, height)
     return layout
+end
+
+---@param part openmw.ui.Layout
+---@param data UIToolkit.ListData.Column
+---@param cfg UIToolkit.ListData.ColumnConfig
+---@return boolean changed
+function Item.updateText(part, data, cfg)
+    local new = tostring(formatColumnValue(data, cfg))
+    local props = H.props(part)
+    if props.text == new then return false end
+    props.text = new
+    part.props = props
+    return true
+end
+
+---@param part openmw.ui.Layout
+---@param data UIToolkit.ListData.Column
+---@param cfg UIToolkit.ListData.ColumnConfig
+---@return boolean changed
+function Item.updateIcon(part, data, cfg)
+    local icon = H.findLayoutByPath(part, { 'icon' })
+    local new = I.UIToolkit.texture(data[cfg.id] or 'icons/UIToolkit/unknown-effect.dds')
+    local props = H.props(icon)
+    if props.resource == new then return false end
+    props.resource = new
+    icon.props = props
+    return true
 end
 
 ---@type UIToolkit.ListItem.Column.Renderer
