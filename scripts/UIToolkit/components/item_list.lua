@@ -208,10 +208,10 @@ function ItemList:_getHolder(n, id, view)
     local holder = self._holders[n]
     local element = holder and holder.element
     local layout = element and element.layout
+    local viewUserData = H.userData(view)
     if layout then
         holder.id = id
         local old = layout.content and layout.content[1]
-        local viewUserData = H.userData(view)
         -- In some cases view might have been re-parented to another holder
         -- check its stored index to see if that's the case
         local viewIdx = viewUserData._index
@@ -233,6 +233,7 @@ function ItemList:_getHolder(n, id, view)
         end
         return holder.element
     end
+    viewUserData._index = n
     element = ui.create {
         props = {
             position = v2(0, (n - 1) * state.itemHeight),
