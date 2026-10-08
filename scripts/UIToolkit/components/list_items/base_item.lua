@@ -4,9 +4,8 @@ local I = require('openmw.interfaces')
 
 local Class = require('scripts.UIToolkit.class')
 
----@generic T : UIToolkit.ListData.Base
 ---@class UIToolkit.ListItem.RowComponent<T> : UIToolkit.Component
----@field data T?
+---@field data UIToolkit.ListData.Base?
 
 ---@param data UIToolkit.ListData.Base
 ---@param component UIToolkit.ListItem.RowComponent<UIToolkit.ListData.Base>
@@ -121,7 +120,7 @@ end
 
 function ListItemBase:clear()
     for _, cached in pairs(self.cache) do
-        if cached and not cached:isDestroyed() then
+        if not cached:isDestroyed() then
             I.UIToolkit.queueDestroy(cached.element, true)
         end
     end

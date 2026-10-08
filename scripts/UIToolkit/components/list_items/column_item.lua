@@ -11,6 +11,9 @@ local Class = require('scripts.UIToolkit.class')
 local Component = require('scripts.UIToolkit.components.component')
 local ListItemBase = require('scripts.UIToolkit.components.list_items.base_item')
 
+---@class UIToolkit.ListItem.ColumnComponent : UIToolkit.ListItem.RowComponent
+---@field dirty? true|table<string, true> set of dirty column ids, or `true` if all columns are dirty
+
 ---@class UIToolkit.ListItem.Column: UIToolkit.ListItem.Base<UIToolkit.ListData.Column>
 ---@field new fun(self:UIToolkit.ListItem.Column):UIToolkit.ListItem.Column
 local Item = Class(ListItemBase)
@@ -57,6 +60,16 @@ function Item:makeComponent(data)
     return component
 end
 
+---@param data UIToolkit.ListData.Column
+---@return UIToolkit.Component
+function Item:getComponent(data)
+    local component = ListItemBase.getComponent(self, data) --[[@as UIToolkit.ListItem.ColumnComponent]]
+    if component.dirty then
+        self:refreshDirty(component, data)
+    end
+    return component
+end
+
 ---@param cfg UIToolkit.ListData.ColumnConfig
 ---@return UIToolkit.ListItem.Column.Updater?
 local function getUpdater(cfg)
@@ -69,18 +82,12 @@ local function getUpdater(cfg)
     return nil
 end
 
----@param idOrData string|UIToolkit.ListData.Column
----@param ... string
-function Item:refreshColumns(idOrData, ...)
-    local id, data
-    if type(idOrData) == 'string' then
-        id = idOrData
-    else
-        id = idOrData.id
-        data = idOrData
-    end
-    local args = { ... }
-    local cached = self:getCachedComponent(id) --[[@as UIToolkit.ListItem.RowComponent]]
+---@param id string
+---@param data UIToolkit.ListData.Column
+---@param names string[]
+---@private
+function Item:refreshColumnsById(id, data, names)
+    local cached = self:getCachedComponent(id) --[[@as UIToolkit.ListItem.ColumnComponent]]
     if not cached or cached:isDestroyed() then return end
     data = data or cached.data
     assert(data)
@@ -97,7 +104,7 @@ function Item:refreshColumns(idOrData, ...)
             local part = content[i] --[[@as openmw.ui.Element]]
             local layout = H.toLayout(part)
             local isElement = part ~= layout
-            if layout and H.findInArray(args, layout.name) then
+            if layout and H.findInArray(names, layout.name) then
                 local updater = getUpdater(cfg)
                 if updater then
                     --update in-place, never re-render; update returns whether the value changed
@@ -121,6 +128,77 @@ function Item:refreshColumns(idOrData, ...)
     end
 end
 
+---@param idOrData string|UIToolkit.ListData.Column
+---@param ... string
+function Item:refreshColumns(idOrData, ...)
+    local id, data
+    if type(idOrData) == 'string' then
+        id = idOrData
+    else
+        id = idOrData.id
+        data = idOrData
+    end
+    self:refreshColumnsById(id, data, { ... })
+end
+
+---@param idOrData string|UIToolkit.ListData.Column
+function Item:markAllDirty(idOrData)
+    local id = type(idOrData) == 'string' and idOrData or idOrData.id
+    local cached = self:getCachedComponent(id) --[[@as UIToolkit.ListItem.ColumnComponent]]
+    if not cached then return end
+    cached.dirty = true
+end
+
+---Marks all currently cached items as having all columns dirty
+function Item:markCacheDirty()
+    for id, cached in pairs(self.cache) do
+        if cached:isDestroyed() then
+            self.cache[id] = nil
+        else
+            cached.dirty = true
+        end
+    end
+end
+
+---@param idOrData string|UIToolkit.ListData.Column
+---@param columnId string
+function Item:markColumnDirty(idOrData, columnId)
+    local id = type(idOrData) == 'string' and idOrData or idOrData.id
+    local cached = self:getCachedComponent(id) --[[@as UIToolkit.ListItem.ColumnComponent]]
+    if not cached then return end
+    local dirty = cached.dirty
+    if dirty == true then return end
+    if not dirty then
+        dirty = {}
+        cached.dirty = dirty
+    end
+    dirty[columnId] = true
+end
+
+---@param component UIToolkit.ListItem.ColumnComponent
+---@param data UIToolkit.ListData.Column
+---@private
+function Item:refreshDirty(component, data)
+    local dirty = component.dirty
+    if not dirty then return end
+    component.dirty = nil
+    local id = (data and data.id) or (component.data and component.data.id)
+    if not id then return end
+    if dirty == true then
+        local names = {}
+        for i = 1, #self.columns do
+            names[#names + 1] = self.columns[i].id
+        end
+        self:refreshColumnsById(id, data, names)
+    else
+        local names = {}
+        for name in pairs(dirty) do
+            names[#names + 1] = name
+        end
+        self:refreshColumnsById(id, data, names)
+    end
+end
+
 ---@param data UIToolkit.ListData.Column
 ---@return UTKTooltips.AnyTooltip?
 function Item:getTooltip(data)
@@ -136,7 +214,7 @@ end
 ---@param hidden? table<string, boolean>
 function Item:setHiddenColumns(hidden)
     self.hidden = hidden or {}
-    self:clear()
+    self:markCacheDirty()
 end
 
 ---@param data UIToolkit.ListData.Column

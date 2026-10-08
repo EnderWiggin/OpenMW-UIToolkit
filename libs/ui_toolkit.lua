@@ -307,6 +307,9 @@ function Components.sortedList(opts) end
 ---@field new fun(self:UIToolkit.ListItem.Column):UIToolkit.ListItem.Column
 ---@field init fun(self:UIToolkit.ListItem.Column, columns:UIToolkit.ListData.ColumnConfig[], rowHeight:number)
 ---@field refreshColumns fun(self:UIToolkit.ListItem.Column, idOrData:string|UIToolkit.ListData.Column, ...:string)
+---@field markColumnDirty fun(self:UIToolkit.ListItem.Column, idOrData:string|UIToolkit.ListData.Column, columnId:string) marks a single column dirty; Dirty columns are refreshed when the view is next requested.
+---@field markAllDirty fun(self:UIToolkit.ListItem.Column, idOrData:string|UIToolkit.ListData.Column) marks all columns dirty; Dirty columns are refreshed when the view is next requested.
+---@field markCacheDirty fun(self:UIToolkit.ListItem.Column) marks all currently cached items as having all columns dirty; Dirty columns are refreshed when the view is next requested.
 ---@field renderText UIToolkit.ListItem.Column.Renderer
 ---@field renderIcon UIToolkit.ListItem.Column.Renderer
 ---@field updateText UIToolkit.ListItem.Column.Updater
