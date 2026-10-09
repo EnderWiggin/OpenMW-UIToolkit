@@ -271,6 +271,7 @@ function ItemGrid:_getHolder(n, id, view, visible)
         props = {
             position = self:getPosByIndex(n),
             size = state.itemSize,
+            visible = visible,
         },
         content = ui.content { view },
     }
