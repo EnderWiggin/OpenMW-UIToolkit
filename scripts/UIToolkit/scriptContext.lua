@@ -54,10 +54,21 @@ local isRuntime = {
     [ScriptContext.Types.Menu] = true,
 }
 
+local hasTypes = {
+    [ScriptContext.Types.Global] = true,
+    [ScriptContext.Types.Local] = true,
+    [ScriptContext.Types.Player] = true,
+}
+
 --- Returns true if current context is runtime (global, local, player or menu)
 ---@return boolean
 function ScriptContext.isRuntime()
     return isRuntime[ScriptContext.get()] == true
+end
+
+---@return boolean
+function ScriptContext.hasTypes()
+    return hasTypes[ScriptContext.get()] == true
 end
 
 return ScriptContext
