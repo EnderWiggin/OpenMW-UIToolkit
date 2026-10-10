@@ -9,6 +9,9 @@ C.API = {
     -- `gap` prop in Flexes
     GAP = core.API_REVISION >= 132,
 
+    -- `wrap` prop in Flexes
+    WRAP = core.API_REVISION >= 135,
+
     -- `padding` prop in Widgets/Images/Flexes
     PADDING = core.API_REVISION >= 143,
 

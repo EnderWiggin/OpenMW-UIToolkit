@@ -8,6 +8,7 @@ local I = require('openmw.interfaces')
 
 local v2 = util.vector2
 local H = require('scripts.UIToolkit.helpers')
+local C = require('scripts.UIToolkit.constants')
 local Class = require('scripts.UIToolkit.class')
 local Component = require('scripts.UIToolkit.components.component')
 local Scrollable = require('scripts.UIToolkit.components.scrollable')
@@ -81,14 +82,21 @@ function ItemGrid:init(opts)
         if onAnyClicked then onAnyClicked(item, idx, btn) end
     end
 
+    local scrollableProps = {
+        position = v2(0, 0),
+        size = v2(0, 0),
+    }
+    if C.API.WRAP then
+        scrollableProps.autoSize = false
+        scrollableProps.wrap = true
+        scrollableProps.horizontal = not opts.horizontal
+    end
+
     ---@type openmw.ui.Element
     local scrollable = ui.create {
         name = 'scrollable',
-        type = ui.TYPE.Widget,
-        props = {
-            position = v2(0, 0),
-            size = v2(0, 0),
-        },
+        type = C.API.WRAP and ui.TYPE.Flex or ui.TYPE.Widget,
+        props = scrollableProps,
         events = {
             ---@param e openmw.ui.MouseEvent
             mousePress = async:callback(function(e)
@@ -161,6 +169,9 @@ function ItemGrid:init(opts)
     self._scrollBar = scroll
     scroll:setMaxScroll(self:_getMaxScroll())
 
+    local content = state.highlightElement
+        and ui.content { state.highlightElement, scrollable }
+        or ui.content { scrollable }
 
     ---@type openmw.ui.Layout
     local layout = {
@@ -172,7 +183,7 @@ function ItemGrid:init(opts)
             {
                 name = 'content',
                 props = { size = self:getContentSize() },
-                content = ui.content { scrollable }
+                content = content
             },
             scroll.element,
         },
@@ -328,7 +339,6 @@ function ItemGrid:getVisibleItemCount()
     end
 end
 
---TODO: for 0.52 try implementing it using Flex with wrapping
 function ItemGrid:_updateScrollable(updateContent)
     local state = self.state
     local itemSize = state.itemSize
@@ -345,16 +355,25 @@ function ItemGrid:_updateScrollable(updateContent)
     ---@type openmw.ui.Layout
     local layout = self._scrollable.layout
     local from, to = self:getVisibleItemRange()
-    local created
-    for i = 1, itemCount do
-        local item = state.items[i]
-        local view = state.provider:getView(item)
-        items[#items + 1], created = self:_getHolder(i, item.id, view, i >= from and i <= to)
-        updateContent = updateContent or created
+    if C.API.WRAP then
+        if updateContent then
+            for i = 1, itemCount do
+                local item = state.items[i]
+                items[#items + 1] = state.provider:getView(item)
+            end
+        end
+    else
+        local created
+        for i = 1, itemCount do
+            local item = state.items[i]
+            local view = state.provider:getView(item)
+            items[#items + 1], created = self:_getHolder(i, item.id, view, i >= from and i <= to)
+            updateContent = updateContent or created
+        end
     end
     layout.props.size = scrollerSize
     if updateContent then
-        if state.highlightElement then table.insert(items, 1, state.highlightElement) end
+        --if state.highlightElement then table.insert(items, 1, state.highlightElement) end
         layout.content = ui.content(items)
     end
     I.UIToolkit.queueUpdate(self._scrollable)
@@ -406,7 +425,7 @@ function ItemGrid:setItems(items)
     state.itemsById = {}
     self._scrollBar:setMaxScroll(self:_getMaxScroll())
     I.UIToolkit.queueUpdate(self._scrollBar.element)
-    self:_updateScrollable(contentChanged)
+    self:_updateScrollable(contentChanged or C.API.WRAP)
     self:updateHoveredItem()
 end
 
@@ -461,21 +480,23 @@ function ItemGrid:getIndexByPos(p)
 end
 
 ---@param idx integer
+---@param visible boolean? if true, returned position is relative to visible area's top-left corner
 ---@return openmw.util.Vector2
-function ItemGrid:getPosByIndex(idx)
+function ItemGrid:getPosByIndex(idx, visible)
     local state = self.state
     local itemSize = state.itemSize
     local contentSize = self:getContentSize()
+    local shift = visible and self._scrollBar:getPosition() or 0
     if state.horizontal then
         local height = math.floor(contentSize.y / itemSize.y)
         local x = math.floor((idx - 1) / height)
         local y = idx - 1 - x * height
-        return v2(itemSize.x * x, itemSize.y * y)
+        return v2(itemSize.x * x - shift, itemSize.y * y)
     else
         local width = math.floor(contentSize.x / itemSize.x)
         local y = math.floor((idx - 1) / width)
         local x = idx - 1 - y * width
-        return v2(itemSize.x * x, itemSize.y * y)
+        return v2(itemSize.x * x, itemSize.y * y - shift)
     end
 end
 
@@ -496,14 +517,15 @@ function ItemGrid:_updateItemHighlight(visible)
     if not state.highlightElement then return end
     local props = H.props(state.highlightElement)
     if state.hovered then
-        props.position = self:getPosByIndex(state.hovered)
+        props.position = self:getPosByIndex(state.hovered, true)
     else
         visible = false
     end
     if visible ~= nil then
         props.visible = visible
     end
-    I.UIToolkit.update(state.highlightElement)
+    I.UIToolkit.queueUpdate(state.highlightElement)
+    I.UIToolkit.queueUpdate(self.element)
 end
 
 function ItemGrid:updateHoveredItem()
