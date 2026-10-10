@@ -798,7 +798,7 @@ function Templates.getBorderSize(style) end
 ---@field color openmw.util.Color? (used in progressBar) The color of the progressBar
 ---@field title string? (used in header) Title of a header
 ---@field subtitle string? (used in header) Subtitle of a header
----@field image string? (used in header, banner) Path to an image resource, used by header and banner types
+---@field image? string|openmw.ui.TextureResourceOptions (used in header, banner) Path to an image resource or texture options, used by header, banner and value types
 ---@field effects openmw.core.MagicEffectWithParams[]? (used in magicEffects) Used by the effects recipe
 ---@field unknown table<integer, boolean>? (used in magicEffects) A table mapping from effect index to boolean indicating if the effect should be hidden. Can be nil.
 ---@field skipTarget boolean? (used in magicEffects) Skips "on self", "on touch", and "on target" information for spell effects

@@ -247,6 +247,14 @@ local mapMarkerNoteBox = {
     },
 }
 
+---@param pathOrOpts string|openmw.ui.TextureResourceOptions
+---@return openmw.ui.TextureResource?
+local function texture(pathOrOpts)
+    if not pathOrOpts then return nil end
+    return type(pathOrOpts) == 'string' and ui.texture { path = pathOrOpts }
+        or ui.texture(pathOrOpts --[[@as openmw.ui.TextureResourceOptions]])
+end
+
 function Builders.banner(item)
     assert(item.image)
     local size = item.size or V2(259, 133)
@@ -255,7 +263,7 @@ function Builders.banner(item)
         content = ui.content { {
             type = ui.TYPE.Image,
             props = {
-                resource = ui.texture { path = item.image },
+                resource = texture(item.image),
                 size = size,
             },
         } },
@@ -375,7 +383,7 @@ function Builders.header(item)
         header:add {
             type = ui.TYPE.Image,
             props = {
-                resource = ui.texture { path = icon },
+                resource = texture(icon),
                 size = iconSize,
             }
         }
@@ -568,7 +576,7 @@ function Builders.value(item)
             {
                 type = ui.TYPE.Image,
                 props = {
-                    resource = ui.texture { path = item.image },
+                    resource = texture(item.image),
                     size = V2(1, 1) * theme.Sizes.textHeader,
                 }
             },
