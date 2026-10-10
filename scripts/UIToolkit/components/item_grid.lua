@@ -267,6 +267,7 @@ function ItemGrid:_getHolder(n, id, view, visible)
     end
     viewUserData._index = n
     element = ui.create {
+        name = 'holder:' .. n,
         props = {
             position = self:getPosByIndex(n),
             size = state.itemSize,

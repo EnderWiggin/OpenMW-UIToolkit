@@ -226,7 +226,7 @@ local TEX_CACHE = {}
 ---@param offset openmw.util.Vector2?
 ---@return string
 local function textureKey(path, size, offset)
-    return '[' .. path .. ']:' .. tostring(size) .. ':' .. tostring(offset)
+    return string.format('[%s]:%s:%s', path, tostring(size), tostring(offset))
 end
 
 ---@param path string
