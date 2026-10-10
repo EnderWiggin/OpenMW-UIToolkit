@@ -293,16 +293,20 @@ function ItemGrid:getVisibleItemRange(strict)
     local roundTo = strict and math.floor or math.ceil
     if state.horizontal then
         local height = math.floor(contentSize.y / itemSize.y)
-
-        local from = math.max(height * roundFrom(scroll / itemSize.x), 1)
+        local ratio = scroll / itemSize.x
+        local count = roundFrom(ratio)
+        local from = math.max(height * count, 1)
+        if strict and ratio == count then from = from + 1 end
         if from > total then return 1, 0 end
         local to = math.min(height * roundTo((scroll + contentSize.x) / itemSize.x), total)
 
         return from, to
     else
         local width = math.floor(contentSize.x / itemSize.x)
-
-        local from = math.max(width * roundFrom(scroll / itemSize.y), 1)
+        local ratio = scroll / itemSize.y
+        local count = roundFrom(ratio)
+        local from = math.max(width * count, 1)
+        if strict and ratio == count then from = from + 1 end
         if from > total then return 1, 0 end
         local to = math.min(width * roundTo((scroll + contentSize.y) / itemSize.y), total)
 
@@ -584,15 +588,17 @@ function ItemGrid:shiftHoveredItem(shift)
     local state = self.state
     local itemSize = state.itemSize
     local contentSize = self:getContentSize()
-    local itemLength, delta
+    local itemLength, delta, perRow, rowsCount
     if state.horizontal then
-        local height = math.floor(contentSize.y / itemSize.y)
+        perRow = math.floor(contentSize.y / itemSize.y)
+        rowsCount = math.floor(contentSize.x / itemSize.x)
         itemLength = itemSize.x
-        delta = shift.x * height + shift.y
+        delta = shift.x * perRow + shift.y
     else
-        local width = math.floor(contentSize.x / itemSize.x)
+        perRow = math.floor(contentSize.x / itemSize.x)
+        rowsCount = math.floor(contentSize.y / itemSize.y)
         itemLength = itemSize.y
-        delta = shift.x + shift.y * width
+        delta = shift.x + shift.y * perRow
     end
 
     if not delta or delta == 0 then return end
@@ -609,20 +615,23 @@ function ItemGrid:shiftHoveredItem(shift)
                 down = false
                 tIdx = 1
             end
-            to = to - 1
         else
             if rIdx == 1 then
                 down = true
                 tIdx = #rows
             end
-            from = from + 1
         end
     end
     tIdx = util.clamp(tIdx, 1, #rows)
 
     if tIdx < from or tIdx > to then
-        local tPos = tIdx + (down and 0 or from - to)
-        tPos = (tPos - 1) * itemLength
+        local tPos = math.ceil(tIdx / perRow) - 1
+        if down then
+            tPos = tPos - 0
+        else
+            tPos = tPos - rowsCount + 1
+        end
+        tPos = tPos * itemLength
         local pos = self:getPosition()
 
         self:setPosition(down
