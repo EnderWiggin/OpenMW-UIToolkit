@@ -4,7 +4,6 @@ local ui = require('openmw.ui')
 local util = require('openmw.util')
 local async = require('openmw.async')
 local ambient = require('openmw.ambient')
-local async = require('openmw.async')
 local I = require('openmw.interfaces')
 
 local v2 = util.vector2
@@ -237,7 +236,7 @@ function ItemGrid:_getHolder(n, id, view, visible)
         holder.id = id
         local old = layout.content and layout.content[1]
         local pos = self:getPosByIndex(n)
-        local needUpdate = pos ~= props.position or props.visible ~= visible
+        local needUpdate = (visible and pos ~= props.position) or props.visible ~= visible
         if needUpdate then
             props.position = pos
             props.visible = visible
@@ -246,7 +245,7 @@ function ItemGrid:_getHolder(n, id, view, visible)
         -- In some cases view might have been re-parented to another holder
         -- check its stored index to see if that's the case
         local viewIdx = viewUserData._index
-        if visible and viewIdx ~= n or old ~= view then
+        if visible and (viewIdx ~= n or old ~= view) then
             if viewIdx and viewIdx ~= n then
                 --index is present and does not match current = remove this view from previous parent
                 local parent = self._holders[viewIdx]
@@ -254,13 +253,13 @@ function ItemGrid:_getHolder(n, id, view, visible)
                 local tmp_layout = parent and parent.layout
                 if tmp_layout and tmp_layout.content then
                     tmp_layout.content = nil
-                    I.UIToolkit.queueUpdate(parent, true)
+                    I.UIToolkit.queueUpdate(parent)
                 end
             end
             if old then H.userData(old)._index = nil end
             viewUserData._index = n
             layout.content = ui.content { view }
-            I.UIToolkit.queueUpdate(element, true)
+            I.UIToolkit.queueUpdate(element)
         elseif needUpdate then
             I.UIToolkit.queueUpdate(element)
         end
@@ -325,7 +324,7 @@ function ItemGrid:getVisibleItemCount()
 end
 
 --TODO: for 0.52 try implementing it using Flex with wrapping
-function ItemGrid:_updateScrollable()
+function ItemGrid:_updateScrollable(updateContent)
     local state = self.state
     local itemSize = state.itemSize
     local scrollerSize = self:getContentSize()
@@ -341,7 +340,6 @@ function ItemGrid:_updateScrollable()
     ---@type openmw.ui.Layout
     local layout = self._scrollable.layout
     local from, to = self:getVisibleItemRange()
-    local updateContent = false
     local created
     for i = 1, itemCount do
         local item = state.items[i]
@@ -352,7 +350,6 @@ function ItemGrid:_updateScrollable()
     layout.props.size = scrollerSize
     if updateContent then
         if state.highlightElement then table.insert(items, 1, state.highlightElement) end
-        --if state.highlightElement then table.insert(items, state.highlightElement) end
         layout.content = ui.content(items)
     end
     I.UIToolkit.queueUpdate(self._scrollable)
@@ -390,10 +387,21 @@ function ItemGrid:setItems(items)
         end
     end
     state.items = items
+    local contentChanged = false
+    for i = #items + 1, table.maxn(self._holders) do
+        local holder = self._holders[i]
+        local element = holder and holder.element
+        if element and element.layout then
+            element.layout.content = nil
+            I.UIToolkit.queueDestroy(element, false)
+            contentChanged = true
+        end
+        self._holders[i] = nil
+    end
     state.itemsById = {}
     self._scrollBar:setMaxScroll(self:_getMaxScroll())
     I.UIToolkit.queueUpdate(self._scrollBar.element)
-    self:_updateScrollable()
+    self:_updateScrollable(contentChanged)
     self:updateHoveredItem()
 end
 
