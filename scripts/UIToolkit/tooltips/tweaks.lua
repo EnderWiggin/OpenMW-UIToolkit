@@ -2,11 +2,13 @@
 
 local types     = require 'openmw.types'
 local ui        = require 'openmw.ui'
+local util      = require 'openmw.util'
 local I         = require 'openmw.interfaces'
 
 local helpers   = require 'scripts.UIToolkit.tooltips.utils'
 local H         = require 'scripts.UIToolkit.helpers'
 local cfgPlayer = require 'scripts.UIToolkit.config.player'
+local v2        = util.vector2
 
 local Interface = I.UTKTooltips
 
@@ -15,6 +17,16 @@ Interface.addPreCreateTooltipHandler(function(recipe, tooltip)
     if not cfgPlayer.interface.b_CompactWeightValue then return end
 
     local items = {}
+
+    local soulItem, soulIndex = helpers.findByName(recipe.items, Interface.CONTENT.SoulValue)
+    if soulItem then
+        table.remove(recipe.items, soulIndex)
+        items[#items + 1] = {
+            type = 'value',
+            image = { path = 'textures/menu_icon_magic.dds', offset = v2(2, 2), size = v2(40, 40) },
+            value = soulItem.value
+        }
+    end
 
     -- Move value to bottom row
     local valueItem, valueIndex = helpers.findByName(recipe.items, Interface.CONTENT.Value)

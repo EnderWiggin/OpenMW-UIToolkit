@@ -28,6 +28,12 @@ ConfigInterfaceReimagined_On: On
 SettingCompactWeightValueName: Condensed weight/value
 SettingCompactWeightValueDesc: |-
   Moves weight and value information in item tooltips to the footer.
+  If "Show soul size" is enabled - it's value will be moved too.
+  
+SettingShowSoulValueName: Show soul size
+SettingShowSoulValueDesc: |-
+  Shows size of the soul inside soul gem in the tooltip.
+  If "Condensed weight/value" is enabled - this value will be condensed too.
 
 SettingConditionAsBarName: Condition as progress bar
 SettingConditionAsBarDesc: |-

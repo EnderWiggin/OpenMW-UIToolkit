@@ -57,6 +57,7 @@ local CONTENT =
     Quality = 'Quality',
     Root = 'Root',
     School = 'School',
+    SoulValue = 'SoulValue',
     Specialization = 'Specialization',
     SkillList = 'SkillList',
     SkillMaxed = 'SkillMaxed',
@@ -533,11 +534,18 @@ Tooltips.miscellaneousRecipe = function(tooltip)
     if not record then return end
     local value = record.value
     local soul = helpers.getSoul(tooltip.object)
-    if soul then
-        value = helpers.soulGemValue(soul.soulValue, value, cfgPlayer.interface.b_SoulGemValueRebalance)
-    end
     local items = {}
     items[#items + 1] = header(record, tooltip.object)
+    if soul then
+        value = helpers.soulGemValue(soul.soulValue, value, cfgPlayer.interface.b_SoulGemValueRebalance)
+        if cfgPlayer.interface.b_ShowSoulValue then
+            items[#items + 1] = {
+                text = l10n('Soul'),
+                value = soul.soulValue,
+                name = CONTENT.SoulValue,
+            }
+        end
+    end
     Tooltips.addWeight(items, record.weight)
     if not record.isKey then
         Tooltips.addValue(items, value)

@@ -77,6 +77,13 @@ I.Settings.registerGroup {
             default = false,
         },
         {
+            key = 'b_ShowSoulValue',
+            renderer = 'checkbox',
+            name = 'SettingShowSoulValueName',
+            description = 'SettingShowSoulValueDesc',
+            default = false,
+        },
+        {
             key = 'b_ConditionAsBar',
             renderer = 'checkbox',
             name = 'SettingConditionAsBarName',

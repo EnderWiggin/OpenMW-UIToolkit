@@ -10,6 +10,7 @@ local D = require 'scripts.UIToolkit.config.defaults'
 ---@field s_IntRe string
 ---@field f_ListRowScale number
 ---@field b_SoulGemValueRebalance boolean
+---@field b_ShowSoulValue boolean
 ---@field b_CompactWeightValue boolean
 ---@field b_ConditionAsBar boolean
 
