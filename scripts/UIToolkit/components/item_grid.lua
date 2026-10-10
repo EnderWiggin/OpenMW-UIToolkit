@@ -310,9 +310,18 @@ function ItemGrid:getVisibleItemRange(strict)
     end
 end
 
+---@return integer
 function ItemGrid:getVisibleItemCount()
     local state = self.state
-    return math.floor(state.currentSize.y / state.itemHeight)
+    local contentSize = self:getContentSize()
+    local itemSize = state.itemSize
+    if state.horizontal then
+        local height = math.floor(contentSize.y / itemSize.y)
+        return height * math.ceil(contentSize.x / itemSize.x)
+    else
+        local width = math.floor(contentSize.x / itemSize.x)
+        return width * math.ceil(contentSize.y / itemSize.y)
+    end
 end
 
 --TODO: for 0.52 try implementing it using Flex with wrapping
