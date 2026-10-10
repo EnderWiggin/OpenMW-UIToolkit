@@ -214,7 +214,7 @@ end
 ---@param hidden? table<string, boolean>
 function Item:setHiddenColumns(hidden)
     self.hidden = hidden or {}
-    self:markCacheDirty()
+    self:clear()
 end
 
 ---@param data UIToolkit.ListData.Column
