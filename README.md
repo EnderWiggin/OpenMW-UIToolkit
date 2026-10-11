@@ -537,6 +537,78 @@ list:setItems {
 
 The header can also be controlled in code. For example, `list.header:toggleColumn('value', false)` selects the value column and sorts it in descending order. Use `defaultSort` when a secondary or initial ordering is needed; items with equal sort values are ordered by their `id`.
 
+## Item Grid
+`itemGrid(opts)` - creates a scrollable grid of items. Uses a grid item provider to get a component for each item. Items can have tooltips. By default items are laid out left to right, then down; set `horizontal` to lay them out down first, then to the right.
+
+Options:
+
+- `size` - size of the grid as a `Vector2`.
+- `provider` - grid item provider that creates a component for each item and supplies its item size.
+- `horizontal` - optional flag that makes scrolling horizontal.
+- `onItemClicked` - callback called with the clicked item and its index.
+- `scrollWidth` - optional width of the scrollbar.
+- `slimScroll` - optional flag that removes borders around the grid's scrollbar arrows and handle.
+- `noBorder` - optional flag that removes the grid border.
+
+### Example
+Create a grid of icons for the items in player's inventory with tooltips. A provider implements `makeComponent` and `getItemSize`, and can supply a tooltip per item via `getTooltip`. `makeComponent` must return a `UIToolkit.Component`, so a plain image is wrapped in one:
+```lua
+local player       = require 'openmw.self'
+local types        = require 'openmw.types'
+local ui           = require 'openmw.ui'
+local util         = require 'openmw.util'
+local I            = require 'openmw.interfaces'
+local Class        = require 'scripts.UIToolkit.class'
+local Component    = require 'scripts.UIToolkit.components.component'
+local GridItemBase = require 'scripts.UIToolkit.components.grid_item_provider'
+
+local iconSize = util.vector2(45, 45)
+
+---@class IconGridItem : UIToolkit.GridItem.Base
+local IconItem = Class(GridItemBase)
+
+function IconItem:makeComponent(data)
+    local element = ui.create {
+        type = ui.TYPE.Image,
+        props = {
+            resource = I.UIToolkit.texture(data.icon),
+            size = iconSize,
+        },
+    }
+    local component = Component:new()
+    component:init(element)
+    return component
+end
+
+function IconItem:getItemSize()
+    return iconSize
+end
+
+function IconItem:getTooltip(data)
+    return data.tooltip
+end
+
+---@type UIToolkit.ListData.Base[]
+local rows = {}
+local items = types.Actor.inventory(player):getAll()
+for i = 1, #items do
+    ---@type openmw.Object
+    local item = items[i]
+    local record = item.type.records[item.recordId]
+    rows[#rows + 1] = {
+        id = item.id,
+        icon = record.icon,
+        tooltip = { object = item, observer = player },
+    }
+end
+
+local grid = I.UIToolkit.Components.itemGrid {
+    provider = IconItem:new(),
+    size = util.vector2(200, 300),
+}
+grid:setItems(rows)
+```
+
 ## Windows
 `I.UIToolkit.WindowManager` handles registering, opening and closing windows. Windows can be draggable, resizable. They store their position and size between opens.
 
