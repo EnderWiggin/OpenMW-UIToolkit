@@ -73,7 +73,11 @@ local function isKnockedOut(obj)
     return not canMove and not isDead and not isParalyzed
 end
 
-local function isAllowedToUse(obj, actor)
+---@param obj openmw.Object
+---@param actor openmw.Object
+---@param owned boolean?
+local function isAllowedToUse(obj, actor, owned)
+    if owned ~= nil then return not owned end
     if not obj or not actor then
         return true
     end
@@ -171,7 +175,7 @@ local function createTooltipLayout(tooltip)
     end
     if layout then
         local template = boxTemplateNormal
-        if showOwnedObjects and not isAllowedToUse(tooltip.object, tooltip.observer) then
+        if showOwnedObjects and not isAllowedToUse(tooltip.object, tooltip.observer, tooltip.owned) then
             template = boxTemplateOwned
         end
 

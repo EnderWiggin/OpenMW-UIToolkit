@@ -756,6 +756,7 @@ function Templates.getBorderSize(style) end
 ---@field recipe UTKTooltips.Recipe? (Optional) recipe. If set, this recipe is used directly.
 ---@field layout openmw.ui.Layout? (Optional) layout. If set, this layout is used directly, skipping all builders.
 ---@field position? fun():openmw.util.Vector2?,openmw.util.Vector2?
+---@field owned? boolean if set will override ownership check
 
 --- Table of information defining a simple menu tooltip. Must have either layout or recipe defined.
 ---@class UTKTooltips.MenuTooltip
