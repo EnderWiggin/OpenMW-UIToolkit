@@ -9,8 +9,8 @@ end
 local M = {
     PageKey = MOD,
     L10N = 'UIToolkitLib',
-    Version = '1.3.0',
-    API = 4,
+    Version = '1.4.0',
+    API = 5,
     Tooltips = 1,
     Section = {
         Interface = section 'Interface',

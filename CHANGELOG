@@ -1,3 +1,20 @@
+Version 1.4.0 (2026-10-11)
+- bumped API version to 5
+- added Item Grid component
+- UIToolkit.texture now can accept openmw.ui.TextureResourceOptions in place of path, so it can be used as a direct replacement for `ui.texture`
+- tooltips:
+  - added `owned` property to tooltips - when set, it overrides the ownership check for the owned-objects box template
+  - added option to display soul size in tooltips
+  - `image` property of tooltip recipes (header/banner/value) can now be TextureResourceOptions, not just a path
+  - tooltip icons now go through the toolkit's texture cache
+- column list item:
+  - column configs can specify an `update` function called to update a column in-place instead of re-rendering;
+    stock text/icon columns fall back to built-in `updateText` / `updateIcon` updaters
+  - added `markColumnDirty` / `markAllDirty` / `markCacheDirty` methods to defer column refreshes until the view is next requested
+- window: fixed clamping to screen that allowed windows to get out of bounds on the right and bottom
+- script context: added `hasTypes` method (true in global/local/player contexts)
+- debug: added `scripts/UIToolkit/debug/measure.lua` time-measure helper (start/finish in milliseconds)
+
 Version 1.3.0 (2026-10-04)
 - bumped API version to 4
 - implemented new (0.52) cursor API
