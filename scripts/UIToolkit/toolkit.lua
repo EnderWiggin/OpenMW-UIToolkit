@@ -229,11 +229,16 @@ local function textureKey(path, size, offset)
     return string.format('[%s]:%s:%s', path, tostring(size), tostring(offset))
 end
 
----@param path string
+---@param path string|openmw.ui.TextureResourceOptions
 ---@param size openmw.util.Vector2?
 ---@param offset openmw.util.Vector2?
 ---@return openmw.ui.TextureResource
 function Interface.texture(path, size, offset)
+    if type(path) ~= 'string' then
+        size = path.size or size
+        offset = path.offset or offset
+        path = path.path
+    end
     local key = textureKey(path, size, offset)
     if TEX_CACHE[key] then return TEX_CACHE[key] end
     local tex = ui.texture { path = path, size = size, offset = offset }
