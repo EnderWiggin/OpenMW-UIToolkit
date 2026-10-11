@@ -733,7 +733,7 @@ function Templates.getBorderSize(style) end
 ---@field createTooltipLayout fun(tooltip:UTKTooltips.Tooltip):openmw.ui.Layout?
 ---@field addPreCreateTooltipHandler fun(handler:UTKTooltips.PreCreateHandler)
 ---@field addPostCreateTooltipHandler fun(handler:UTKTooltips.PostCreateHandler)
----@field registerBuilder fun(handler:fun())
+---@field registerBuilder fun(type:string, handler:fun(item:table):openmw.ui.Layout)
 ---@field CONTENT UTKTooltips.ContentNames
 ---@field TYPE UTKTooltips.TooltipTypes
 ---@field builders table<UTKTooltips.RecipeItemType, UTKTooltips.RecipeItemBuilder>
