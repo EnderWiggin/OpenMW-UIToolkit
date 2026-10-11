@@ -251,8 +251,7 @@ local mapMarkerNoteBox = {
 ---@return openmw.ui.TextureResource?
 local function texture(pathOrOpts)
     if not pathOrOpts then return nil end
-    return type(pathOrOpts) == 'string' and ui.texture { path = pathOrOpts }
-        or ui.texture(pathOrOpts --[[@as openmw.ui.TextureResourceOptions]])
+    return I.UIToolkit.texture(pathOrOpts)
 end
 
 function Builders.banner(item)
