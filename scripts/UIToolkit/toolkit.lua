@@ -375,7 +375,7 @@ local function onFrame()
     end
     if isPlayer then
         InterfaceP.WindowManager._onFrame(dt)
-        Controller._onFrame(dt)
+        Controller._onFrame()
         if input.getMouseMoveX() ~= 0 or input.getMouseMoveY() ~= 0 then
             Controller._setControllerActiveState(false)
         elseif controllerAxisMoved() then

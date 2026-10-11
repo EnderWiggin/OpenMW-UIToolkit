@@ -311,7 +311,7 @@ local function enchantment(items, record, object, noCharge)
         local chargeMax = enchant.charge
         if chargeMax > 0 and not noCharge then
             if object then
-                local itemData = Item.itemData(object)
+                local itemData = Item.itemData(object) --[[@as openmw.types.ItemData]]
                 chargeCurrent = itemData.enchantmentCharge
             end
             items[#items + 1] = { text = l10n('Charge'), name = CONTENT.Text }

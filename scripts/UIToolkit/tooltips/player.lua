@@ -262,9 +262,6 @@ local function updatePosition()
             props.anchor = util.vector2(0.5, 1)
         end
     end
-    if extraParams and extraParams.fixedTipAnchor then
-        props.anchor = extraParams.fixedTipAnchor
-    end
     fixedPositionSet = true
 end
 

@@ -373,7 +373,6 @@ function ItemGrid:_updateScrollable(updateContent)
     end
     layout.props.size = scrollerSize
     if updateContent then
-        --if state.highlightElement then table.insert(items, 1, state.highlightElement) end
         layout.content = ui.content(items)
     end
     I.UIToolkit.queueUpdate(self._scrollable)
