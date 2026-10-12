@@ -521,7 +521,9 @@ function Components.sortedList(opts) end
 ---@field setTitle fun(self:UIToolkit.Window, newTitle:string)
 ---@field setContent fun(self:UIToolkit.Window, content:openmw.ui.Content)
 ---@field getPosition fun(self:UIToolkit.Window):openmw.util.Vector2
+---@field setPosition fun(self:UIToolkit.Window, p:openmw.util.Vector2)
 ---@field getSize fun(self:UIToolkit.Window):openmw.util.Vector2
+---@field setSize fun(self:UIToolkit.Window, sz:openmw.util.Vector2)
 ---@field getInnerSize fun(self:UIToolkit.Window):openmw.util.Vector2
 ---@field isPinned fun(self:UIToolkit.Window):boolean
 ---@field setPinnable fun(self:UIToolkit.Window, pinnable:boolean)

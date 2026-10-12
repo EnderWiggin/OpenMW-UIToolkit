@@ -618,8 +618,25 @@ function Window:init(opts, id, saved)
         return window.layout.props.position
     end
 
+    self.setPosition = function(_, p)
+        window.layout.props.position = p
+        window:update()
+    end
+
     self.getSize = function(_)
         return window.layout.props.size
+    end
+
+    self.setSize = function(_, sz)
+        if window.layout.props.size == sz then return end
+        window.layout.props.size = sz
+
+        window:update()
+        header:update()
+        body:update()
+        pinButton:update()
+
+        if handler then handler:onResized(self:getInnerSize()) end
     end
 
     self.getInnerSize = function(_)
