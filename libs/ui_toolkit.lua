@@ -771,7 +771,7 @@ function Templates.getBorderSize(style) end
 
 ---@alias UTKTooltips.RecipeItemType
 ---|'banner' # Recipe for a large image, normally preceding the header
----|'default' # The default recipe item type, for regular 'text: value' and 'text: min-max' items. Can be used to create a simple line of text by passing only text.
+---|'default' # The default recipe item type, for regular 'text: value' and 'text: min-max' items. Can be used to create a simple line of text by passing only text. If 'color' is set it will be used for text color.
 ---|'magicEffects' # Recipe for a list of magic effects
 ---|'factionRank' # A rank name
 ---|'factionNextRank' # The next rank, and the attribute requirements for it
@@ -785,12 +785,13 @@ function Templates.getBorderSize(style) end
 ---|'progressBar' # A progress bar, filled up to 'current' out of 'max'
 ---|'root' # Another @{#Recipe} instance
 ---|'spellList' # Takes a list of spells and outputs a list spells divided by type (Spell, Ability, Power, etc.)
+---|'text' # simple text with optional color
 ---|'value' # renders as an item.image + item.value
 
 --- Table defining a single recipe item, to form one entry in the final tooltip
 -- Required/ignored fields depend on the recipe item type.
 ---@class UTKTooltips.RecipeItem
----@field type UTKTooltips.RecipeItemType? defines which builder is used to create the layout for this item. (default='default')
+---@field type? UTKTooltips.RecipeItemType|string defines which builder is used to create the layout for this item. (default='default')
 ---@field name string?
 ---@field align openmw.ui.Alignment? Re-aligns this item. Used by paragraph item to set horizontal text alignment.
 ---@field text string? (used in default, note, paragraph)

@@ -17,6 +17,9 @@ end
 
 -- Short-hands
 local V2 = util.vector2
+local Toolkit = I.UIToolkit
+local T = Toolkit.Templates
+
 local Builders = {}
 
 local resources =
@@ -34,7 +37,7 @@ local l10n = core.l10n('UTKTooltips')
 
 local function textHeader(text, name)
     return {
-        template = I.MWUI.templates.textHeader,
+        template = T.header(),
         name = name,
         props = {
             text = text,
@@ -43,13 +46,17 @@ local function textHeader(text, name)
     }
 end
 
-local function textNormal(text, name)
+---@param text string
+---@param name string?
+---@param color openmw.util.Color?
+local function textNormal(text, name, color)
     return {
-        template = I.MWUI.templates.textNormal,
+        template = T.text(),
         name = name,
         props = {
             text = text,
             multiline = true,
+            textColor = color,
             textAlignH = ui.ALIGNMENT.Center
         }
     }
@@ -59,14 +66,16 @@ end
 ---@param name string?
 ---@param width number?
 ---@param align openmw.ui.Alignment?
+---@param color openmw.util.Color?
 ---@return openmw.ui.Layout
-local function textParagraph(text, name, width, align)
+local function textParagraph(text, name, width, align, color)
     return {
-        template = I.MWUI.templates.textParagraph,
+        template = T.paragraph(),
         name = name,
         props = {
             text = text,
             size = V2(width or 400, 0),
+            textColor = color,
             textAlignH = align,
         }
     }
@@ -110,7 +119,7 @@ local function effectDescription(content, effect, noTarget, noMagnitude, noDurat
     local mgef = effect.effect
     local tex = ui.texture { path = mgef.icon }
     local icon = {
-        template = I.UIToolkit.Templates.padding(4),
+        template = T.padding(4),
         content = ui.content { {
             type = ui.TYPE.Image,
             props = {
@@ -163,7 +172,6 @@ local function fallbackGap(layout)
     if hasGapAPI then return layout end
     local content = layout.content
     if content and #content > 0 then
-        local T = I.UIToolkit.Templates
         local gap = layout.props and layout.props.gap
         if gap and (layout.type == ui.TYPE.Flex or layout.template and layout.template.type == ui.TYPE.Flex) then
             layout.props.gap = nil
@@ -251,14 +259,14 @@ local mapMarkerNoteBox = {
 ---@return openmw.ui.TextureResource?
 local function texture(pathOrOpts)
     if not pathOrOpts then return nil end
-    return I.UIToolkit.texture(pathOrOpts)
+    return Toolkit.texture(pathOrOpts)
 end
 
 function Builders.banner(item)
     assert(item.image)
     local size = item.size or V2(259, 133)
     return {
-        template = I.MWUI.templates.box,
+        template = T.box {},
         content = ui.content { {
             type = ui.TYPE.Image,
             props = {
@@ -401,7 +409,7 @@ function Builders.header(item)
     if subtitle then
         textContent:add(textParagraph(subtitle, 'Subtitle', item.width))
     end
-    local theme = I.UIToolkit.getTheme()
+    local theme = Toolkit.getTheme()
     return fallbackGap {
         type = ui.TYPE.Flex,
         props = {
@@ -435,7 +443,7 @@ function Builders.list(item)
 end
 
 function Builders.note(item)
-    local theme = I.UIToolkit.getTheme()
+    local theme = Toolkit.getTheme()
     return fallbackGap {
         type = ui.TYPE.Flex,
         props = {
@@ -453,12 +461,11 @@ end
 ---@param item UTKTooltips.RecipeItem
 function Builders.paragraph(item)
     assert(item.text ~= nil)
-    return textParagraph(item.text, nil, item.width, item.align)
+    return textParagraph(item.text, nil, item.width, item.align, item.color)
 end
 
 function Builders.progressBar(item)
-    local theme = I.UIToolkit.getTheme()
-    local T = I.UIToolkit.Templates
+    local theme = Toolkit.getTheme()
     local current = item.current or 0
     local max = item.max or 100
     local color = item.color or theme.Colors.HEALTH
@@ -563,11 +570,11 @@ end
 
 function Builders.text(item)
     assert(item.text ~= nil)
-    return textNormal(item.text)
+    return textNormal(item.text, 'text', item.color)
 end
 
 function Builders.value(item)
-    local theme = I.UIToolkit.getTheme()
+    local theme = Toolkit.getTheme()
     return {
         type = ui.TYPE.Container,
         props = {},
@@ -580,7 +587,7 @@ function Builders.value(item)
                 }
             },
             {
-                template = I.UIToolkit.Templates.header(),
+                template = T.header(),
                 props = {
                     text = tostring(item.value),
                     position = V2(theme.Sizes.textHeader + theme.Sizes.smallGap, 0)
@@ -599,7 +606,7 @@ function Builders.default(item)
         if str ~= '' then str = str .. ': ' end
         str = str .. tostring(item.min) .. ' - ' .. tostring(item.max)
     end
-    return textNormal(str, item.name)
+    return textNormal(str, item.name, item.color)
 end
 
 return Builders
