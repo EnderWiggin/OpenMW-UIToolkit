@@ -1,3 +1,9 @@
+Version 1.4.1 (2026-10-15)
+- window: added setters for position and size
+- window: enforce min size on open, resize or min size change
+- dropbox: fixed doubled click sound
+- tooltips: default, text and paragraph items can have text color customized
+
 Version 1.4.0 (2026-10-11)
 - bumped API version to 5
 - added Item Grid component
