@@ -90,4 +90,18 @@ function M.getFirstControllerInput(bind)
     return inputs
 end
 
+---@param bind UIToolkit.SettingRenderer.CustomBind[]
+---@return UIToolkit.Controller.Input
+function M.getFirstKeyboardInput(bind)
+    ---@type UIToolkit.Controller.Input[]
+    if not bind then return {} end
+    for i = 1, #bind do
+        local tmp = bind[i]
+        if tmp.device == Device.Keyboard and tmp.code then
+            return { id = tmp.code }
+        end
+    end
+    return {}
+end
+
 return M
