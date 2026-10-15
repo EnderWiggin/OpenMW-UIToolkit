@@ -2,7 +2,6 @@
 
 local ui = require('openmw.ui')
 local util = require('openmw.util')
-local ambient = require('openmw.ambient')
 local I = require('openmw.interfaces')
 
 local v2 = util.vector2
@@ -46,7 +45,6 @@ function Dropbox:init(opts)
         scrollWidth = 10,
         slimScroll = true,
         onItemClicked = function(data, idx)
-            ambient.playSound('menu click', { scale = false })
             self:selectItem(data)
             self:closePopup()
             if opts.onItemSelected then
