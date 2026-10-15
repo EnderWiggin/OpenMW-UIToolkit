@@ -308,10 +308,14 @@ local function update()
     end
 end
 
----@param tip UTKTooltips.AnyTooltip?
+---@param tip? UTKTooltips.AnyTooltip|UTKTooltips.TipProvider
 ---@return UTKTooltips.Tooltip?
 local function processAnyTooltip(tip)
     if not tip then return nil end
+
+    if type(tip) == 'function' then
+        tip = tip()
+    end
     if type(tip) == 'string' then
         ---@type UTKTooltips.Tooltip
         return { recipe = { items = { { text = tip --[[@as string]] } } } }
@@ -335,7 +339,7 @@ local function processAnyTooltip(tip)
     return { recipe = { items = items, arrange = ui.ALIGNMENT.Center } }
 end
 
----@param newTooltip? UTKTooltips.AnyTooltip
+---@param newTooltip UTKTooltips.AnyTooltip|UTKTooltips.TipProvider|nil
 ---@param extra UTKTooltips.ExtraParams?
 local function setTooltip(newTooltip, extra)
     clear()

@@ -73,7 +73,7 @@ function Interactive.updateState(layoutOrElement, state) end
 ---@field disabled boolean? element is disabled
 
 ---@class UIToolkit.InteractiveOpts
----@field tooltip? UTKTooltips.AnyTooltip|UIToolkit.TooltipProvider|nil optional tooltip or tooltip provider function
+---@field tooltip? UTKTooltips.AnyTooltip|UTKTooltips.TipProvider|nil optional tooltip or tooltip provider function
 ---@field onClick? fun(e:openmw.ui.MouseEvent) optional function to be called when element is clicked.
 ---@field onRClick? fun(e:openmw.ui.MouseEvent) optional function to be called when element is right-clicked.
 ---@field canClick? fun():boolean
@@ -264,7 +264,7 @@ function Components.sortedList(opts) end
 
 ---@class UIToolkit.ListData.Base
 ---@field id string
----@field tooltip? UTKTooltips.AnyTooltip|UIToolkit.TooltipProvider
+---@field tooltip? UTKTooltips.AnyTooltip|UTKTooltips.TipProvider
 ---@field isActive? fun():boolean
 ---@field isDisabled? fun():boolean
 
@@ -274,7 +274,7 @@ function Components.sortedList(opts) end
 ---@field getComponent fun(self:UIToolkit.ListItem.Base<T>, data:T):UIToolkit.Component
 ---@field getCachedComponent fun(self:UIToolkit.ListItem.Base<T>, id:string):UIToolkit.Component?
 ---@field makeComponent fun(self:UIToolkit.ListItem.Base<T>, data:T):UIToolkit.Component
----@field getTooltip fun(self:UIToolkit.ListItem.Base<T>, data:T):UTKTooltips.AnyTooltip?
+---@field getTooltip fun(self:UIToolkit.ListItem.Base<T>, data:T):UTKTooltips.AnyTooltip|UTKTooltips.TipProvider|nil
 ---@field getView fun(self:UIToolkit.ListItem.Base<T>, data:T):openmw.ui.Element
 ---@field refreshState fun(self:UIToolkit.ListItem.Base<T>, idOrData:string|UIToolkit.ListData.Base)
 ---@field getCachedView fun(self:UIToolkit.ListItem.Base<T>, id:string):openmw.ui.Element?
@@ -288,7 +288,7 @@ function Components.sortedList(opts) end
 ---@field new fun(self:UIToolkit.ListItem.Text):UIToolkit.ListItem.Text
 ---@field getItemHeight fun(self:UIToolkit.ListItem.Text):number
 ---@field makeComponent fun(self:UIToolkit.ListItem.Text, data:UIToolkit.ListData.Text):UIToolkit.Component
----@field getTooltip fun(self:UIToolkit.ListItem.Text, data:UIToolkit.ListData.Text):UTKTooltips.AnyTooltip?
+---@field getTooltip fun(self:UIToolkit.ListItem.Text, data:UIToolkit.ListData.Text):UTKTooltips.AnyTooltip|UTKTooltips.TipProvider|nil
 
 ---@alias UIToolkit.ListItem.Column.Renderer fun(data:UIToolkit.ListData.Column, cfg:UIToolkit.ListData.ColumnConfig, height:number):openmw.ui.Layout|openmw.ui.Element
 ---@alias UIToolkit.ListItem.Column.Updater fun(part:openmw.ui.LayoutOrElement, data:UIToolkit.ListData.Column, cfg:UIToolkit.ListData.ColumnConfig, height:number):boolean returns true if the value was changed
@@ -354,7 +354,7 @@ function Components.sortedList(opts) end
 ---@field getComponent fun(self:UIToolkit.ListItem.Base<T>, data:T):UIToolkit.Component
 ---@field getCachedComponent fun(self:UIToolkit.ListItem.Base<T>, id:string):UIToolkit.Component?
 ---@field makeComponent fun(self:UIToolkit.ListItem.Base<T>, data:T):UIToolkit.Component
----@field getTooltip fun(self:UIToolkit.ListItem.Base<T>, data:T):UTKTooltips.AnyTooltip?
+---@field getTooltip fun(self:UIToolkit.ListItem.Base<T>, data:T):UTKTooltips.AnyTooltip|UTKTooltips.TipProvider|nil
 ---@field getView fun(self:UIToolkit.ListItem.Base<T>, data:T):openmw.ui.Element
 ---@field refreshState fun(self:UIToolkit.ListItem.Base<T>, idOrData:string|UIToolkit.ListData.Base)
 ---@field getCachedView fun(self:UIToolkit.ListItem.Base<T>, id:string):openmw.ui.Element?
@@ -546,7 +546,7 @@ function Components.sortedList(opts) end
 ---@class UIToolkit.PopupButtonOpts
 ---@field text string text on the button
 ---@field onClicked? fun() will be called when button is clicked
----@field tooltip? UTKTooltips.AnyTooltip|UIToolkit.TooltipProvider tooltip or tooltip provider to show on a button
+---@field tooltip? UTKTooltips.AnyTooltip|UTKTooltips.TipProvider|nil tooltip or tooltip provider to show on a button
 ---@field noClose? boolean if set to true popup won't be closed when this button is clicked. Defaults to false.
 ---@field style UIToolkit.BoxStyle?
 
@@ -730,8 +730,8 @@ function Templates.getBorderSize(style) end
 ---@class openmw.interfaces.UTKTooltips
 ---@field version number
 ---@field currentTooltip fun():UTKTooltips.Tooltip?
----@field setTooltip fun(tooltip:UTKTooltips.AnyTooltip?, extra:UTKTooltips.ExtraParams?)
----@field convertAnyTooltip fun(tip:UTKTooltips.AnyTooltip?):UTKTooltips.Tooltip?
+---@field setTooltip fun(tooltip:UTKTooltips.AnyTooltip|UTKTooltips.TipProvider|nil, extra:UTKTooltips.ExtraParams?)
+---@field convertAnyTooltip fun(tip:UTKTooltips.AnyTooltip|UTKTooltips.TipProvider|nil):UTKTooltips.Tooltip?
 ---@field createTooltipLayout fun(tooltip:UTKTooltips.Tooltip):openmw.ui.Layout?
 ---@field addPreCreateTooltipHandler fun(handler:UTKTooltips.PreCreateHandler)
 ---@field addPostCreateTooltipHandler fun(handler:UTKTooltips.PostCreateHandler)
@@ -743,8 +743,8 @@ function Templates.getBorderSize(style) end
 ---@class openmw.interfaces.UTKMenuTooltips
 ---@field version number
 ---@field currentTooltip fun():UTKTooltips.Tooltip?
----@field setTooltip fun(tooltip:UTKTooltips.AnyTooltip?, extra:UTKTooltips.ExtraParams?)
----@field convertAnyTooltip fun(tip:UTKTooltips.AnyTooltip?):UTKTooltips.Tooltip?
+---@field setTooltip fun(tooltip:UTKTooltips.AnyTooltip|UTKTooltips.TipProvider|nil, extra:UTKTooltips.ExtraParams?)
+---@field convertAnyTooltip fun(tip:UTKTooltips.AnyTooltip|UTKTooltips.TipProvider|nil):UTKTooltips.Tooltip?
 ---@field createTooltipLayout fun(tooltip:UTKTooltips.Tooltip):openmw.ui.Layout?
 
 --- Table of information defining a tooltip
@@ -920,8 +920,8 @@ function Templates.getBorderSize(style) end
 ---@alias UTKTooltips.PreCreateHandler fun(recipe:UTKTooltips.Recipe, tooltip:UTKTooltips.Tooltip)
 ---@alias UTKTooltips.PostCreateHandler fun(layout:openmw.ui.Layout, tooltip:UTKTooltips.Tooltip)
 ---@alias UTKTooltips.CurrentTipIsAlive fun():boolean
----@alias UIToolkit.TooltipProvider fun():UTKTooltips.AnyTooltip?
 ---@alias UTKTooltips.SimpleTextTooltip string
 ---@alias UTKTooltips.SimpleTooltip {title:string?, body:string?, width:number?}
 ---@alias UTKTooltips.AnyTooltip UTKTooltips.Tooltip|UTKTooltips.SimpleTooltip|UTKTooltips.SimpleTextTooltip
+---@alias UTKTooltips.TipProvider fun():UTKTooltips.AnyTooltip?
 ---@alias UTKTooltips.AnyMenuTooltip UTKTooltips.MenuTooltip|UTKTooltips.SimpleTooltip|UTKTooltips.SimpleTextTooltip

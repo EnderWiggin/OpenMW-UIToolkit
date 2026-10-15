@@ -39,7 +39,7 @@ function ListItemText:makeComponent(data)
 end
 
 ---@param data UIToolkit.ListData.Text
----@return UTKTooltips.AnyTooltip?
+---@return UTKTooltips.AnyTooltip|UTKTooltips.TipProvider|nil
 function ListItemText:getTooltip(data)
     return data.tooltip
 end

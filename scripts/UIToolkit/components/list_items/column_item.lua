@@ -200,7 +200,7 @@ function Item:refreshDirty(component, data)
 end
 
 ---@param data UIToolkit.ListData.Column
----@return UTKTooltips.AnyTooltip?
+---@return UTKTooltips.AnyTooltip|UTKTooltips.TipProvider|nil
 function Item:getTooltip(data)
     local tip = data.tooltip
     if not tip then return nil end

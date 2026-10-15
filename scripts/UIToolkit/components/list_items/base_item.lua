@@ -45,7 +45,7 @@ end
 
 ---@generic T: UIToolkit.ListData.Base
 ---@param data T
----@return UTKTooltips.AnyTooltip?
+---@return UTKTooltips.AnyTooltip|UTKTooltips.TipProvider|nil
 ---@diagnostic disable-next-line: unused-local
 function ListItemBase:getTooltip(data)
     return nil
