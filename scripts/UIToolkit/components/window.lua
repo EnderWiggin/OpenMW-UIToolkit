@@ -401,6 +401,12 @@ function Window:init(opts, id, saved)
         dragType = nil,
     }
 
+    local function normalizeSize(sz)
+        local m = data.minSize
+        return v2(math.max(sz.x, m.x), math.max(sz.y, m.y))
+    end
+    size = normalizeSize(size)
+
     local function setDragType(dragType)
         data.dragType = dragType
     end
@@ -628,6 +634,7 @@ function Window:init(opts, id, saved)
     end
 
     self.setSize = function(_, sz)
+        sz = normalizeSize(sz)
         if window.layout.props.size == sz then return end
         window.layout.props.size = sz
 
@@ -670,7 +677,7 @@ function Window:init(opts, id, saved)
     self.setMinSize = function(_, minSz)
         if data.minSize == minSz then return end
         data.minSize = minSz or MIN_SZ
-        --TODO: update size if smaller?
+        self:setSize(window.layout.props.size)
     end
 
     Component.init(self, window)
