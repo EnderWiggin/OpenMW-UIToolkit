@@ -68,7 +68,7 @@ function M.open(id, data)
     wnd:init(opts, id, saved and {
         pinned = saved.pinned == true,
         position = M.toAbsolute(saved.position),
-        size = M.toAbsolute(saved.size),
+        size = opts.resizing and M.toAbsolute(saved.size) or nil,
     } or nil)
     cfg.wnd = wnd
     if handler then
