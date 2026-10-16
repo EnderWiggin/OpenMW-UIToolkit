@@ -147,7 +147,7 @@ function ItemGrid:init(opts)
         horizontal = state.horizontal,
         width = opts.scrollWidth,
         slim = opts.slimScroll,
-        scrollStep = 2 * (state.horizontal and state.itemSize.x or state.itemSize.y),
+        scrollStep = (opts.scrollStep or 2) * (state.horizontal and state.itemSize.x or state.itemSize.y),
         maxScroll = 0,
         length = self:_getScrollLength()
     }

@@ -412,6 +412,7 @@ Options:
 - `onItemClicked` - callback called with the clicked item and its index.
 - `scrollWidth` - optional width of the scrollbar.
 - `slimScroll` - optional flag that removes borders around the list's scrollbar arrows and handle.
+- `scrollStep` - optional number of items to move per scrollbar arrow click. Defaults to 2.
 - `noBorder` - optional flag that removes the list border.
 
 ### Example
@@ -502,6 +503,7 @@ Options:
 - `onItemClicked` - callback called with the clicked item and its index.
 - `scrollWidth` - optional width of the scrollbar.
 - `slimScroll` - optional flag that removes borders around the list's scrollbar arrows and handle.
+- `scrollStep` - optional number of items to move per scrollbar arrow click. Defaults to 2.
 - `noBorder` - optional flag that removes the list border.
 
 ### Example
@@ -548,6 +550,7 @@ Options:
 - `onItemClicked` - callback called with the clicked item and its index.
 - `scrollWidth` - optional width of the scrollbar.
 - `slimScroll` - optional flag that removes borders around the grid's scrollbar arrows and handle.
+- `scrollStep` - optional number of items to move per scrollbar arrow click. Defaults to 2.
 - `noBorder` - optional flag that removes the grid border.
 
 ### Example

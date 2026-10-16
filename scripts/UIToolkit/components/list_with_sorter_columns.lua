@@ -106,6 +106,7 @@ function SortedList:init(opts)
         scrollWidth = opts.scrollWidth,
         slimScroll = opts.slimScroll,
         noBorder = opts.noBorder,
+        scrollStep = opts.scrollStep,
     }
 
     self.header = I.UIToolkit.Components.columnSorter {

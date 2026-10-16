@@ -327,6 +327,7 @@ function Components.sortedList(opts) end
 ---@field slimScroll boolean? scrollbar will have no borders around arrows or handle
 ---@field noBorder boolean?
 ---@field itemDeepUpdate boolean?
+---@field scrollStep integer? number of items the scrollbar moves when its arrows are clicked. Defaults to 2
 
 ---@class UIToolkit.ItemList : UIToolkit.Scrollable
 ---@field new fun():UIToolkit.ItemList
@@ -374,6 +375,7 @@ function Components.sortedList(opts) end
 ---@field slimScroll boolean? scrollbar will have no borders around arrows or handle
 ---@field noBorder boolean?
 ---@field itemDeepUpdate boolean?
+---@field scrollStep integer? number of items the scrollbar moves when its arrows are clicked. Defaults to 2
 
 ---@class UIToolkit.ItemGrid : UIToolkit.Scrollable
 ---@field new fun():UIToolkit.ItemGrid
@@ -443,6 +445,7 @@ function Components.sortedList(opts) end
 ---@field scrollWidth number?
 ---@field slimScroll boolean? scrollbar will have no borders around arrows or handle
 ---@field noBorder boolean?
+---@field scrollStep integer? number of items the scrollbar moves when its arrows are clicked. Defaults to 2
 
 ---@alias UIToolkit.SortedList.Filter fun(item:UIToolkit.ListData.Column):boolean
 
