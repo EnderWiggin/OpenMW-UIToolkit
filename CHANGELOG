@@ -1,3 +1,8 @@
+Version 1.4.2 (2026-10-16)
+- tooltips: setTooltip accepts provider function
+- config util: added getFirstKeyboardInput variant of getFirstControllerInput
+- added option to pass scroll step to item grid, list and sorted list
+
 Version 1.4.1 (2026-10-15)
 - window: added setters for position and size
 - window: enforce min size on open, resize or min size change
