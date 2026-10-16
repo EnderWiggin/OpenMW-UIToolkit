@@ -51,15 +51,15 @@ end
 
 ---@param id string
 ---@param data any?
----@return UIToolkit.Window
+---@return UIToolkit.Window, UIToolkit.WindowHandler
 function M.open(id, data)
     local cfg = assert(windows[id])
-    if cfg.wnd ~= nil then return cfg.wnd end
+    if cfg.wnd ~= nil then return cfg.wnd, cfg.handler end
     ---@type UIToolkit.WindowOpts
     local opts = H.shallowCopy(assert(cfg.opts))
     local handler = opts.handler
     if type(handler) == 'function' then handler = handler() end
-    windows[id].handler = handler
+    cfg.handler = handler
     opts.handler = handler
 
     ---@type UIToolkit.WindowSaveData?
@@ -70,12 +70,12 @@ function M.open(id, data)
         position = M.toAbsolute(saved.position),
         size = M.toAbsolute(saved.size),
     } or nil)
-    windows[id].wnd = wnd
+    cfg.wnd = wnd
     if handler then
         handler:onOpened(wnd, data, saved and saved.custom or nil)
     end
     M._queueFocusedWindow(id)
-    return wnd
+    return wnd, handler
 end
 
 ---@param c openmw.util.Vector2?

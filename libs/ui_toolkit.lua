@@ -476,7 +476,7 @@ function Components.sortedList(opts) end
 
 ---@class UIToolkit.WindowManager
 ---@field register fun(id: string, opts: UIToolkit.WindowOpts)
----@field open fun(id: string, data:any?):UIToolkit.Window
+---@field open fun(id: string, data:any?):UIToolkit.Window, UIToolkit.WindowHandler
 ---@field close fun(id: string, force:boolean?) won't close pinned window, unless force is true
 ---@field isOpen fun(id: string):boolean
 ---@field getHandler fun(id: string):UIToolkit.WindowHandler?
