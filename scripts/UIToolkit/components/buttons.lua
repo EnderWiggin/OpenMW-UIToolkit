@@ -10,6 +10,18 @@ local Class = require('scripts.UIToolkit.class')
 local Component = require('scripts.UIToolkit.components.component')
 local M = {}
 
+local OpacityStates = {
+    default = 0,
+    hover = 0.25,
+    pressed = 0.35,
+    --active = 1,
+    --activeHover = 1,
+    --activePressed = 0.9,
+    --disabled = 0,
+    --disabledHover = 0.2,
+    --disabledPressed = 0.2,
+}
+
 ---@class UIToolkit.TextButton : UIToolkit.Component
 local TextButton = Class(Component)
 
@@ -76,8 +88,21 @@ function ImageButton:init(opts)
             resource = I.UIToolkit.texture(opts.icon),
             relativeSize = v2(1, 1),
         },
-        userData = { colorable = true },
+        userData = { colorable = opts.colorable ~= false },
     }
+    local parts = {}
+    if opts.highlight then
+        parts[#parts + 1] = {
+            type = ui.TYPE.Image,
+            props = {
+                resource = I.UIToolkit.texture('white'),
+                relativeSize = v2(1, 1),
+            },
+            userData = { colorable = true, opacityStates = OpacityStates },
+        }
+    end
+    parts[#parts + 1] = img
+
     ---@type UIToolkit.BoxStyle
     local style = opts.style or (intRe and 'empty' or 'button')
     local padding
@@ -100,7 +125,7 @@ function ImageButton:init(opts)
         props = {
             size = opts.size,
         },
-        content = ui.content { img },
+        content = ui.content(parts),
         events = {},
         userData = {},
     })

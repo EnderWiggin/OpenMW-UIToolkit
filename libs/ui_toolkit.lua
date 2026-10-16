@@ -163,6 +163,8 @@ function Components.sortedList(opts) end
 ---@class UIToolkit.ImageButtonOpts : UIToolkit.ButtonOpts
 ---@field icon string image on the button
 ---@field size openmw.util.Vector2 size of the button
+---@field colorable? boolean if set to false will not change color of the image, defaults to true.
+---@field highlight? boolean if true, will add highlight to the button's background, defaults to false
 
 ---@class UIToolkit.ImageButton : UIToolkit.Component
 ---@field new fun():UIToolkit.ImageButton
