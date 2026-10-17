@@ -1,0 +1,12 @@
+<component name="ArtifactManager">
+  <artifact name="tooltips complete">
+    <output-path>$PROJECT_DIR$/artifacts/</output-path>
+    <root id="root">
+      <element id="archive" name="UTK_TooltipsComplete.zip">
+        <element id="directory" name="UTK_TooltipsComplete">
+          <element id="dir-copy" path="$PROJECT_DIR$/extra/tooltips_complete" />
+        </element>
+      </element>
+    </root>
+  </artifact>
+</component>
