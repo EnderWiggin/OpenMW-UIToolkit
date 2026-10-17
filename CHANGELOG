@@ -1,3 +1,13 @@
+Version 1.4.3 (2026-10-17)
+- window manager: on open returns handler in addition to window
+- window manager: do not restore size if window is not resizable
+- image button: added option to not colorize icon and option to have background highlight
+- tooltips:
+  - extracted settings to a separate page
+  - import settings from old page
+  - added option to show soul capacity for soul gems
+  - added option to show enchant capacity
+
 Version 1.4.2 (2026-10-16)
 - tooltips: setTooltip accepts provider function
 - config util: added getFirstKeyboardInput variant of getFirstControllerInput
