@@ -5,8 +5,9 @@ local types = require('openmw.types')
 local ui = require('openmw.ui')
 local I = require('openmw.interfaces')
 local helpers = require('scripts.UIToolkit.tooltips.utils')
+local D = require('scripts.UIToolkit.tooltips.defaults')
 local H = require('scripts.UIToolkit.helpers')
-local cfgPlayer = require('scripts.UIToolkit.config.player')
+local cfg = require('scripts.UIToolkit.tooltips.config')
 
 -- Short-hands
 local Player = types.Player
@@ -17,6 +18,7 @@ local Lockable = types.Lockable
 local NPC = types.NPC
 local Item = types.Item
 local V2 = util.vector2
+local fSoulGemMult = core.getGMST('fSoulGemMult')
 
 local Tooltips = {}
 
@@ -57,6 +59,7 @@ local CONTENT =
     Quality = 'Quality',
     Root = 'Root',
     School = 'School',
+    SoulCapacity = 'SoulCapacity',
     SoulValue = 'SoulValue',
     Specialization = 'Specialization',
     SkillList = 'SkillList',
@@ -152,7 +155,7 @@ local gmsts =
     'fCombatDistance',
     'fWortChanceValue',
 }
-local l10n = core.l10n('UTKTooltips')
+local l10n = core.l10n(D.L10N)
 
 local enchantmentTypeStrings = {
     [core.magic.ENCHANTMENT_TYPE.CastOnStrike] = l10n('ItemCastWhenStrikes'),
@@ -316,7 +319,7 @@ local function enchantment(items, record, object, noCharge)
             end
             items[#items + 1] = { text = l10n('Charge'), name = CONTENT.Text }
             local color
-            if cfgPlayer.interface.b_ConditionAsBar then
+            if cfg.main.b_ConditionAsBar then
                 color = I.UIToolkit.getTheme().Colors.MAGICK
             end
             items[#items + 1] = {
@@ -393,7 +396,7 @@ Tooltips.armorRecipe = function(tooltip)
     local items = {}
     items[#items + 1] = header(record, tooltip.object)
     items[#items + 1] = { text = l10n('ArmorRating'), value = math.floor(rating), name = CONTENT.ArmorRating }
-    if cfgPlayer.interface.b_ConditionAsBar then
+    if cfg.main.b_ConditionAsBar then
         items[#items + 1] = {
             type = 'progressBar',
             current = condition,
@@ -536,12 +539,20 @@ Tooltips.miscellaneousRecipe = function(tooltip)
     local soul = helpers.getSoul(tooltip.object)
     local items = {}
     items[#items + 1] = header(record, tooltip.object)
+    local showSoulCapacity = cfg.main.n_ShowSoulCapacity > (soul and 1 or 0)
+    if showSoulCapacity and record.id:find('^misc_soulgem') then
+        items[#items + 1] = {
+            text = l10n('SoulCapacity'),
+            value = H.addSeparators(value * fSoulGemMult),
+            name = CONTENT.SoulCapacity,
+        }
+    end
     if soul then
-        value = helpers.soulGemValue(soul.soulValue, value, cfgPlayer.interface.b_SoulGemValueRebalance)
-        if cfgPlayer.interface.b_ShowSoulValue then
+        value = helpers.soulGemValue(soul.soulValue, value, cfg.main.b_SoulGemValueRebalance)
+        if cfg.main.b_ShowSoulValue then
             items[#items + 1] = {
-                text = l10n('Soul'),
-                value = soul.soulValue,
+                text = l10n('SoulValue'),
+                value = H.addSeparators(soul.soulValue),
                 name = CONTENT.SoulValue,
             }
         end
@@ -589,7 +600,7 @@ Tooltips.lockpickRecipe = function(tooltip)
     local uses = getCondition(tooltip.object) or record.maxCondition
     local items = {}
     items[#items + 1] = header(record, tooltip.object)
-    if cfgPlayer.interface.b_ConditionAsBar then
+    if cfg.main.b_ConditionAsBar then
         items[#items + 1] = {
             type = 'progressBar',
             current = uses,
@@ -643,7 +654,7 @@ Tooltips.probeRecipe = function(tooltip)
     local uses = getCondition(tooltip.object) or record.maxCondition
     local items = {}
     items[#items + 1] = header(record, tooltip.object)
-    if cfgPlayer.interface.b_ConditionAsBar then
+    if cfg.main.b_ConditionAsBar then
         items[#items + 1] = {
             type = 'progressBar',
             current = uses,
@@ -667,7 +678,7 @@ Tooltips.repairRecipe = function(tooltip)
     local uses = getCondition(tooltip.object) or record.maxCondition
     local items = {}
     items[#items + 1] = header(record, tooltip.object)
-    if cfgPlayer.interface.b_ConditionAsBar then
+    if cfg.main.b_ConditionAsBar then
         items[#items + 1] = {
             type = 'progressBar',
             current = uses,
@@ -730,7 +741,7 @@ Tooltips.weaponRecipe = function(tooltip)
     end
 
     if condition and not noHealth[record.type] then
-        if cfgPlayer.interface.b_ConditionAsBar then
+        if cfg.main.b_ConditionAsBar then
             items[#items + 1] = {
                 type = 'progressBar',
                 current = condition,

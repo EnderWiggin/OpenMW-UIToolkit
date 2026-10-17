@@ -903,6 +903,7 @@ function Templates.getBorderSize(style) end
 ---@field Quality string
 ---@field Root string
 ---@field School string
+---@field SoulCapacity string
 ---@field SoulValue string
 ---@field Specialization string
 ---@field SkillList string

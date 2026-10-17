@@ -69,34 +69,6 @@ I.Settings.registerGroup {
                 roundToStep = true,
             }
         },
-        {
-            key = 'b_CompactWeightValue',
-            renderer = 'checkbox',
-            name = 'SettingCompactWeightValueName',
-            description = 'SettingCompactWeightValueDesc',
-            default = false,
-        },
-        {
-            key = 'b_ShowSoulValue',
-            renderer = 'checkbox',
-            name = 'SettingShowSoulValueName',
-            description = 'SettingShowSoulValueDesc',
-            default = false,
-        },
-        {
-            key = 'b_ConditionAsBar',
-            renderer = 'checkbox',
-            name = 'SettingConditionAsBarName',
-            description = 'SettingConditionAsBarDesc',
-            default = false,
-        },
-        {
-            key = 'b_SoulGemValueRebalance',
-            renderer = 'checkbox',
-            name = 'SettingSoulGemValueRebalanceName',
-            description = 'SettingSoulGemValueRebalanceDesc',
-            default = false,
-        },
     },
 }
 

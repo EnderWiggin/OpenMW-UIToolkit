@@ -1,0 +1,35 @@
+SettingPageName: UI Tooltips
+SettingPageDesc: Settings for UI Toolkit's tooltips
+
+SettingCompactWeightValueName: Condensed weight/value
+SettingCompactWeightValueDesc: |-
+  Moves weight and value information in item tooltips to the footer.
+  If "Show soul size" is enabled - it's value will be moved too.
+
+SettingShowSoulValueName: Show soul size
+SettingShowSoulValueDesc: |-
+  Shows size of the soul inside soul gem in the tooltip.
+  If "Condensed weight/value" is enabled - this value will be condensed too.
+
+SettingShowSoulCapacityName: Show soul gem capacity
+SettingShowSoulCapacityDesc: |-
+  Select when to show maximum soul size that can fit into empty soul gem.
+
+SC_Never: Never
+SC_Empty: Empty Gem
+SC_Always: Always
+
+SettingConditionAsBarName: Condition as progress bar
+SettingConditionAsBarDesc: |-
+  Makes item condition and tool uses displayed as a progress bar.
+  Also makes item charge bar use magicka color.
+
+SettingSoulGemValueRebalanceName: Soulgem Values Rebalance
+SettingSoulGemValueRebalanceDesc: |-
+  Set this to match same setting from the game launcher.
+  Makes the value of filled soul gems depend only on soul magnitude.
+
+
+EnchantCapacity: Enchant Capacity
+SoulCapacity: Soul Capacity
+SoulValue: Soul Value
