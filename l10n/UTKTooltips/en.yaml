@@ -19,6 +19,14 @@ SC_Never: Never
 SC_Empty: Empty Gem
 SC_Always: Always
 
+SettingShowEnchantCapacityName: Show enchant capacity
+SettingShowEnchantCapacityDesc: |-
+  Select when to show enchant capacity of the item.
+
+EC_Never: Never
+EC_Empty: Not Enchanted
+EC_Always: Always
+
 SettingConditionAsBarName: Condition as progress bar
 SettingConditionAsBarDesc: |-
   Makes item condition and tool uses displayed as a progress bar.

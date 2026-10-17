@@ -9,6 +9,7 @@ local D = require 'scripts.UIToolkit.tooltips.defaults'
 ---@field b_SoulGemValueRebalance boolean
 ---@field n_ShowSoulCapacity 0|1|2
 ---@field b_ShowSoulValue boolean
+---@field n_ShowEnchantCapacity boolean
 ---@field b_CompactWeightValue boolean
 ---@field b_ConditionAsBar boolean
 

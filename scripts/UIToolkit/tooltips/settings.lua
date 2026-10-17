@@ -76,6 +76,21 @@ I.Settings.registerGroup {
             }
         },
         {
+            key = 'n_ShowEnchantCapacity',
+            renderer = 'UIToolkit/Dropbox',
+            name = 'SettingShowEnchantCapacityName',
+            description = 'SettingShowEnchantCapacityDesc',
+            default = 0,
+            argument = {
+                l10n = D.L10N,
+                items = {
+                    { id = 0, text = 'EC_Never' },
+                    { id = 1, text = 'EC_Empty' },
+                    { id = 2, text = 'EC_Always' },
+                },
+            }
+        },
+        {
             key = 'b_CompactWeightValue',
             renderer = 'checkbox',
             name = 'SettingCompactWeightValueName',

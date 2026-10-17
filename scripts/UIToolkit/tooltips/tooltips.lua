@@ -19,6 +19,7 @@ local NPC = types.NPC
 local Item = types.Item
 local V2 = util.vector2
 local fSoulGemMult = core.getGMST('fSoulGemMult')
+local fEnchantmentMult = core.getGMST('fEnchantmentMult')
 
 local Tooltips = {}
 
@@ -38,6 +39,7 @@ local CONTENT =
     Condition = 'Condition',
     Damage = 'Damage',
     EmptyLine = 'EmptyLine',
+    EnchantCapacity = 'EnchantCapacity',
     EnchantmentType = 'EnchantmentType',
     EXPELLED = 'EXPELLED',
     FactionFavoriteSkills = 'FactionFavoriteSkills',
@@ -284,7 +286,22 @@ Tooltips.addValue = function(items, value)
     items[#items + 1] = { text = l10n('Value'), value = value, name = CONTENT.Value }
 end
 
+---@param items UTKTooltips.RecipeItem[]
+---@param capacity number|nil
+---@param enchanted boolean
+Tooltips.addEnchantCapacity = function(items, capacity, enchanted)
+    if not capacity or capacity <= 0 then return end
+    if cfg.main.n_ShowEnchantCapacity < (enchanted and 2 or 1) then return end
+
+    -- OpenMW returns rawValue*0.1, but enchantment uses rawValue*fEnchantmentMult
+    capacity = math.floor(capacity / 0.1 * fEnchantmentMult)
+    local value = H.addSeparators(capacity)
+
+    items[#items + 1] = { text = l10n('EnchantCapacity'), value = value, name = CONTENT.EnchantCapacity }
+end
+
 Tooltips.standardValues = function(items, record)
+    Tooltips.addEnchantCapacity(items, record.enchantCapacity, record.enchant ~= nil)
     Tooltips.addWeight(items, record.weight)
     Tooltips.addValue(items, record.value)
 end

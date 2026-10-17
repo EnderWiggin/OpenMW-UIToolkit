@@ -882,6 +882,7 @@ function Templates.getBorderSize(style) end
 ---@field Condition string
 ---@field Damage string
 ---@field EmptyLine string
+---@field EnchantCapacity string
 ---@field EnchantmentType string
 ---@field EXPELLED string
 ---@field FactionFavoriteSkills string
