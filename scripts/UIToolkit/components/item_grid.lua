@@ -62,6 +62,7 @@ function ItemGrid:init(opts)
 
     ---@param btn number
     ---@param offset openmw.util.Vector2
+    ---@return UIToolkit.ListData.Base?, integer?
     local function processItemClick(btn, offset)
         local wasPressed = mousePressed[btn]
         mousePressed[btn] = nil
@@ -80,6 +81,7 @@ function ItemGrid:init(opts)
 
         if callback then callback(item, idx) end
         if onAnyClicked then onAnyClicked(item, idx, btn) end
+        return item, idx
     end
 
     local scrollableProps = {
@@ -116,8 +118,8 @@ function ItemGrid:init(opts)
                 self:_updateLastHoveredPos(offset)
                 local btn = e.button
 
-                processItemClick(btn, offset)
-                if onListClicked then onListClicked(btn) end
+                local item, idx = processItemClick(btn, offset)
+                if onListClicked then onListClicked(btn, item, idx) end
             end),
             ---@param e openmw.ui.MouseEvent
             mouseMove = async:callback(function(e)

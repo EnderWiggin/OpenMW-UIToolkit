@@ -324,7 +324,7 @@ function Components.sortedList(opts) end
 ---@field onItemClicked? fun(data:UIToolkit.ListData.Base, idx:integer) called when item is clicked with left mouse button
 ---@field onItemRClicked? fun(data:UIToolkit.ListData.Base, idx:integer) called when item is clicked with right mouse button
 ---@field onItemClickedAny? fun(data:UIToolkit.ListData.Base, idx:integer, button: number) called when item is clicked with any mouse button
----@field onListClicked? fun(button: number) called when list is clicked with any mouse button
+---@field onListClicked? fun(button: number, data:UIToolkit.ListData.Base?, idx:integer?) called when list is clicked with any mouse button. If click was in item - it and its index will also be passed
 ---@field scrollWidth number?
 ---@field slimScroll boolean? scrollbar will have no borders around arrows or handle
 ---@field noBorder boolean?
@@ -372,7 +372,7 @@ function Components.sortedList(opts) end
 ---@field onItemClicked? fun(data:UIToolkit.ListData.Base, idx:integer) called when item is clicked with left mouse button
 ---@field onItemRClicked? fun(data:UIToolkit.ListData.Base, idx:integer) called when item is clicked with right mouse button
 ---@field onItemClickedAny? fun(data:UIToolkit.ListData.Base, idx:integer, button: number) called when item is clicked with any mouse button
----@field onListClicked? fun(button: number) called when list is clicked with any mouse button
+---@field onListClicked? fun(button: number, data:UIToolkit.ListData.Base?, idx:integer?) called when list is clicked with any mouse button. If click was in item - it and its index will also be passed
 ---@field scrollWidth number?
 ---@field slimScroll boolean? scrollbar will have no borders around arrows or handle
 ---@field noBorder boolean?
@@ -443,7 +443,7 @@ function Components.sortedList(opts) end
 ---@field onItemClicked? fun(data:UIToolkit.ListData.Base, idx:integer) called when item is clicked with left mouse button
 ---@field onItemRClicked? fun(data:UIToolkit.ListData.Base, idx:integer) called when item is clicked with right mouse button
 ---@field onItemClickedAny? fun(data:UIToolkit.ListData.Base, idx:integer, button: number) called when item is clicked with any mouse button
----@field onListClicked? fun(button: number) called when list is clicked with any mouse button
+---@field onListClicked? fun(button: number, data:UIToolkit.ListData.Base?, idx:integer?) called when list is clicked with any mouse button. If click was in item - it and its index will also be passed
 ---@field scrollWidth number?
 ---@field slimScroll boolean? scrollbar will have no borders around arrows or handle
 ---@field noBorder boolean?
