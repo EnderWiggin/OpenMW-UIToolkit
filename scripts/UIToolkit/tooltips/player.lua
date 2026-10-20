@@ -209,7 +209,7 @@ local function updatePosition()
     end
 
     local mousePos = I.UIToolkit.getCursorPos()
-    local screenSize = ui.screenSize()
+    local screenSize = ui.layers[ui.layers.indexOf('Popup')].size
 
     if mousePos then
         -- UI move is active
