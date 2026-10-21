@@ -1,3 +1,8 @@
+Version 1.4.4 (2026-10-21)
+- tooltips: fixed tooltip vertical flip point when UI is scaled
+- fixed error if tooltip provider returns nil
+- item grid and list: onListClicked now also receives item and index if click was on item and not empty space
+
 Version 1.4.3 (2026-10-17)
 - window manager: on open returns handler in addition to window
 - window manager: do not restore size if window is not resizable
