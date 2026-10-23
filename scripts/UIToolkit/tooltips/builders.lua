@@ -144,6 +144,10 @@ local function effectDescription(content, effect, noTarget, noMagnitude, noDurat
         effectString = effectString .. ' ' .. l10n('for') .. ' ' .. helpers.formatDuration(effect.duration)
     end
 
+    if effect.area > 0 then
+        effectString = effectString .. ' ' .. l10n('In') .. ' ' .. tostring(effect.area) .. ' ' .. l10n('FootArea')
+    end
+
     if not noTarget then
         local rangeString = helpers.rangeString(effect.range)
         if rangeString then
