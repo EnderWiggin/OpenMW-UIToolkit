@@ -761,22 +761,6 @@ Tooltips.weaponRecipe = function(tooltip)
         }
     end
 
-    if condition and not noHealth[record.type] then
-        if cfg.main.b_ConditionAsBar then
-            items[#items + 1] = {
-                type = 'progressBar',
-                current = condition,
-                max = record.health,
-                name = CONTENT.Condition
-            }
-        else
-            items[#items + 1] = {
-                text = l10n('Condition'),
-                value = tostring(condition) .. '/' .. tostring(record.health),
-                name = CONTENT.Condition
-            }
-        end
-    end
     if cfg.main.b_ShowMeleeInfo then
         -- Mirrors the engine's own tooltip for this feature (weapon.cpp):
         -- reach only for melee weapons, speed for everything except ammunition,
@@ -796,6 +780,23 @@ Tooltips.weaponRecipe = function(tooltip)
                 text = l10n('AttributeSpeed'),
                 value = util.round(speed * 100) .. '%',
                 name = CONTENT.Speed,
+            }
+        end
+    end
+
+    if condition and not noHealth[record.type] then
+        if cfg.main.b_ConditionAsBar then
+            items[#items + 1] = {
+                type = 'progressBar',
+                current = condition,
+                max = record.health,
+                name = CONTENT.Condition
+            }
+        else
+            items[#items + 1] = {
+                text = l10n('Condition'),
+                value = tostring(condition) .. '/' .. tostring(record.health),
+                name = CONTENT.Condition
             }
         end
     end
