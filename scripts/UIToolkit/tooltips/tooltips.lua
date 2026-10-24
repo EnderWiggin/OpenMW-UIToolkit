@@ -431,6 +431,7 @@ Tooltips.armorRecipe = function(tooltip)
             name = CONTENT.Condition
         }
     end
+    Tooltips.addEnchantCapacity(items, record.enchantCapacity, record.enchant ~= nil)
     Tooltips.addWeight(items, helpers.formatOneDecimal(record.weight) .. ' (' .. weightClass .. ')')
     Tooltips.addValue(items, record.value)
     enchantment(items, record, tooltip.object)
