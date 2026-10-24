@@ -104,5 +104,12 @@ I.Settings.registerGroup {
             description = 'SettingConditionAsBarDesc',
             default = false,
         },
+        {
+            key = 'b_ShowMeleeInfo',
+            renderer = 'checkbox',
+            name = 'SettingShowMeleeInfoName',
+            description = 'SettingShowMeleeInfoDesc',
+            default = false,
+        },
     },
 }

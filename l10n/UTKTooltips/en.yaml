@@ -37,6 +37,9 @@ SettingSoulGemValueRebalanceDesc: |-
   Set this to match same setting from the game launcher.
   Makes the value of filled soul gems depend only on soul magnitude.
 
+SettingShowMeleeInfoName: Show melee info
+SettingShowMeleeInfoDesc: |-
+  Shows melee weapon reach in feet and attack speed as a percentage in the tooltip.
 
 EnchantCapacity: Enchant Capacity
 SoulCapacity: Soul Capacity

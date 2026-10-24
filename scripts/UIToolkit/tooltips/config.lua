@@ -12,6 +12,7 @@ local D = require 'scripts.UIToolkit.tooltips.defaults'
 ---@field n_ShowEnchantCapacity boolean
 ---@field b_CompactWeightValue boolean
 ---@field b_ConditionAsBar boolean
+---@field b_ShowMeleeInfo boolean
 
 ---@class UIToolkit.Config.Player
 ---@field main UTKTooltips.Config.Main

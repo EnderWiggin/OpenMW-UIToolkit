@@ -20,6 +20,8 @@ local Item = types.Item
 local V2 = util.vector2
 local fSoulGemMult = core.getGMST('fSoulGemMult')
 local fEnchantmentMult = core.getGMST('fEnchantmentMult')
+-- Engine constant Constants::UnitsPerFoot, converts game units to feet
+local unitsPerFoot = 21.33333333
 
 local Tooltips = {}
 
@@ -59,11 +61,13 @@ local CONTENT =
     Paragraph = 'Paragraph',
     ProgressBar = 'ProgressBar',
     Quality = 'Quality',
+    Reach = 'Reach',
     Root = 'Root',
     School = 'School',
     SoulCapacity = 'SoulCapacity',
     SoulValue = 'SoulValue',
     Specialization = 'Specialization',
+    Speed = 'Speed',
     SkillList = 'SkillList',
     SkillMaxed = 'SkillMaxed',
     SpellList = 'SpellList',
@@ -770,6 +774,28 @@ Tooltips.weaponRecipe = function(tooltip)
                 text = l10n('Condition'),
                 value = tostring(condition) .. '/' .. tostring(record.health),
                 name = CONTENT.Condition
+            }
+        end
+    end
+    if cfg.main.b_ShowMeleeInfo then
+        -- Mirrors the engine's own tooltip for this feature (weapon.cpp):
+        -- reach only for melee weapons, speed for everything except ammunition,
+        -- both skipped when the record value is 0
+        local reach = record.reach or 0
+        if isMelee[record.type] and reach > 0 then
+            local feet = gmsts.fCombatDistance * reach / unitsPerFoot
+            items[#items + 1] = {
+                text = l10n('Range'),
+                value = helpers.formatOneDecimal(feet) .. ' ' .. l10n('Feet'),
+                name = CONTENT.Reach,
+            }
+        end
+        local speed = record.speed or 0
+        if not isAmmo[record.type] and speed > 0 then
+            items[#items + 1] = {
+                text = l10n('AttributeSpeed'),
+                value = util.round(speed * 100) .. '%',
+                name = CONTENT.Speed,
             }
         end
     end

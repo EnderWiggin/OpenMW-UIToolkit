@@ -902,11 +902,13 @@ function Templates.getBorderSize(style) end
 ---@field Paragraph string
 ---@field ProgressBar string
 ---@field Quality string
+---@field Reach string
 ---@field Root string
 ---@field School string
 ---@field SoulCapacity string
 ---@field SoulValue string
 ---@field Specialization string
+---@field Speed string
 ---@field SkillList string
 ---@field SkillMaxed string
 ---@field SpellList string
