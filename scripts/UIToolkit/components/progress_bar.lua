@@ -56,7 +56,7 @@ function ProgressBar:init(opts)
         visible = self.textStyle ~= 'none',
     }
 
-    Component:init(I.UIToolkit.Interactive.makeInteractive(opts, {
+    Component.init(self, I.UIToolkit.Interactive.makeInteractive(opts, {
         template = T.border { style = 'thin' },
         props = {
             size = v2(100 + 2 * border, textSize + 2 * (border + theme.Sizes.padding))
