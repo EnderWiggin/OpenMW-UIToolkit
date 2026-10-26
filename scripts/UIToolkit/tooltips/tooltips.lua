@@ -162,6 +162,7 @@ local gmsts =
     'fWortChanceValue',
 }
 local l10n = core.l10n(D.L10N)
+local FMT_USE_COST = string.format('%s %%d/%s', l10n('Charge'), l10n('Use'))
 
 local enchantmentTypeStrings = {
     [core.magic.ENCHANTMENT_TYPE.CastOnStrike] = l10n('ItemCastWhenStrikes'),
@@ -311,7 +312,7 @@ Tooltips.standardValues = function(items, record)
     Tooltips.addValue(items, record.value)
 end
 
-local function enchantment(items, record, object, noCharge)
+local function enchantment(items, record, tooltip, noCharge)
     if record.enchant then
         local enchant = core.magic.enchantments.records[record.enchant]
         items[#items + 1] = { text = enchantmentTypeStrings[enchant.type], name = CONTENT.EnchantmentType }
@@ -335,11 +336,20 @@ local function enchantment(items, record, object, noCharge)
         local chargeCurrent = enchant.charge
         local chargeMax = enchant.charge
         if chargeMax > 0 and not noCharge then
+            local object = tooltip.object
+            local observer = tooltip.observer
             if object then
                 local itemData = Item.itemData(object) --[[@as openmw.types.ItemData]]
                 chargeCurrent = itemData.enchantmentCharge
             end
-            items[#items + 1] = { text = l10n('Charge'), name = CONTENT.Text }
+            local label
+            if cfg.main.b_ShowEnchantUseCost then
+                local cost = helpers.getModifiedSpellCost(enchant.id, true, observer)
+                label = string.format(FMT_USE_COST, cost)
+            else
+                label = l10n('Charge')
+            end
+            items[#items + 1] = { text = label, name = CONTENT.Text }
             local color
             if cfg.main.b_ConditionAsBar then
                 color = I.UIToolkit.getTheme().Colors.MAGICK
@@ -435,7 +445,7 @@ Tooltips.armorRecipe = function(tooltip)
     Tooltips.addEnchantCapacity(items, record.enchantCapacity, record.enchant ~= nil)
     Tooltips.addWeight(items, helpers.formatOneDecimal(record.weight) .. ' (' .. weightClass .. ')')
     Tooltips.addValue(items, record.value)
-    enchantment(items, record, tooltip.object)
+    enchantment(items, record, tooltip)
     return {
         name = 'Armor',
         arrange = ui.ALIGNMENT.Center,
@@ -449,7 +459,7 @@ Tooltips.bookRecipe = function(tooltip)
     local items = {}
     items[#items + 1] = header(record, tooltip.object)
     Tooltips.standardValues(items, record)
-    enchantment(items, record, tooltip.object, true)
+    enchantment(items, record, tooltip, true)
     return {
         name = 'Book',
         arrange = ui.ALIGNMENT.Center,
@@ -463,7 +473,7 @@ Tooltips.clothingRecipe = function(tooltip)
     local items = {}
     items[#items + 1] = header(record, tooltip.object)
     Tooltips.standardValues(items, record)
-    enchantment(items, record, tooltip.object)
+    enchantment(items, record, tooltip)
     return {
         name = 'Clothing',
         arrange = ui.ALIGNMENT.Center,
@@ -803,7 +813,7 @@ Tooltips.weaponRecipe = function(tooltip)
         end
     end
     Tooltips.standardValues(items, record)
-    enchantment(items, record, tooltip.object)
+    enchantment(items, record, tooltip)
     return {
         name = 'Weapon',
         arrange = ui.ALIGNMENT.Center,

@@ -13,6 +13,7 @@ local context = require 'scripts.UIToolkit.scriptContext'
 local isPlayer = context.get() == context.Types.Player
 
 local l10n = core.l10n('UTKTooltips')
+local fEffectCostMult = core.getGMST('fEffectCostMult')
 local Utils = {}
 
 function Utils.formatActiveEffectName(name, mgef, aef)
@@ -354,6 +355,68 @@ function Utils.getSpellEffectiveSchool(spellRecord, actor)
         end
     end
     return effectiveSchool
+end
+
+function Utils.getBaseSpellCost(spellId, isEnchant)
+    local cost = 0
+
+    local spellRecord
+    if isEnchant then
+        spellRecord = core.magic.enchantments.records[spellId]
+    else
+        spellRecord = core.magic.spells.records[spellId]
+    end
+    if not spellRecord then return cost end
+
+    if not spellRecord.autocalcFlag then
+        return spellRecord.cost
+    end
+
+    for _, effect in ipairs(spellRecord.effects) do
+        local minMagnitude, maxMagnitude = 1, 1
+        local baseEffect = effect.effect
+
+        if baseEffect.hasMagnitude then
+            minMagnitude = effect.magnitudeMin
+            maxMagnitude = effect.magnitudeMax
+        end
+        if not isEnchant then
+            minMagnitude = math.max(1, minMagnitude)
+            maxMagnitude = math.max(1, maxMagnitude)
+        end
+
+        local x = baseEffect.hasDuration and effect.duration or 1
+        if not baseEffect.isAppliedOnce then
+            x = math.max(x, 1)
+        end
+        x = x * 0.1 * baseEffect.baseCost
+        x = x * 0.5 * (effect.magnitudeMin + effect.magnitudeMax)
+        x = x + 0.05 * baseEffect.baseCost * effect.area
+        if effect.range == core.magic.RANGE.Target then
+            x = x * 1.5
+        end
+        x = x * fEffectCostMult
+        x = math.max(0, x)
+
+        cost = cost + x
+    end
+
+    return cost
+end
+
+function Utils.getModifiedSpellCost(spellId, isEnchant, user)
+    local baseCost = Utils.getBaseSpellCost(spellId, isEnchant)
+
+    local cost = baseCost
+
+    if isEnchant and user and NPC.objectIsInstance(user) then
+        local skill = user.type.stats.skills.enchant(user).modified
+        local x = 0.01 * (110 - skill)
+        cost = math.floor(x * cost)
+        cost = math.max(cost, 1)
+    end
+
+    return cost
 end
 
 return Utils

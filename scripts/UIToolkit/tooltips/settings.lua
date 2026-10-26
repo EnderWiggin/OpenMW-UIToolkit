@@ -91,6 +91,13 @@ I.Settings.registerGroup {
             }
         },
         {
+            key = 'b_ShowEnchantUseCost',
+            renderer = 'checkbox',
+            name = 'SettingShowEnchantUseCostName',
+            description = 'SettingShowEnchantUseCostDesc',
+            default = false,
+        },
+        {
             key = 'b_CompactWeightValue',
             renderer = 'checkbox',
             name = 'SettingCompactWeightValueName',
