@@ -1,3 +1,8 @@
+Version 1.4.8 (2026-10-26)
+- progress bar: fixed broken init that lead to it not updating properly when values are set
+- tooltips: fixed enchant capacity of 0 being shown
+- tooltips: added option to show enchant use cost
+
 Version 1.4.7 (2026-10-25)
 - tooltips: fixed armor not showing enchant capacity even when enabled
 
