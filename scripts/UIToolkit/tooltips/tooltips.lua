@@ -294,11 +294,12 @@ end
 ---@param capacity number|nil
 ---@param enchanted boolean
 Tooltips.addEnchantCapacity = function(items, capacity, enchanted)
-    if not capacity or capacity <= 0 then return end
+    if not capacity then return end
     if cfg.main.n_ShowEnchantCapacity < (enchanted and 2 or 1) then return end
 
     -- OpenMW returns rawValue*0.1, but enchantment uses rawValue*fEnchantmentMult
     capacity = math.floor(capacity / 0.1 * fEnchantmentMult)
+    if capacity <= 0 then return end
     local value = H.addSeparators(capacity)
 
     items[#items + 1] = { text = l10n('EnchantCapacity'), value = value, name = CONTENT.EnchantCapacity }
