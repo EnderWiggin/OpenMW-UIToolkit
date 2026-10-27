@@ -1,6 +1,7 @@
 ---@omw-context player|menu
 
 local ui = require('openmw.ui')
+local input = require('openmw.input')
 local util = require('openmw.util')
 local async = require('openmw.async')
 local I = require('openmw.interfaces')
@@ -10,6 +11,7 @@ local Class = require('scripts.UIToolkit.class')
 local Component = require('scripts.UIToolkit.components.component')
 
 local REVERT_TEX = ui.texture { path = 'icons/UIToolkit/revert.dds' }
+local Enter = input.KEY.Enter
 
 ---@generic T
 ---@class UIToolkit.TextEdit<T> : UIToolkit.Component
@@ -41,6 +43,8 @@ function TextEdit:init(opts)
     self._textColorNormal = opts.textColorNormal or t.Colors.DEFAULT
     self._textColorPlaceholder = opts.textColorPlaceholder or t.Colors.DISABLED
     self._onValueChanged = opts.onValueChanged
+    self._onFocusLost = opts.onFocusLost
+    self._onEnterPressed = opts.onEnterPressed
     local empty = isEmpty(self._value)
 
     ---@type openmw.ui.Element
@@ -94,6 +98,13 @@ function TextEdit:init(opts)
                     layout.props.text = self:getPlaceholder() or ''
                     layout.props.textColor = self:_textColor(true)
                     I.UIToolkit.queueUpdate(element)
+                end
+                if self._onFocusLost then self._onFocusLost() end
+            end),
+            keyPress = async:callback(function(evt)
+                ---@cast evt openmw.input.KeyboardEvent
+                if evt.code == Enter and self._onEnterPressed then
+                    self._onEnterPressed()
                 end
             end),
         }

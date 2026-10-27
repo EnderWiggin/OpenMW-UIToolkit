@@ -199,6 +199,8 @@ function Components.sortedList(opts) end
 ---@field width number? defaults to 200
 ---@field showClearButton boolean?
 ---@field onClearClicked? fun()
+---@field onFocusLost? fun()
+---@field onEnterPressed? fun()
 
 ---@generic T
 ---@class UIToolkit.TextEdit<T> : UIToolkit.Component
