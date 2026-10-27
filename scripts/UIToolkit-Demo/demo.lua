@@ -338,6 +338,7 @@ function Handler:onOpened(wnd, _, saved)
         width = 55,
         textAlignH = ui.ALIGNMENT.Center,
         validate = function(text)
+            if text == '' then return true, text end
             local number = tonumber(text)
             if not number then
                 return false, nil
@@ -345,7 +346,15 @@ function Handler:onOpened(wnd, _, saved)
                 return true, util.clamp(number, 1, 100)
             end
         end,
+        onFocusLost = function()
+            --reset to default if text is unfocused while empty
+            if edit:getValue() ~= '' then return end
+            local pos = 2 * (edit:getDefault() - 1)
+            --this will set text value too
+            slider:setPosition(pos)
+        end,
         onValueChanged = function(value)
+            if value == '' then return end
             local pos = 2 * (value - 1)
             state.slider = value
             slider:setPosition(pos, true)
