@@ -1,3 +1,8 @@
+Version 1.4.9 (2026-10-28)
+- text edit: added onFocusLost and onEnterPressed callbacks
+- dropbox: now will open upward if not enough space below
+- demo: improved text edit + slider combo example to allow for empty text while editing
+
 Version 1.4.8 (2026-10-26)
 - progress bar: fixed broken init that lead to it not updating properly when values are set
 - tooltips: fixed enchant capacity of 0 being shown
