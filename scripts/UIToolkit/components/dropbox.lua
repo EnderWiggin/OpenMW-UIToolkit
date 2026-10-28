@@ -22,8 +22,13 @@ function Dropbox:init(opts)
     local outer = 2 * (pad + border)
     local arrowSize = theme.Sizes.textNormal - 2
 
+    self.upward = opts.upward == true
     self.width = opts.width or 150
     local height = theme.Sizes.textNormal + outer
+    self.height = height
+
+    local up = v2(0, self.upward and 1 or 0)
+    local down = v2(0.5, self.upward and 0 or 1)
 
     self.provider = TextProvider:new()
     ---@type UIToolkit.ListData.Text[]
@@ -54,19 +59,22 @@ function Dropbox:init(opts)
     }
     self.list:setItems(self.items)
     self.list:updateProps {
-        anchor = v2(0.5, 1),
-        relativePosition = v2(0.5, 1),
+        anchor = down,
+        relativePosition = down,
     }
     self.popup = ui.create {
         template = I.UIToolkit.Templates.border { padding = 2, background = 'solid' },
         props = {
             position = v2(0, 0),
             size = v2(self.width, listHeight + height + 2 * pad + border),
+            anchor = up,
         },
         content = ui.content {
             {
                 props = {
                     size = v2(self.width - outer, height - outer),
+                    anchor = up,
+                    relativePosition = up,
                 },
                 content = ui.content {
                     {
@@ -88,7 +96,9 @@ function Dropbox:init(opts)
             {
                 template = I.MWUI.templates.horizontalLine,
                 props = {
-                    position = v2(0, height - 2 * pad - border),
+                    position = self.upward
+                        and v2(0, listHeight + 2 * pad - border)
+                        or v2(0, height - 2 * pad - border),
                 },
             },
             self.list.element,
@@ -175,7 +185,7 @@ end
 
 ---@param e openmw.ui.MouseEvent
 function Dropbox:_onClicked(e)
-    self.popup.layout.props.position = e.position - e.offset
+    self.popup.layout.props.position = e.position - e.offset + v2(0, self.upward and self.height or 0)
     I.UIToolkit.queueUpdate(self.popup)
     I.UIToolkit.Layers.addDropbox(self.popup)
 end

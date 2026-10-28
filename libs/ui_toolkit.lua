@@ -218,6 +218,7 @@ function Components.sortedList(opts) end
 ---@field onItemSelected? fun(item:UIToolkit.ListData.Text, idx: integer)
 ---@field width number? defaults to 150
 ---@field maxVisibleItems integer? defaults to all
+---@field upward boolean? if true, will open upward
 
 ---@class UIToolkit.Dropbox : UIToolkit.Component
 ---@field setItems fun(self:UIToolkit.Dropbox, items:UIToolkit.ListData.Text[])
