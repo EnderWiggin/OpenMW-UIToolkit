@@ -22,7 +22,7 @@ function Dropbox:init(opts)
     local outer = 2 * (pad + border)
     local arrowSize = theme.Sizes.textNormal - 2
 
-    self.upward = opts.upward == true
+    self.upward = false
     self.width = opts.width or 150
     local height = theme.Sizes.textNormal + outer
     self.height = height
@@ -43,6 +43,7 @@ function Dropbox:init(opts)
     local visibleItems = opts.maxVisibleItems or #self.items
     visibleItems = math.min(visibleItems, #self.items)
     local listHeight = visibleItems * self.provider:getItemHeight()
+    self.listHeight = listHeight
     self.list = I.UIToolkit.Components.itemList {
         provider = self.provider,
         size = v2(self.width - outer, listHeight),
@@ -132,6 +133,36 @@ function Dropbox:init(opts)
     Component.init(self, element)
 end
 
+function Dropbox:_setDirection(upward)
+    if upward == self.upward then return end
+    self.upward = upward
+    local up = v2(0, upward and 1 or 0)
+    local down = v2(0.5, upward and 0 or 1)
+
+    self.list:updateProps {
+        anchor = down,
+        relativePosition = down,
+    }
+    I.UIToolkit.queueUpdate(self.list.element)
+
+    local popup = self.popup.layout --[[@as openmw.ui.Layout]]
+    popup.props.anchor = up
+
+    local props = popup.content[1].props
+    props.anchor = up
+    props.relativePosition = up
+
+    local T = I.UIToolkit.Templates
+    local theme = I.UIToolkit.getTheme()
+    local pad = theme.Sizes.padding
+    local border = T.getBorderSize('thin')
+
+    props = popup.content[2].props
+    props.position = upward
+        and v2(0, self.listHeight + 2 * pad - border)
+        or v2(0, self.height - 2 * pad - border)
+end
+
 function Dropbox:beforeElementDestroy()
     self:closePopup()
     I.UIToolkit.queueDestroy(self.popup, true)
@@ -185,7 +216,12 @@ end
 
 ---@param e openmw.ui.MouseEvent
 function Dropbox:_onClicked(e)
-    self.popup.layout.props.position = e.position - e.offset + v2(0, self.upward and self.height or 0)
+    local position = e.position - e.offset
+    local layerSize = ui.layers[ui.layers.indexOf('Windows')].size
+    local upward = layerSize.y - position.y - self.listHeight - self.height < 16
+    self:_setDirection(upward)
+
+    self.popup.layout.props.position = position + v2(0, self.upward and self.height or 0)
     I.UIToolkit.queueUpdate(self.popup)
     I.UIToolkit.Layers.addDropbox(self.popup)
 end
