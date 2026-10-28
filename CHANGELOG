@@ -1,6 +1,7 @@
 Version 1.4.9 (2026-10-28)
 - text edit: added onFocusLost and onEnterPressed callbacks
 - dropbox: now will open upward if not enough space below
+- tooltips: show arrow/bolt damage
 - demo: improved text edit + slider combo example to allow for empty text while editing
 
 Version 1.4.8 (2026-10-26)
