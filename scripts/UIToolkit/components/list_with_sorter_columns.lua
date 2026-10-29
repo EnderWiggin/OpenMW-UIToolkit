@@ -117,7 +117,7 @@ function SortedList:init(opts)
     }
 
     self.header:updateProps {
-        position = v2(theme.Sizes.border + theme.Sizes.padding, 0),
+        position = v2(opts.noBorder and 0 or theme.Sizes.border + theme.Sizes.padding, 0),
     }
 
     self.list:updateProps { position = v2(0, rowHeight) }
