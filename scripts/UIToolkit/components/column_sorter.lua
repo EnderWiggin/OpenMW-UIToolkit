@@ -108,6 +108,7 @@ function ColumnSorter:toggleColumn(id, asc)
         props.resource = asc and SORT_ASC or SORT_DESC
         props.visible = true
         props.size = v2(ICON_SZ, ICON_SZ)
+        I.UIToolkit.queueUpdate(col)
     end
 
     self.activeColumn = id
