@@ -219,7 +219,9 @@ local function makeLayouts(hints)
             layouts[#layouts + 1] = separator
         else
             local _input = hint.input
-            if #_input == 0 then
+            if not _input then
+                --Do nothing, just display text
+            elseif #_input == 0 then
                 layouts[#layouts + 1] = _input.axis
                     and M.makeAxisLayout(_input.id)
                     or M.makeButtonLayout(_input.id)
