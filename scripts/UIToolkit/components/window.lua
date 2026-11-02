@@ -511,7 +511,7 @@ function Window:init(opts, id, saved)
 
         window.layout.events = {
             mousePress = async:callback(function(e, layout)
-                I.UIToolkit.WindowManager._queueFocusedWindow(self.id)
+                I.UIToolkit.WindowManager.focusWindow(self.id)
                 if e.button ~= 1 then return end
                 if data.dragType == nil then return end
                 data.dragging = true
@@ -523,7 +523,7 @@ function Window:init(opts, id, saved)
                 end
             end),
             mouseMove = async:callback(function(e, layout)
-                I.UIToolkit.WindowManager._queueFocusedWindow(self.id)
+                I.UIToolkit.WindowManager.focusWindow(self.id)
                 local minWidth = data.minSize.x
                 local minHeight = data.minSize.y
                 --userData.hadMouseMoveThisFrame = true
@@ -585,14 +585,14 @@ function Window:init(opts, id, saved)
                 end
             end),
             focusGain = async:callback(function()
-                I.UIToolkit.WindowManager._queueFocusedWindow(self.id)
+                I.UIToolkit.WindowManager.focusWindow(self.id)
                 window.layout.userData.focusDelayed = true
             end),
             focusLoss = async:callback(function()
                 window.layout.userData.focusDelayed = false
             end),
             mouseRelease = async:callback(function(e)
-                I.UIToolkit.WindowManager._queueFocusedWindow(self.id)
+                I.UIToolkit.WindowManager.focusWindow(self.id)
                 if e.button ~= 1 then return end
                 data.dragging = false
             end),
@@ -601,14 +601,14 @@ function Window:init(opts, id, saved)
         window.layout.events = {
             mouseMove = async:callback(function(e)
                 I.UIToolkit.setCursorPos(e.position)
-                I.UIToolkit.WindowManager._queueFocusedWindow(self.id)
+                I.UIToolkit.WindowManager.focusWindow(self.id)
             end),
             mousePress = async:callback(function(e)
-                I.UIToolkit.WindowManager._queueFocusedWindow(self.id)
+                I.UIToolkit.WindowManager.focusWindow(self.id)
                 I.UIToolkit.setCursorPos(e.position)
             end),
             mouseRelease = async:callback(function(e)
-                I.UIToolkit.WindowManager._queueFocusedWindow(self.id)
+                I.UIToolkit.WindowManager.focusWindow(self.id)
                 I.UIToolkit.setCursorPos(e.position)
             end),
         }

@@ -74,7 +74,7 @@ function M.open(id, data)
     if handler then
         handler:onOpened(wnd, data, saved and saved.custom or nil)
     end
-    M._queueFocusedWindow(id)
+    M.focusWindow(id)
     return wnd, handler
 end
 
@@ -187,7 +187,7 @@ function M.updateSavedData(id, custom)
 end
 
 ---@param id string
-function M._queueFocusedWindow(id)
+function M.focusWindow(id)
     if windowFocusQueue[1] == id then return end
     H.removeFromArray(windowFocusQueue, id)
     table.insert(windowFocusQueue, 1, id)
@@ -246,7 +246,7 @@ local function updateFocusedWindow()
         end
     end
     if found then
-        M._queueFocusedWindow(found)
+        M.focusWindow(found)
     end
 end
 
