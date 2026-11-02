@@ -390,6 +390,12 @@ local function onFrame()
     end
 end
 
+local function onMouseButtonPress(btn)
+    if isPlayer then
+        InterfaceP.WindowManager._onMouseButtonPress(btn)
+    end
+end
+
 local function onMouseWheel(v)
     if isPlayer then
         Controller._setControllerActiveState(false)
@@ -412,7 +418,9 @@ local function onControllerButtonPress(button)
             return
         end
 
-        local focused = InterfaceP.WindowManager.getFocusedWindowHandler()
+        local manager = InterfaceP.WindowManager
+        if button == input.CONTROLLER_BUTTON.A then manager._onMouseButtonPress(1) end
+        local focused = manager.getFocusedWindowHandler()
         if not focused then return end
         focused:onControllerButtonPress(button)
     end
@@ -463,6 +471,7 @@ return {
     interface = Interface,
     engineHandlers = {
         onFrame = onFrame,
+        onMouseButtonPress = onMouseButtonPress,
         onMouseWheel = onMouseWheel,
         onControllerButtonPress = onControllerButtonPress,
         onControllerButtonRelease = onControllerButtonRelease,

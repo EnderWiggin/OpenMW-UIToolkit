@@ -169,7 +169,10 @@ function ItemList:init(opts)
         events = {
             focusGain = async:callback(function() I.UIToolkit.getCtx().focusedScrollable = self end),
             focusLoss = async:callback(function() I.UIToolkit.getCtx().focusedScrollable = nil end),
-            mouseRelease = async:callback(function(e) if onListClicked then onListClicked(e.button) end end),
+            mouseRelease = async:callback(function(e)
+                I.UIToolkit.setCursorPos(e.position)
+                if onListClicked then onListClicked(e.button) end
+            end),
             mouseMove = async:callback(function(e) I.UIToolkit.setCursorPos(e.position) end),
         },
     }

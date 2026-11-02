@@ -220,11 +220,12 @@ local function getOrderedWindows()
     ]]
 end
 
+local mouseClicked = false
 local function updateFocusedWindow()
     if focusChangedThisFrame or #windowFocusQueue < 2 then return end
 
     local toolkit = I.UIToolkit
-    if not toolkit.cursorMovedThisFrame() then return end
+    if not toolkit.cursorMovedThisFrame() and not mouseClicked then return end
 
     local p = toolkit.getCursorPos()
     if not p then return end
@@ -259,6 +260,11 @@ function M._onFrame(dt)
         if handler then handler:onFrame(dt) end
     end
     focusChangedThisFrame = false
+    mouseClicked = false
+end
+
+function M._onMouseButtonPress(_)
+    mouseClicked = true
 end
 
 ---@param id string
