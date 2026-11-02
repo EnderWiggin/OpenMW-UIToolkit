@@ -1,3 +1,10 @@
+Version 1.4.10 (2026-11-02)
+- sorted list: fixed slightly misaligned header position when border is disabled
+- controller hints: fixed error when input is nil, now will just show text
+- columns: fixed toggleColumn not updating new column
+- window manager: update focused window when mouse button or controller A are pressed
+- window manager: added public focusWindow method
+
 Version 1.4.9 (2026-10-28)
 - text edit: added onFocusLost and onEnterPressed callbacks
 - dropbox: now will open upward if not enough space below
