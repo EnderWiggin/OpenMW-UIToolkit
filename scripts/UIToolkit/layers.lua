@@ -16,35 +16,52 @@ local M = {}
 ---@type openmw.ui.Element?
 local dropbox
 
-local dropBoxLayer = Component:new()
+---@type openmw.ui.Layout
+local _dropBoxHolder
 
-local dropBoxHolder = {
-    name = 'dropbox-holder',
-    props = {
-        relativeSize = v2(1, 1),
-    },
-}
+---@return openmw.ui.Layout
+local function dropBoxHolder()
+    if not _dropBoxHolder then
+        _dropBoxHolder = {
+            name = 'dropbox-holder',
+            props = {
+                relativeSize = v2(1, 1),
+            },
+        }
+    end
+    return _dropBoxHolder
+end
 
-dropBoxLayer:init(ui.create {
-    name = C.Layers.Dropbox,
-    layer = C.Layers.Dropbox,
+---@type UIToolkit.Component
+local _dropBoxLayer
 
-    props = {
-        relativeSize = v2(1, 1),
-        visible = false,
-    },
-    content = ui.content {
-        dropBoxHolder,
-    },
-    events = {
-        mousePress = async:callback(function() M.closeDropbox() end),
-    },
-})
+---@return UIToolkit.Component
+local function dropBoxLayer()
+    if not _dropBoxLayer then
+        _dropBoxLayer = Component:new()
+        _dropBoxLayer:init(ui.create {
+            name = C.Layers.Dropbox,
+            layer = C.Layers.Dropbox,
+
+            props = {
+                relativeSize = v2(1, 1),
+                visible = false,
+            },
+            content = ui.content {
+                dropBoxHolder(),
+            },
+            events = {
+                mousePress = async:callback(function() M.closeDropbox() end),
+            },
+        })
+    end
+    return _dropBoxLayer
+end
 
 function M.closeDropbox()
     if not dropbox then return end
-    dropBoxHolder.content = nil
-    dropBoxLayer:setVisible(false)
+    dropBoxHolder().content = nil
+    dropBoxLayer():setVisible(false)
     dropbox = nil
 end
 
@@ -52,8 +69,8 @@ function M.addDropbox(box)
     M.closeDropbox()
     if box then
         dropbox = box
-        dropBoxHolder.content = ui.content { box }
-        dropBoxLayer:setVisible(true)
+        dropBoxHolder().content = ui.content { box }
+        dropBoxLayer():setVisible(true)
     end
 end
 
