@@ -69,6 +69,13 @@ I.Settings.registerGroup {
                 roundToStep = true,
             }
         },
+        {
+            key = 'b_GridSelectAllowNext',
+            renderer = 'checkbox',
+            name = 'SettingGridSelectAllowNextName',
+            description = 'SettingGridSelectAllowNextDesc',
+            default = true,
+        },
     },
 }
 

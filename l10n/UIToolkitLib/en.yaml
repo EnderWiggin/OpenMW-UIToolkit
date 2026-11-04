@@ -25,6 +25,17 @@ ConfigInterfaceReimagined_Off: Off
 ConfigInterfaceReimagined_Auto: Auto
 ConfigInterfaceReimagined_On: On
 
+SettingListRowScaleName: List Row Scale
+SettingListRowScaleDesc: |-
+  Adjust the default height of ItemList rows.
+  Applies only if List is created without specifying rowHeight.
+
+SettingGridSelectAllowNextName: Item Grid Move To Next
+SettingGridSelectAllowNextDesc: |-
+  When Item Grid's selection is moved (usually by keyboard or controller) this setting controls what is happening when selection moved beyond edge of a row/column.
+  If enabled, selection will move to start of next row/column (or end of previous if moved backwards).
+  If disabled, it will loop to start or end of current row/column.
+
 # -------------- Controller Settings --------------
 ControllerSettingsName: Controller Settings
 ControllerSettingsDesc: |-

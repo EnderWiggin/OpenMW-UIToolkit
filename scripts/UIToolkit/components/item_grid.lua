@@ -9,6 +9,7 @@ local I = require('openmw.interfaces')
 local v2 = util.vector2
 local H = require('scripts.UIToolkit.helpers')
 local C = require('scripts.UIToolkit.constants')
+local cfgPlayer = require('scripts.UIToolkit.config.player')
 local Class = require('scripts.UIToolkit.class')
 local Component = require('scripts.UIToolkit.components.component')
 local Scrollable = require('scripts.UIToolkit.components.scrollable')
@@ -470,10 +471,20 @@ end
 ---@return integer
 function ItemGrid:getIndexByPos(p)
     local state = self.state
-    local contentSize = self:getContentSize()
     local itemSize = state.itemSize
     local x = math.floor(p.x / itemSize.x)
     local y = math.floor(p.y / itemSize.y)
+    return self:getIndexByXY(x, y)
+end
+
+--Returns item index by logical zero-based x and y positions
+---@param x integer
+---@param y integer
+---@return integer
+function ItemGrid:getIndexByXY(x, y)
+    local state = self.state
+    local contentSize = self:getContentSize()
+    local itemSize = state.itemSize
     if state.horizontal then
         local height = math.floor(contentSize.y / itemSize.y)
         return 1 + x * height + y
@@ -489,18 +500,32 @@ end
 function ItemGrid:getPosByIndex(idx, visible)
     local state = self.state
     local itemSize = state.itemSize
-    local contentSize = self:getContentSize()
     local shift = visible and self._scrollBar:getPosition() or 0
+    local x, y = self:getXYByIndex(idx)
+    if state.horizontal then
+        return v2(itemSize.x * x - shift, itemSize.y * y)
+    else
+        return v2(itemSize.x * x, itemSize.y * y - shift)
+    end
+end
+
+--Returns logical zero-based x and y positions for index
+---@param idx integer
+---@return integer x, integer y
+function ItemGrid:getXYByIndex(idx)
+    local state = self.state
+    local itemSize = state.itemSize
+    local contentSize = self:getContentSize()
     if state.horizontal then
         local height = math.floor(contentSize.y / itemSize.y)
         local x = math.floor((idx - 1) / height)
         local y = idx - 1 - x * height
-        return v2(itemSize.x * x - shift, itemSize.y * y)
+        return x, y
     else
         local width = math.floor(contentSize.x / itemSize.x)
         local y = math.floor((idx - 1) / width)
         local x = idx - 1 - y * width
-        return v2(itemSize.x * x, itemSize.y * y - shift)
+        return x, y
     end
 end
 
@@ -612,50 +637,88 @@ end
 ---@param shift openmw.util.Vector2
 function ItemGrid:shiftHoveredItem(shift)
     local state = self.state
+    local hovered = state.hovered
+    local tIdx
+    local items = #state.items
+    local down = shift.y > 0 or shift.x > 0
+    local up = shift.y < 0 or shift.x < 0
+    local from, to = self:getVisibleItemRange(true)
     local itemSize = state.itemSize
     local contentSize = self:getContentSize()
-    local itemLength, delta, perRow, rowsCount
+    local itemLength, perRow, visibleRowsCount
     if state.horizontal then
         perRow = math.floor(contentSize.y / itemSize.y)
-        rowsCount = math.floor(contentSize.x / itemSize.x)
+        visibleRowsCount = math.floor(contentSize.x / itemSize.x)
         itemLength = itemSize.x
-        delta = shift.x * perRow + shift.y
     else
         perRow = math.floor(contentSize.x / itemSize.x)
-        rowsCount = math.floor(contentSize.y / itemSize.y)
+        visibleRowsCount = math.floor(contentSize.y / itemSize.y)
         itemLength = itemSize.y
-        delta = shift.x + shift.y * perRow
     end
+    local actualRowsCount = math.ceil(items / perRow)
+    local allowNext = cfgPlayer.interface.b_GridSelectAllowNext
 
-    if not delta or delta == 0 then return end
-    local down = delta > 0
-    local rows = state.items
-    local from, to = self:getVisibleItemRange(true)
-    local rIdx = state.hovered
-    local tIdx = down and from or to
-    if rIdx then
-        util.clamp(rIdx, from, to)
-        tIdx = rIdx + delta
-        if down then
-            if rIdx == #rows then
-                down = false
-                tIdx = 1
+    if hovered then
+        local axis = state.horizontal and shift.x or shift.y
+        if hovered >= items and down then
+            if allowNext or axis > 0 then tIdx = 1 end
+        elseif hovered <= 1 and up then
+            if allowNext or axis < 0 then tIdx = items end
+        end
+
+        if not tIdx then
+            local x, y = self:getXYByIndex(hovered)
+            x = x + shift.x
+            y = y + shift.y
+
+            if x < 0 then
+                x = actualRowsCount - 1
+                if allowNext then
+                    if y > 0 then y = y - 1 else y = perRow - 1 end
+                end
+            elseif x >= actualRowsCount then
+                x = 0
+                if allowNext then y = y + 1 end
             end
-        else
-            if rIdx == 1 then
-                down = true
-                tIdx = #rows
+            if y < 0 then
+                y = perRow - 1
+                if allowNext then
+                    if x > 0 then x = x - 1 else x = actualRowsCount - 1 end
+                end
+            elseif y >= perRow then
+                y = 0
+                if allowNext then x = x + 1 end
+            end
+
+            tIdx = self:getIndexByXY(x, y)
+            if down then
+                tIdx = math.max(tIdx, 1)
+            else
+                tIdx = math.min(tIdx, items)
             end
         end
+    elseif down then
+        tIdx = 1
+        down = false
+    else
+        tIdx = items
+        down = true
     end
-    tIdx = util.clamp(tIdx, 1, #rows)
+
+    if tIdx > items then
+        tIdx = 1
+    elseif tIdx < 1 then
+        tIdx = items
+    end
+
+    if hovered then down = tIdx > hovered end
 
     if tIdx < from or tIdx > to then
         local tPos = math.ceil(tIdx / perRow) - 1
         if down then
             tPos = tPos - 0
         else
-            tPos = tPos - rowsCount + 1
+            tPos = tPos - visibleRowsCount + 1
         end
         tPos = tPos * itemLength
         local pos = self:getPosition()
@@ -665,6 +728,7 @@ function ItemGrid:shiftHoveredItem(shift)
             or math.min(pos, tPos)
         )
     end
+
     state.lastHoveredPos = nil
     self:setHovered(tIdx, true)
 end
