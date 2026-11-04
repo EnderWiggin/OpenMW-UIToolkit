@@ -1,3 +1,9 @@
+Version 1.4.11 (2026-11-04)
+- item grid: tweaked how shiftHoveredItem navigates
+- item grid: added setting for edge looping behavior
+- added onFocusGained and onFocusLost methods to WindowHandler + made tooltips clear when window focus is changed
+- added workaround for errors when launching game on 0.52 directly into game skipping main menu
+
 Version 1.4.10 (2026-11-02)
 - sorted list: fixed slightly misaligned header position when border is disabled
 - controller hints: fixed error when input is nil, now will just show text
