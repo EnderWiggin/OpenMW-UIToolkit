@@ -189,8 +189,13 @@ end
 ---@param id string
 function M.focusWindow(id)
     if windowFocusQueue[1] == id then return end
+    local handler = M.getFocusedWindowHandler()
+    if handler then handler:onFocusLost() end
+    I.UTKTooltips.setTooltip()
     H.removeFromArray(windowFocusQueue, id)
     table.insert(windowFocusQueue, 1, id)
+    handler = M.getFocusedWindowHandler()
+    if handler then handler:onFocusGained() end
     focusChangedThisFrame = true
 end
 
