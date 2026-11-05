@@ -20,6 +20,13 @@ local Item = types.Item
 local V2 = util.vector2
 local fSoulGemMult = core.getGMST('fSoulGemMult')
 local fEnchantmentMult = core.getGMST('fEnchantmentMult')
+local iMagicItemCharge = {
+    [core.magic.ENCHANTMENT_TYPE.CastOnStrike] = core.getGMST('iMagicItemChargeStrike'),
+    [core.magic.ENCHANTMENT_TYPE.CastOnUse] = core.getGMST('iMagicItemChargeUse'),
+    [core.magic.ENCHANTMENT_TYPE.CastOnce] = core.getGMST('iMagicItemChargeOnce'),
+    [core.magic.ENCHANTMENT_TYPE.ConstantEffect] = core.getGMST('iMagicItemChargeConst'),
+}
+
 -- Engine constant Constants::UnitsPerFoot, converts game units to feet
 local unitsPerFoot = 21.33333333
 
@@ -333,9 +340,14 @@ local function enchantment(items, record, tooltip, noCharge)
             name = CONTENT.MagicEffects
         }
 
-        local chargeCurrent = enchant.charge
         local chargeMax = enchant.charge
         if chargeMax > 0 and not noCharge then
+            local baseCost
+            if enchant.isAutocalc then
+                baseCost = helpers.getBaseSpellCost(enchant.id, true)
+                chargeMax = util.round(baseCost) * iMagicItemCharge[enchant.type]
+            end
+            local chargeCurrent = chargeMax
             local object = tooltip.object
             local observer = tooltip.observer
             if object then
@@ -344,7 +356,7 @@ local function enchantment(items, record, tooltip, noCharge)
             end
             local label
             if cfg.main.b_ShowEnchantUseCost then
-                local cost = helpers.getModifiedSpellCost(enchant.id, true, observer)
+                local cost = helpers.getModifiedSpellCost(enchant.id, true, observer, baseCost)
                 label = string.format(FMT_USE_COST, cost)
             else
                 label = l10n('Charge')

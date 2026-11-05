@@ -404,10 +404,10 @@ function Utils.getBaseSpellCost(spellId, isEnchant)
     return cost
 end
 
-function Utils.getModifiedSpellCost(spellId, isEnchant, user)
-    local baseCost = Utils.getBaseSpellCost(spellId, isEnchant)
+function Utils.getModifiedSpellCost(spellId, isEnchant, user, baseCost)
+     baseCost = baseCost or Utils.getBaseSpellCost(spellId, isEnchant)
 
-    local cost = baseCost
+    local cost = math.floor(baseCost)
 
     if isEnchant and user and NPC.objectIsInstance(user) then
         local skill = user.type.stats.skills.enchant(user).modified
