@@ -9,7 +9,7 @@ end
 local M = {
     PageKey = MOD,
     L10N = 'UIToolkitLib',
-    Version = '1.4.11',
+    Version = '1.4.12',
     API = 5,
     Tooltips = 1,
     Section = {
