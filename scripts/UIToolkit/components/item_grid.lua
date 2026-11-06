@@ -62,6 +62,27 @@ function ItemGrid:init(opts)
     end
 
     ---@param btn number
+    ---@param item UIToolkit.ListData.Base?
+    ---@param idx integer?
+    local function doItemClick(btn, item, idx)
+        local callback = getCallback(btn)
+        if not callback and not onAnyClicked then return end
+
+        local controller = I.UIToolkit.Controller.isControllerActive()
+
+        if btn == 1 and controller then
+            item, idx = self:getHovered()
+        else
+            item = self.state.items[idx]
+        end
+        if not item or not idx then return end
+
+        if callback then callback(item, idx) end
+        if onAnyClicked then onAnyClicked(item, idx, btn) end
+        return item, idx
+    end
+
+    ---@param btn number
     ---@param offset openmw.util.Vector2
     ---@return UIToolkit.ListData.Base?, integer?
     local function processItemClick(btn, offset)
@@ -72,17 +93,10 @@ function ItemGrid:init(opts)
         local _size = self._scrollable.layout.props.size
         if offset.x < 0 or offset.y < 0 or offset.x >= _size.x or offset.y >= _size.y then return end
 
-        local callback = getCallback(btn)
-        if not callback and not onAnyClicked then return end
-
         local idx = self:getIndexByPos(offset)
         if idx ~= wasPressed then return end --released over another item
         local item = self.state.items[idx]
-        if not item then return end
-
-        if callback then callback(item, idx) end
-        if onAnyClicked then onAnyClicked(item, idx, btn) end
-        return item, idx
+        return doItemClick(btn, item, idx)
     end
 
     local scrollableProps = {
@@ -126,13 +140,17 @@ function ItemGrid:init(opts)
             mouseMove = async:callback(function(e)
                 I.UIToolkit.setCursorPos(e.position)
                 local offset = e.offset
-                self:_updateLastHoveredPos(offset)
-                self:setHovered(self:getIndexByPos(offset))
+                if offset ~= state.lastOffset then
+                    state.lastOffset = offset
+                    self:_updateLastHoveredPos(offset)
+                    self:setHovered(self:getIndexByPos(offset))
+                end
                 return true
             end),
             focusLoss = async:callback(function()
                 self:setHovered(nil)
                 state.lastHoveredPos = nil
+                state.lastOffset = nil
                 return true
             end),
         },
@@ -195,7 +213,11 @@ function ItemGrid:init(opts)
             focusLoss = async:callback(function() I.UIToolkit.getCtx().focusedScrollable = nil end),
             mouseRelease = async:callback(function(e)
                 I.UIToolkit.setCursorPos(e.position)
-                if onListClicked then onListClicked(e.button) end
+
+                local btn = e.button
+                doItemClick(btn)
+                
+                if onListClicked then onListClicked(btn) end
             end),
             mouseMove = async:callback(function(e) I.UIToolkit.setCursorPos(e.position) end),
         },

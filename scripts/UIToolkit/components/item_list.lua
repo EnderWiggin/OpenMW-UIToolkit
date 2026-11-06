@@ -61,6 +61,27 @@ function ItemList:init(opts)
     end
 
     ---@param btn number
+    ---@param item UIToolkit.ListData.Base?
+    ---@param idx integer?
+    local function doItemClick(btn, item, idx)
+        local callback = getCallback(btn)
+        if not callback and not onAnyClicked then return end
+        
+        local controller = I.UIToolkit.Controller.isControllerActive()
+        
+        if btn == 1 and controller then
+            item, idx = self:getHovered()
+        else
+            item = self.state.items[idx]
+        end
+        if not item or not idx then return end
+
+        if callback then callback(item, idx) end
+        if onAnyClicked then onAnyClicked(item, idx, btn) end
+        return item, idx
+    end
+
+    ---@param btn number
     ---@param offset openmw.util.Vector2
     ---@return UIToolkit.ListData.Base?, integer?
     local function processItemClick(btn, offset)
@@ -71,17 +92,10 @@ function ItemList:init(opts)
         local _size = self._scrollable.layout.props.size
         if offset.x < 0 or offset.y < 0 or offset.x >= _size.x or offset.y >= _size.y then return end
 
-        local callback = getCallback(btn)
-        if not callback and not onAnyClicked then return end
-
         local idx = self:getIndexByYPos(offset.y)
         if idx ~= wasPressed then return end --released over another item
         local item = self.state.items[idx]
-        if not item then return end
-
-        if callback then callback(item, idx) end
-        if onAnyClicked then onAnyClicked(item, idx, btn) end
-        return item, idx
+        return doItemClick(btn, item, idx)
     end
 
     ---@type openmw.ui.Element
@@ -116,13 +130,21 @@ function ItemList:init(opts)
             ---@param e openmw.ui.MouseEvent
             mouseMove = async:callback(function(e)
                 I.UIToolkit.setCursorPos(e.position)
-                self.state.lastHoveredPos = e.offset.y - self._scrollBar:getPosition()
-                self:setHovered(self:getIndexByYPos(e.offset.y))
+                local offset = e.offset
+                if offset ~= state.lastOffset then
+                    state.lastOffset = offset
+                    local hoveredPos = offset.y - self._scrollBar:getPosition()
+                    if hoveredPos ~= state.lastHoveredPos then
+                        state.lastHoveredPos = hoveredPos
+                        self:setHovered(self:getIndexByYPos(offset.y))
+                    end
+                end
                 return true
             end),
             focusLoss = async:callback(function()
                 self:setHovered(nil)
                 self.state.lastHoveredPos = nil
+                self.state.lastOffset = nil
                 return true
             end),
         },
@@ -171,7 +193,11 @@ function ItemList:init(opts)
             focusLoss = async:callback(function() I.UIToolkit.getCtx().focusedScrollable = nil end),
             mouseRelease = async:callback(function(e)
                 I.UIToolkit.setCursorPos(e.position)
-                if onListClicked then onListClicked(e.button) end
+                
+                local btn = e.button
+                doItemClick(btn)
+                
+                if onListClicked then onListClicked(btn) end
             end),
             mouseMove = async:callback(function(e) I.UIToolkit.setCursorPos(e.position) end),
         },
