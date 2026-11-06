@@ -2,6 +2,7 @@
 
 local core = require('openmw.core')
 local ui = require('openmw.ui')
+local input = require('openmw.input')
 local util = require('openmw.util')
 local I = require('openmw.interfaces')
 local section = require('openmw.storage').playerSection('UIToolkit:WindowData')
@@ -269,6 +270,7 @@ function M._onFrame(dt)
 end
 
 function M._onMouseButtonPress(_)
+    if input.isControllerButtonPressed(input.CONTROLLER_BUTTON.A) then return end 
     mouseClicked = true
 end
 
