@@ -585,10 +585,10 @@ function Components.sortedList(opts) end
 ---@field getDPadIcon fun(direction:UIToolkit.Controller.DPAdDirection):string
 ---@field makeButtonLayout fun(button:number, opts:UIToolkit.Controller.IconOpts?)
 ---@field makeAxisLayout fun(axis:number, opts:UIToolkit.Controller.IconOpts?)
+---@field isControllerActive fun():boolean
 
 ---@class UIToolkit.Controller : UIToolkit.ControllerMenu
 ---@field setExternalHints fun(source:string, hints?:UIToolkit.Controller.HintList)
----@field isControllerActive fun():boolean
 
 ---@class UIToolkit.Controller.IconOpts
 ---@field color? openmw.util.Color

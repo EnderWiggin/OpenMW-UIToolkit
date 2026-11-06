@@ -376,11 +376,11 @@ local function onFrame()
     if isPlayer then
         InterfaceP.WindowManager._onFrame(dt)
         Controller._onFrame()
-        if input.getMouseMoveX() ~= 0 or input.getMouseMoveY() ~= 0 then
-            Controller._setControllerActiveState(false)
-        elseif controllerAxisMoved() then
-            Controller._setControllerActiveState(true)
-        end
+    end
+    if input.getMouseMoveX() ~= 0 or input.getMouseMoveY() ~= 0 then
+        Controller._setControllerActiveState(false)
+    elseif controllerAxisMoved() then
+        Controller._setControllerActiveState(true)
     end
 
     processUpdateAndDestroyQueues()
@@ -397,9 +397,7 @@ local function onMouseButtonPress(btn)
 end
 
 local function onMouseWheel(v)
-    if isPlayer then
-        Controller._setControllerActiveState(false)
-    end
+    Controller._setControllerActiveState(false)
     local scrollable = getFocusedScrollable()
     if not scrollable then return end
     scrollable:onMouseScrolled(v)
@@ -409,8 +407,8 @@ end
 local function onControllerButtonPress(button)
     buttonPressDuration[button] = 0
 
+    Controller._setControllerActiveState(true)
     if isPlayer then
-        Controller._setControllerActiveState(true)
         local popup = InterfaceP.Popups.getActivePopup()
         if popup then
             local callback = popup.handler.onControllerButtonPress
@@ -429,9 +427,7 @@ end
 ---@param button number
 local function onControllerButtonRelease(button)
     buttonPressDuration[button] = nil
-    if isPlayer then
-        Controller._setControllerActiveState(true)
-    end
+    Controller._setControllerActiveState(true)
 end
 
 ---@param evt openmw.input.KeyboardEvent
@@ -439,8 +435,8 @@ local function onKeyPress(evt)
     local key = evt.code
     keyPressDuration[key] = 0
 
+    Controller._setControllerActiveState(false)
     if isPlayer then
-        Controller._setControllerActiveState(false)
         local popup = InterfaceP.Popups.getActivePopup()
         if popup then
             local callback = popup.handler.onKeyboardButtonPress
@@ -457,9 +453,7 @@ end
 ---@param evt openmw.input.KeyboardEvent
 local function onKeyRelease(evt)
     keyPressDuration[evt.code] = nil
-    if isPlayer then
-        Controller._setControllerActiveState(false)
-    end
+    Controller._setControllerActiveState(false)
 end
 
 local function onUIModeChanged()

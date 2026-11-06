@@ -292,6 +292,16 @@ local function showControllerHint(hints)
     }
 end
 
+function M._setControllerActiveState(state)
+    if state == controllerIsActive then return end
+    controllerIsActive = state
+    if isPlayer then P.updateHintVisibility() end
+end
+
+function M.isControllerActive()
+    return controllerIsActive
+end
+
 if isPlayer then
     ---@omw-context-begin player
 
@@ -370,16 +380,6 @@ if isPlayer then
         if not element then return end
         element.layout.props.visible = showHint
         IP.UIToolkit.queueUpdate(element)
-    end
-
-    function M._setControllerActiveState(state)
-        if state == controllerIsActive then return end
-        controllerIsActive = state
-        P.updateHintVisibility()
-    end
-
-    function M.isControllerActive()
-        return controllerIsActive
     end
 
     ---@omw-context-end player
