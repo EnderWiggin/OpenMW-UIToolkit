@@ -352,6 +352,7 @@ function Components.sortedList(opts) end
 ---@field getVisibleItemCount fun(self:UIToolkit.ItemList):integer
 ---@field setHovered fun(self:UIToolkit.ItemList, idOrIndex:string|integer|nil)
 ---@field shiftHoveredItem fun(self:UIToolkit.ItemList, shift:integer)
+---@field scrollIntoView fun(self:UIToolkit.ItemList, idOrIndex:string|integer, strict:boolean?):boolean scrolls so that the item or index is within the visible range; returns true if the scroll moved
 
 ---@generic T: UIToolkit.ListData.Base
 ---@class UIToolkit.GridItem.Base<T>
@@ -400,6 +401,7 @@ function Components.sortedList(opts) end
 ---@field getVisibleItemCount fun(self:UIToolkit.ItemGrid):integer
 ---@field setHovered fun(self:UIToolkit.ItemGrid, idOrIndex:string|integer|nil, highlight:boolean?)
 ---@field shiftHoveredItem fun(self:UIToolkit.ItemGrid, shift:openmw.util.Vector2)
+---@field scrollIntoView fun(self:UIToolkit.ItemGrid, idOrIndex:string|integer, strict:boolean?):boolean scrolls so that the item or index is within the visible range; returns true if the scroll moved
 
 ---@class UIToolkit.ColumnSorter.Column
 ---@field id string?

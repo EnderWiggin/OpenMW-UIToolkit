@@ -487,6 +487,32 @@ function ItemList:shiftHoveredItem(shift)
     self:setHovered(tIdx)
 end
 
+---@param idOrIndex string|integer item id or 1-based index in the current list
+---@param strict boolean? if true, only fully visible items count as in view. Defaults to true
+---@return boolean true if the scroll position changed
+function ItemList:scrollIntoView(idOrIndex, strict)
+    local idx
+    if type(idOrIndex) == 'number' then
+        idx = idOrIndex
+    else
+        local _, found = self:getItemById(idOrIndex)
+        idx = found
+    end
+    if not idx then return false end
+
+    local from, to = self:getVisibleItemRange(strict ~= false)
+    if idx >= from and idx <= to then return false end
+
+    local state = self.state
+    local down = idx > to
+    --align the target row to the near viewport edge, like shiftHoveredItem does
+    local tPos = (down and idx or idx - (to - from)) - 1
+    tPos = tPos * state.itemHeight
+    local pos = self:getPosition()
+    self:setPosition(down and math.max(pos, tPos) or math.min(pos, tPos))
+    return true
+end
+
 ---@param id string
 ---@return UIToolkit.ListData.Base?, integer?
 function ItemList:getItemById(id)

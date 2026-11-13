@@ -755,6 +755,46 @@ function ItemGrid:shiftHoveredItem(shift)
     self:setHovered(tIdx, true)
 end
 
+---@param idOrIndex string|integer item id or 1-based index in the current list
+---@param strict boolean? if true, only fully visible items count as in view. Defaults to true
+---@return boolean true if the scroll position changed
+function ItemGrid:scrollIntoView(idOrIndex, strict)
+    local idx
+    if type(idOrIndex) == 'number' then
+        idx = idOrIndex
+    else
+        local _, found = self:getItemById(idOrIndex)
+        idx = found
+    end
+    if not idx then return false end
+
+    local state = self.state
+    local from, to = self:getVisibleItemRange(strict ~= false)
+    if idx >= from and idx <= to then return false end
+
+    local contentSize = self:getContentSize()
+    local itemSize = state.itemSize
+    local perRow, visibleRowsCount, itemLength
+    if state.horizontal then
+        perRow = math.floor(contentSize.y / itemSize.y)
+        visibleRowsCount = math.floor(contentSize.x / itemSize.x)
+        itemLength = itemSize.x
+    else
+        perRow = math.floor(contentSize.x / itemSize.x)
+        visibleRowsCount = math.floor(contentSize.y / itemSize.y)
+        itemLength = itemSize.y
+    end
+
+    local down = idx > to
+    --align the target row to the near viewport edge, like shiftHoveredItem does
+    local tPos = math.ceil(idx / perRow) - 1
+    if not down then tPos = tPos - visibleRowsCount + 1 end
+    tPos = tPos * itemLength
+    local pos = self:getPosition()
+    self:setPosition(down and math.max(pos, tPos) or math.min(pos, tPos))
+    return true
+end
+
 ---@param id string
 ---@return UIToolkit.ListData.Base?, integer?
 function ItemGrid:getItemById(id)
