@@ -7,14 +7,14 @@ local I         = require 'openmw.interfaces'
 
 local helpers   = require 'scripts.UIToolkit.tooltips.utils'
 local H         = require 'scripts.UIToolkit.helpers'
-local cfgPlayer = require 'scripts.UIToolkit.config.player'
+local cfg       = require 'scripts.UIToolkit.tooltips.config'
 local v2        = util.vector2
 
 local Interface = I.UTKTooltips
 
 
 Interface.addPreCreateTooltipHandler(function(recipe, tooltip)
-    if not cfgPlayer.interface.b_CompactWeightValue then return end
+    if not cfg.main.b_CompactWeightValue then return end
 
     local items = {}
 
