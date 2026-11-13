@@ -1,3 +1,7 @@
+Version 1.4.14 (2026-11-13)
+- tooltips: fixed Condensed weight/value setting being read from old settings
+- list and grid: added scrollIntoView method that ensures item is visible
+
 Version 1.4.13 (2026-11-07)
 - controller: isControllerActive is available in MENU context too
 - improved window focus change under controller - focus does not change from button A presses
